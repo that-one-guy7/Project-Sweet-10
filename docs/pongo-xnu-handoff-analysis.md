@@ -10,6 +10,7 @@ Reviewed sources:
 - PongoOS revision: [`4c9b7541629234147fcc778f0ce4162482aaccef`](https://github.com/checkra1n/PongoOS/commit/4c9b7541629234147fcc778f0ce4162482aaccef), the repository's inspected `master` commit at review time
 - PongoOS README and KPF source: [README](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/README.md), [`checkra1n/kpf/main.c`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/checkra1n/kpf/main.c)
 - PongoOS boot-stage source: [`src/boot/stage3.c`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/boot/stage3.c)
+- PongoOS runtime/transfer sources: [`src/kernel/entry.c`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/kernel/entry.c), [`src/boot/jump_to_image.S`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/boot/jump_to_image.S), [`src/drivers/xnu/xnu.c`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/drivers/xnu/xnu.c), [`src/shell/main.c`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/shell/main.c), and [`src/kernel/pongo.h`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/kernel/pongo.h).
 - Apple XNU: [`xnu-8796.141.3/pexpert/pexpert/arm64/boot.h`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/boot.h), [`osfmk/arm64/start.s`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/start.s)
 
 This is source analysis, not a device procedure. No exploit invocation, Pongo command sequence, firmware installation, partition write, or boot attempt is specified.
@@ -39,6 +40,16 @@ These routines search instruction streams and modify matched instructions or bra
 
 Accordingly, Sweet-10 should not treat the stock PongoOS + KPF path as its custom-kernel loader. The KPF source is useful to understand what the existing checkra1n flow does, but its patches and security-policy changes are not a replacement for a platform port. Sweet-10's own research should preserve kernel security semantics rather than importing unrelated patch behavior.
 
+## Additional PongoOS raw-payload and KernelCache-copy paths
+
+The pinned implementation contains more than the README-level Pongo/KPF description. The shell registers a raw-payload command (`bootr`), and the kernel entry code dispatches that mode to an uploaded buffer through `jump_to_image_extended()`. The assembly helper branches to the uploaded payload, passes the existing Apple `boot_args` pointer in `x0`, and passes the original kernel entry point in `x8`. The source does not parse or relocate a custom Mach-O in this path, nor does it construct a new memory map or DeviceTree.
+
+The XNU driver also registers `loadx`. Its `pongo_copy_xnu()` handler locates the current in-memory KernelCache Mach-O header and copies uploaded bytes over that image. Its source comment explicitly leaves modification of `gEntryPoint` to the caller and lists Mach-O parsing/entry-point selection as a TODO. This is an incomplete in-place copy helper, not a complete validated kernel loader.
+
+Pongo's `pongo_entry_cached()` reads the supplied `arm-io/device_type` and includes a `t8010` SoC identifier branch. That establishes T8010 recognition in this source revision only; it does not prove all device drivers, boot stages, or runtime fields are correct for iPhone9,1.
+
+These findings refine, but do not remove, the custom-loader blocker. They identify a possible raw-stage extension point and an incomplete kernel-copy helper. See the detailed [PongoOS raw-payload and KernelCache-copy audit](pongo-raw-payload-and-copyx-audit.md). Neither path is a ready-to-run Sweet-10 XNU loader.
+
 ## XNU 8796 boot-argument contract visible in public source
 
 The pinned XNU header defines an ARM64 `boot_args` structure with these fields, in order:
@@ -67,7 +78,7 @@ The intended chain has at least three separate engineering components:
 2. **Sweet-10 image-loading/handoff layer:** a separately validated design must identify the intended custom XNU image and provide the correct entry context, memory layout, boot arguments, and DeviceTree contract.
 3. **A10/T8010 XNU platform:** XNU must contain or be adapted to contain the board configuration, CPU/platform initialization, interrupt/timer support, and required early services for iPhone9,1.
 
-The PongoOS README establishes the existence of a Pongo-to-XNU flow for its documented KPF path. It does not establish component 2 for a custom Sweet-10 kernel, and it does not establish component 3.
+The README and implementation establish a Pongo-to-XNU path for an already supplied XNU image, a raw uploaded-payload entry point, and an incomplete in-place KernelCache-copy helper. They do not establish a completed Sweet-10 component 2: the raw path does not parse/relocate XNU or build its target handoff, and the copy helper leaves entry-point selection to another component. They also do not establish component 3.
 
 The current `20H392` reference remains an iPhone X/A11/T8015 userland donor. The available iPhone7 `19H422` reference is iOS 15.8.8 and can inform target-side DeviceTree research only. Neither release label is proof that the other device's kernel image or boot arguments are interchangeable.
 
@@ -87,6 +98,6 @@ No Pongo transport, exploit, or kernel-loading code should be added until these 
 
 ## Project decision
 
-Keep PongoOS as the proposed early boot environment, but track its shell, its KPF-assisted XNU path, and a future custom Sweet-10 XNU handoff as separate items. Do not label PongoConsolidated as a custom XNU loader. Do not infer target addresses, memory ranges, DeviceTree properties, or entry values.
+Keep PongoOS as the proposed early boot environment, but track its shell, normal KPF-assisted XNU path, raw-payload entry point, incomplete `loadx` copy helper, and a future complete Sweet-10 XNU loader as separate items. The raw and copy helpers are extension points, not a completed custom XNU loader. Do not infer target addresses, memory ranges, DeviceTree properties, or entry values.
 
 This document does not claim that PongoOS has been run on a Sweet-10 build, that a custom XNU image has been loaded, or that iOS 16 has booted on iPhone7.
