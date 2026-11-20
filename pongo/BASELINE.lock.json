@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/checkra1n/PongoOS",
+  "repository": "checkra1n/PongoOS",
+  "commit_sha": "4c9b7541629234147fcc778f0ce4162482aaccef",
+  "status": "pinned-for-source-review",
+  "reason": "Exact upstream revision inspected for Project Sweet-10 PongoOS handoff and A10/T8010 platform-backend audits.",
+  "not_a_device_support_claim": true
+}
