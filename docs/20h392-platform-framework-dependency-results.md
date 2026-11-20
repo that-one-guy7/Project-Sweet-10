@@ -20,40 +20,33 @@ not provided for independent review.
 |---|---:|---:|---:|
 | `BoardServices` | 6 | 0 | 0 |
 | `BaseBoard` | 15 | 0 | 0 |
-| `GraphicsServices` | 6 | 0 | 1 (raw kind 3; likely weak-link + re-export) |
+| `GraphicsServices` | 6 | 0 | 1 (raw kind 3; source-mapped weak-link + re-export) |
 | `RunningBoardServices` | 7 | 1 | 0 |
 | `AssertionServices` | 5 | 1 | 0 |
 | `IOSurface` | 5 | 0 | 0 |
-| **Total** | **44** | **2 explicit + 1 likely composite** | **1 raw kind-3 row** |
+| **Total** | **44** | **2 explicit + 1 composite weak-link/re-export** | **1 raw kind-3 row retained** |
 
 ### Interpreting the `unknown 3` formatter output
 
-The exact ipsw revision used in the earlier 20H392 inspection is pinned at
+The exact ipsw revision used in the 20H392 inspection is pinned at
 `a7dfadbcaca8375b424c12a68dae40767e5e07c1`. Its
 `pkg/dyld/prebuilt_types.go` defines `DependentKind` values:
 normal = 0, weak-link = 1, re-export = 2, upward = 4, and delay-init = 8.
 Its `String()` method uses an exact-value switch, so a combined value of
 `1 | 2 = 3` falls through to the display text `unknown 3`.
 
-Apple dyld's `LinkedDylibAttributes::toString()` checks the `weakLink`
-and `reExport` attributes independently and appends both labels when both
-are present. This is consistent with interpreting raw kind 3 as a combined
-**weak-link + re-export** attribute set. Accordingly, the GraphicsServices
-row is best recorded as:
+Apple dyld's pinned source defines `LinkedDylibAttributes` as a one-byte
+bitfield with `weakLink` in bit 0 and `reExport` in bit 1. Its
+`toString()` implementation checks and appends these fields independently.
+The parsed value 3 therefore maps to **weak-link + re-export**. This is a
+source-verified interpretation of the numeric kind printed by ipsw; the raw
+cache byte has not been separately extracted. Keep the original `unknown 3`
+label in the evidence record, and never treat this row as a normal strong edge.
 
-- Raw ipsw display: `unknown 3`
-- Evidence-backed interpretation: likely `weak-link | re-export`
-- Confidence: strong source-level interpretation, but not yet independently
-  confirmed against the raw dependent-kind byte or a second parser
-
-Keep the original raw label in the evidence record. In derived graph summaries,
-do not treat this row as a normal strong dependency. Preserve both suspected
-attributes until the raw on-disk attribute and 20H392 format are independently
-checked.
-
-Sources:
-- [ipsw v3.1.749 parser at the exact inspected commit](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/prebuilt_types.go)
-- [Apple dyld LinkedDylibAttributes formatting](https://github.com/apple-oss-distributions/dyld/blob/main/mach_o/UnsafeHeader.cpp)
+Sources pinned for this interpretation:
+- [ipsw v3.1.749 parser](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/prebuilt_types.go)
+- [Apple dyld LinkedDylibAttributes bitfield](https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/mach_o/UnsafeHeader.h)
+- [Apple dyld LinkedDylibAttributes::toString](https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/mach_o/UnsafeHeader.cpp)
 
 ## Ordered dependent records
 
