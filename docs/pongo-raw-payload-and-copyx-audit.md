@@ -40,7 +40,34 @@ The assembly helper sets the uploaded payload as the branch destination, places 
 
 This is a real extension point for a separately supplied raw stage. It is more specific than saying Pongo has no custom-payload handoff at all. However, the reviewed path itself does not parse a Mach-O KernelCache, validate or relocate its segments, allocate a new kernel memory layout, construct new `boot_args`, or populate the missing runtime DeviceTree fields. Those responsibilities would belong to a future payload/loader and remain unimplemented in Project Sweet-10.
 
-## 3. Existing KernelCache-copy helper (`loadx`)
+## 3. ARM64 `boot_args` layout cross-check
+
+The pinned PongoOS header defines `BOOT_LINE_LENGTH_iOS13` as `0x260` (608 bytes). The pinned XNU 8796 ARM64 header defines `BOOT_LINE_LENGTH` as 608 bytes. The PongoOS `iOS13` union member and XNU 8796's ARM64 `boot_args` therefore use the same command-line length.
+
+The structures also have matching field offsets on ARM64. PongoOS marks its structure packed and supplies explicit padding fields; XNU uses the platform compiler's natural 8-byte alignment for 64-bit pointers and `unsigned long`. The explicit PongoOS padding corresponds to the alignment gaps in XNU:
+
+| Field | PongoOS/XNU ARM64 offset |
+|---|---:|
+| `Revision` | `0x000` |
+| `Version` | `0x002` |
+| `virtBase` | `0x008` |
+| `physBase` | `0x010` |
+| `memSize` | `0x018` |
+| `topOfKernelData` | `0x020` |
+| `Video` | `0x028` |
+| `machineType` | `0x058` |
+| `deviceTreeP` | `0x060` |
+| `deviceTreeLength` | `0x068` |
+| `CommandLine[608]` | `0x06c` |
+| `bootFlags` (`iOS13` view) | `0x2d0` |
+| `memSizeActual` (`iOS13` view) | `0x2d8` |
+| `sizeof(boot_args)` | `0x2e0` |
+
+The offsets are derived directly from the two declarations for the ARM64 ABI. This is a positive source-level layout match for the PongoOS `iOS13` view and the pinned XNU 8796 structure. It removes a suspected structure-layout mismatch between these two headers; it does **not** establish the live `Revision`, `Version`, flags, physical/virtual bases, memory sizes, framebuffer fields, DeviceTree address/length, or a matching iPhone9,1 KernelCache. No runtime boot-argument block has been captured for this project.
+
+Sources: [PongoOS `pongo.h`](https://github.com/checkra1n/PongoOS/blob/4c9b7541629234147fcc778f0ce4162482aaccef/src/kernel/pongo.h#L40-L115) and [XNU 8796 ARM64 `boot.h`](https://github.com/apple-oss-distributions/xnu/blob/1b191cb58250d0705d8a51287127505aa4bc0789/pexpert/pexpert/arm64/boot.h#L15-L90).
+
+## 4. Existing KernelCache-copy helper (`loadx`) 
 
 The XNU driver registers a shell command named `loadx`, whose handler is `pongo_copy_xnu()`. The handler:
 
@@ -52,13 +79,13 @@ The source comment is decisive: it says this function performs only the copy and
 
 Therefore, `loadx` is a low-level in-place replacement helper, not a self-contained, validated custom-XNU image loader. It does not establish that an arbitrary Sweet-10 kernel is correctly laid out, relocated, entered, or compatible with the existing boot arguments and memory map. It must not be treated as a ready-to-run replacement path.
 
-## 4. Distinguish the normal XNU/KPF route
+## 5. Distinguish the normal XNU/KPF route
 
 The normal Pongo XNU route retains the incoming XNU entry point and boot arguments. The registered `bootx` and `bootux` handlers choose the KPF-hooked or unhooked route. The main entry flow runs the corresponding XNU preparation and then returns through the stage-3 image-exit path. The README's consolidated PongoOS/KPF build description refers to this existing XNU path.
 
 The KPF source performs pattern-based modifications to code in the loaded XNU image. That is distinct from the raw-payload entry point and distinct from implementing all of the image parsing, relocation, memory ownership, and boot-argument work required by a custom kernel.
 
-## 5. What this changes for Project Sweet-10
+## 6. What this changes for Project Sweet-10
 
 The source now supports this more precise architecture description:
 
@@ -72,7 +99,7 @@ The source now supports this more precise architecture description:
 
 The 19H422 iPhone9,1 DeviceTree we parsed is a static IPSW component. Its zero-valued clock and memory/panic fields do not supply the final runtime values consumed by Pongo or XNU. The separate `20H392` reference remains the selected iOS 16 userland target, not proof of an iPhone9,1 KernelCache identity.
 
-## 6. Next evidence gates
+## 7. Next evidence gates
 
 Before implementing or invoking a Sweet-10 payload, the project still needs:
 
