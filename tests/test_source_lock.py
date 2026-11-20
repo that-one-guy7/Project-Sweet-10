@@ -53,6 +53,16 @@ class SourceLockTests(unittest.TestCase):
             "xnu/history/xnu-8019.80.24.lock.json", workflow
         )
         self.assertIn("tools/audit_xnu_machine_history.py", workflow)
+        self.assertEqual(workflow.count('- "xnu/history/**"'), 2)
+        self.assertEqual(workflow.count('- "tools/audit_xnu_machine_history.py"'), 2)
+
+    def test_workflow_uses_sparse_source_checkouts(self):
+        workflow = (
+            ROOT / ".github/workflows/xnu-source-check.yml"
+        ).read_text(encoding="utf-8")
+        self.assertEqual(workflow.count("sparse-checkout-cone-mode: false"), 3)
+        self.assertIn("/pexpert/pexpert/arm64/H9.h", workflow)
+        self.assertIn("/makedefs/MakeInc.kernel", workflow)
 
     def test_workflow_has_read_only_repository_permissions(self):
         workflow = (
