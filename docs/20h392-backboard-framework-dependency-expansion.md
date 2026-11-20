@@ -3,9 +3,9 @@
 ## Scope and status
 
 This note defines the next read-only host-side inspection for the iPhone X
-iOS 16.7.16 (20H392) donor SystemOS shared cache. **This is an inspection
-plan, not a report of results:** the four framework-specific loader records
-below have not yet been supplied or validated.
+iOS 16.7.16 (20H392) donor SystemOS shared cache. The four framework-specific
+loader records have now been collected and are recorded in the
+[result inventory](20h392-backboard-framework-dependency-results.md).
 
 The Project Sweet-10 target remains iPhone 7 `iPhone9,1` / D10AP /
 A10-T8010. Nothing in this donor cache establishes target compatibility.
@@ -147,3 +147,14 @@ the complete ordered lists and derived edges.
 
 The next inspection candidates are selected from those observed edges; they
 are not pre-asserted recursive requirements.
+
+
+## Results collected
+
+All four requested `ipsw dyld image` queries exited 0. The supplied output
+contains 10 regular dependencies for BackBoardHIDEventFoundation, 9 for
+BackBoardHIDEventProcessors, 12 regular dependencies plus one re-export for
+BackBoardServices, and 4 regular dependencies for IOMobileFramebuffer. No
+weak-link entries appeared in these four blocks. See the
+[result inventory](20h392-backboard-framework-dependency-results.md) for
+the complete ordered lists and derived donor-side edges.
