@@ -329,3 +329,30 @@ ordered rows and interpretation limits are recorded in
 This remains donor-side static metadata. It does not identify API use,
 runtime clients, target IOKit providers, or iPhone9,1 compatibility.
 M6 remains in progress; M7 has not started.
+
+
+## Service and graphics framework loader results (2026-11-20)
+
+The user inspected six more donor SystemOS cache loader records:
+BoardServices, BaseBoard, GraphicsServices, RunningBoardServices,
+AssertionServices, and IOSurface. All six reported exit status 0 in the
+supplied terminal excerpt. The dependent rows comprise 44 regular entries,
+two weak-link entries naming BaseBoard, and one GraphicsServices entry
+printed as `unknown 3`. The pinned ipsw v3.1.749 source assigns 1 to
+weak-link and 2 to re-export, then formats kinds using exact matches, so the
+combined value 3 displays as unknown. Apple dyld formats weak-link and
+re-export attributes independently, making kind 3 a strong candidate for
+weak-link + re-export. The raw dependent-kind byte has not yet been inspected,
+so the combined interpretation remains qualified.
+
+The records show donor-side relationships including BoardServices to
+BaseBoard, BaseBoard to IOSurface/IOKit/CoreGraphics,
+RunningBoardServices weak-linking BaseBoard, AssertionServices depending
+on RunningBoardServices and weak-linking BaseBoard, and IOSurface depending
+on IOKit. Full ordered results and caveats are in
+[the service and graphics framework dependency results](20h392-platform-framework-dependency-results.md).
+
+The next bounded donor inspection targets IOKit, CoreGraphics, and the
+FontServices image named by the unknown-kind row. These cache records remain
+static iPhone X donor evidence, not iPhone9,1 driver or SpringBoard proof.
+M6 remains in progress; M7 has not started.
