@@ -1,103 +1,121 @@
 # iPhone9,1 target-native hardware and service crosswalk
 
-## Purpose
+## Purpose and scope
 
-The donor-side 20H392 userland dependency inventory now covers the launchd
-GUI chain, BackBoard services, framework-level graphics/I/O dependencies,
-and the bounded FontServices/CoreText chain. The next task is to distinguish
-which requirements have actual iPhone9,1 evidence from those known only on
-the iPhone X donor.
+This document compares the iPhone X iOS 16.7.16 (20H392) donor's GUI-related
+framework requirements with hardware evidence from the iPhone 7
+`iPhone9,1` / D10AP / A10-T8010 target.
 
-This is a read-only host-side research plan. The iPhone 7 remains on its
-existing iOS 12.1.4 installation. Do not restore, update, or change the
-device to perform this inspection.
+The phone itself remains on its existing iOS 12.1.4 installation. The
+target-side hardware reference used here is a separately inspected iPhone 7
+iOS 15.8.8 (19H422) IPSW. That static IPSW is useful evidence about the target
+board; it is not installed on the phone, is not the donor userland, and does
+not prove that 20H392 can run on iPhone9,1.
 
-## Evidence sources and boundaries
+This is a host-side static evidence crosswalk. It does not include device
+operations, kernel implementation, firmware modification, or a boot claim.
 
-Use target-native material only when it is specifically identified as
-`iPhone9,1` / D10AP / A10-T8010. A useful first reference is an already
-available stock iPhone 7 iOS 12.1.4 IPSW (or its extracted BuildManifest,
-DeviceTree, kernel collection/kernelcache, and driver metadata).
+## Evidence sources
 
-Important distinctions:
+### Donor: iPhone X 20H392
 
-- iOS 12.1.4 target artifacts are evidence of the iPhone 7's original
-  hardware configuration and older software stack. They are not an iOS 16
-  target system and do not prove that 20H392 userland can run on them.
-- iPhone X 20H392 donor artifacts are evidence of the intended donor
-  userland's frameworks and service metadata. They do not become target
-  artifacts because they are ARM64 or share generic framework names.
-- Public XNU source support for a T8010/H9 profile is not enough by itself:
-  the exact iOS 16 XNU baseline, machine allowlist, board-specific values,
-  dependencies, and kernel handoff contract remain separate questions.
-- A framework depending on IOKit does not identify the concrete target
-  driver, personality, matched service, DeviceTree node, or hardware resource.
-- Keep each finding marked **target-confirmed**, **donor-only**,
-  **missing**, or **unverified**.
+The separate OS root filesystem and SystemOS Cryptex were mounted and inspected.
+The selected SystemOS cache reports:
 
-## Crosswalk table to build
+- Magic: `dyld_v1   arm64`
+- Platform: iOS
+- OS version: 16.7
+- Images: 2,710
+- Subcaches: 42
+- Cache UUID: `8F970452-C9E3-3E88-B114-FEB1864BC9E0`
 
-| Requirement / area | 20H392 donor evidence | iPhone9,1 target evidence | Status |
+The donor cache and PrebuiltLoaderSet records include the framework families
+used by the donor GUI chain: IOMobileFramebuffer, BackBoard HID event
+frameworks, BackBoardServices, IOKit, CoreGraphics, Metal, IOSurface,
+RunningBoard, and SpringBoard. These are donor-side image and loader records,
+not evidence of target provider matches.
+
+See [the 20H392 cache inventory](20h392-dyld-cache-inventory.md) and the
+[BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md).
+
+### Target: iPhone 7 19H422 static DeviceTree
+
+The target reference is the verified iPhone9,1 / D10AP iOS 15.8.8 (19H422)
+DeviceTree component. The component was independently decompressed and parsed
+as 227 nodes including root, with all 160,572 input bytes consumed and no
+trailing bytes. The raw tree is intentionally not committed because it contains
+device-specific information.
+
+The root identifies `D10AP` and `iPhone9,1`; `/arm-io` identifies
+`arm-io,t8010` and `t8010-io`. The tree is a static IPSW component, not
+the final runtime DeviceTree that a boot environment might provide.
+
+See the [parsed 19H422 DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
+and [property inventory](../device-tree/PROPERTY_INVENTORY.md).
+
+## Crosswalk
+
+| Requirement area | 20H392 donor evidence | iPhone9,1 target evidence from 19H422 | Assessment |
 |---|---|---|---|
-| Board identity / SoC | donor is iPhone X D22AP / A11-T8015 | exact D10AP / T8010 properties needed | unverified |
-| Display controller / framebuffer | IOMobileFramebuffer and CoreGraphics loader records | target DeviceTree and driver identifiers needed | unverified |
-| Touch input / HID | BackBoardHIDEventFoundation and Processors | target touch controller, HID provider, and driver identifiers needed | unverified |
-| IOKit services | donor frameworks name IOKit | target personalities and matched services needed | unverified |
-| BackBoard service layer | BackBoardServices, BoardServices, BaseBoard | target-compatible providers and board services needed | unverified |
-| Font / graphics support | CoreGraphics, CoreText, FontServices donor chain | relevance to first SpringBoard milestone not yet established | unverified |
-| Launch services | launchd inventory and donor MachServices names | target-side service/provider equivalents needed | unverified |
-| Kernel baseline | pinned candidate XNU source; A10 profile issue documented | exact source mapping and target interfaces needed | unverified |
+| Board / SoC identity | Donor is iPhone X, D22AP, A11/T8015 | Root identifies iPhone9,1 / D10AP; `/arm-io` identifies T8010 | **Target-confirmed identity**; donor is a different board and SoC |
+| Display subsystem | Donor cache/loader records include IOMobileFramebuffer, CoreGraphics, Metal, and IOSurface | `/arm-io/disp0` is `disp0,t8010`; MIPI-DSI child is `lcd,pinot` | **Target-confirmed node names**; matching driver/provider and working display path are unverified |
+| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `/arm-io/spi2` identifies a Samsung SPI controller; child `multi-touch` identifies `hid-transport,k1` | **Target-confirmed node names**; target HID provider, protocol handling, and BackBoard integration are unverified |
+| Backlight | Donor GUI/graphics inventory does not identify a target backlight provider | `/arm-io/i2c0/lm3539` identifies `backlight,lm3539` | **Target-confirmed node name**; driver/provider match is unverified |
+| IOKit provider matching | Donor contains the IOKit framework and framework dependencies | DeviceTree gives candidate hardware nodes, but the target KEXT bundle/personality inventory has not yet been correlated | **Unverified** |
+| BackBoard / RunningBoard services | Donor contains BackBoardServices, RunningBoardServices, RunningBoard, and SpringBoard images | No target-native provider or service equivalence follows from the DeviceTree node names | **Donor-only service evidence**; target service compatibility is unverified |
+| CPU / memory / early platform | Donor is A11/T8015; its cache does not supply D10AP platform values | 19H422 static tree identifies two CPU nodes and T8010; static CPU clock values are zero, memory/PRAM/VRAM ranges are zero, and panic-log size is absent | **Target-confirmed static identity/structure**; runtime clock, memory, and panic handoff values remain unknown |
+| XNU machine configuration | Candidate XNU 8796 is relevant to the iOS 16 generation | Reviewed XNU 8796 ARM64 machine allowlist and board header omit T8010; historical T8010/H9 source exists in older XNU 7195, not as a ready 8796 profile | **Known source/build blocker**; historical profile presence does not prove a compatible backport |
 
-## Host-side inspection workflow
+### Important DeviceTree parsing limit
 
-1. Locate an already-downloaded iPhone 7 iOS 12.1.4 IPSW or an extracted
-   copy. Do not connect the phone or use a restore/update workflow.
-2. Confirm its BuildManifest identifies `iPhone9,1` and the expected
-   D10AP board configuration before treating any component as target evidence.
-3. Record the exact component identifiers and paths for the target's
-   DeviceTree and kernel-related artifacts. Preserve hashes and build
-   identifiers in a local research log.
-4. Inspect the DeviceTree statically for display, touch, interrupt, GPIO,
-   clock, power, and IOMobileFramebuffer-related nodes. Record names and
-   compatible strings only; do not infer register values or runtime support
-   from a name alone.
-5. Inventory the target's available kernel/driver identifiers using
-   read-only extraction tools. Keep driver names, personalities, bundle IDs,
-   and matching properties separate.
-6. Map only concrete donor requirements to target evidence. Generic names
-   such as IOKit, CoreFoundation, and Foundation are not enough to claim
-   hardware compatibility.
-7. Update the table above with source paths, hashes, and the exact evidence
-   supporting each status.
+The target `/arm-io/spi2/multi-touch` node has a 32-byte `reg`
+property. Its parent advertises `#address-cells = 1` and
+`#size-cells = 7`. Do not reinterpret this field as a conventional 16-byte
+64-bit address/size pair or use a fixed-width register-summary heuristic.
+The parsed audit records this as a format caveat, not as a decoded hardware
+resource.
 
-## Required output
+## What this establishes
 
-Produce a reviewed target/donor matrix with:
+The crosswalk now has target-side evidence for the names and placement of the
+iPhone 7 display, panel, SPI touchscreen transport, and backlight nodes. It
+also confirms that the selected 20H392 donor cache contains the corresponding
+high-level GUI/HID framework families.
 
-- IPSW build and product type;
-- DeviceTree component name and SHA-256;
-- target board and SoC identifiers;
-- display and touch node identifiers;
-- available driver/personality names;
-- donor framework/service requirement;
-- evidence status and unresolved gap.
+It does **not** establish that a donor framework can bind to a target driver.
+DeviceTree node presence is not a driver implementation; a framework image in
+the donor cache is not a target KEXT; and a matching string alone is not proof
+of an IOKit service match. No display, touch, or backlight operation has been
+validated on the target.
 
-Do not copy proprietary binaries, keys, personal data, or full firmware
-images into the Git repository. Commit only sanitized names, hashes,
-source references, and conclusions.
+The XNU 8796 T8010 machine-profile gap, static DeviceTree runtime-value gaps,
+and custom kernel handoff requirements remain separate blockers. See the
+[kernel implementation readiness gate](kernel-implementation-readiness.md).
 
-## Stop conditions and acceptance criteria
+## Next host-side evidence
 
-Do not call the target compatibility matrix complete until every claimed
-match has an actual iPhone9,1 source artifact and the relevant interface
-relationship is documented. A matching string is a lead, not proof.
+The next bounded task is to inventory the KEXTs and IOKit personality metadata
+from the already identified iPhone9,1 19H422 KernelCache component:
 
-This work does not make an iPhone 7 iOS 16 bootable and does not establish
-SpringBoard readiness. M6 remains in progress; M7 has not started.
+1. Use the existing 19H422 IPSW on the analysis computer; do not connect,
+   restore, update, or alter the phone.
+2. Extract the target KernelCache component to a host-side research directory.
+3. Record the KernelCache hash and enumerate its KEXT bundle identifiers.
+4. Inspect only the relevant candidate metadata for display, touch/HID,
+   backlight, and IOKit matching properties.
+5. Compare those records with the sanitized 19H422 DeviceTree node names and
+   compatible strings. Keep a provider relationship **unverified** until the
+   actual matching metadata supports it.
+6. Commit only sanitized names, bundle identifiers, hashes, and conclusions;
+   do not add firmware binaries, device-specific identifiers, or raw DeviceTree
+   data to the repository.
 
-## References
+The `ipsw` CLI documents KernelCache extraction and KEXT listing. Those are
+offline file-analysis operations; they are not device commands.
 
-- [20H392 FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md)
-- [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
-- [Project Sweet-10 kernel implementation readiness](kernel-implementation-readiness.md)
-- [Apple dyld PrebuiltLoader design](https://github.com/apple-oss-distributions/dyld/blob/main/doc/dyld4.md)
+## Status
+
+M6 remains in progress. The donor framework inventory is substantially
+expanded and the target static DeviceTree is parsed, but target KEXT/provider
+matching and userland service compatibility are not complete. M7 (SpringBoard
+on iPhone9,1) has **not started**.

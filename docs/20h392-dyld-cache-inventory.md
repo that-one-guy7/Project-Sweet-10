@@ -31,9 +31,11 @@ System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64
 Do not confuse it with the separate DriverKit cache at
 `System/DriverKit/System/Library/dyld/dyld_shared_cache_arm64`.
 
-The user ran `ipsw dyld info -l` using ipsw 3.1.749
-(commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1`). The command exited 0
-and wrote no error output. The parsed main cache header reports:
+The user inspected the cache with ipsw 3.1.749
+(commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1`). The image-list
+inspection used `ipsw dyld info -l`; a second header/mapping inspection used
+`ipsw dyld info "$CACHE"`. Both completed successfully. The latter reported
+the following main-cache header:
 
 | Field | Observed value |
 |---|---|
@@ -44,10 +46,29 @@ and wrote no error output. The parsed main cache header reports:
 | Subcaches | 42 |
 | Cache UUID | `8F970452-C9E3-3E88-B114-FEB1864BC9E0` |
 
-The selected main cache file is 393,216 bytes. Its small size is expected for
-this split-cache layout; the companion subcache files are part of the same
-cache set. Do not concatenate, rename, or treat the companion files as
-independent caches.
+The selected main cache file is 393,216 bytes (384 KiB). The user also listed
+the on-disk companions: numbered subcache files `.01` through `.42`, the
+`.dylddata` and `.dyldlinkedit` companions, and the `.symbols` file.
+The `ipsw dyld info "$CACHE"` output enumerated subcache UUIDs and mappings.
+This confirms the split-cache set is readable; do not concatenate, rename, or
+treat companion files as independent caches.
+
+### APFS-FUSE mount layout observed
+
+Both donor DMGs were mounted at separate host mountpoints. In this installed
+`apfs-fuse` layout, each mountpoint contains a child directory named
+`root`; the iOS filesystem hierarchy is below that child. In particular,
+the working SystemOS cache path is:
+
+```text
+$HOME/20H392/systemos-mnt/root/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64
+```
+
+The outer `root` is the host mountpoint; the inner `root` is the directory
+exposed by the APFS-FUSE mount. This distinction matters when reproducing the
+inspection from the Ubuntu shell. The main cache was identified by
+`ipsw` as `dyld_v1   arm64` even though the generic `file` utility
+described it only as `data`.
 
 ## GUI-relevant images listed in the cache
 
@@ -84,13 +105,17 @@ With the SystemOS APFS volume mounted read-only and readable by the current
 Ubuntu user:
 
 ```sh
-CACHE="$HOME/20H392/systemos-mnt/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
+SYSTEM_MNT="$HOME/20H392/systemos-mnt/root"
+CACHE="$SYSTEM_MNT/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
 ipsw version
+file "$CACHE"
+ipsw dyld info "$CACHE" > "$HOME/20H392/dyld-cache-header-and-mappings.txt"
 ipsw dyld info -l "$CACHE" > "$HOME/20H392/dyld-cache-info.txt"
 ```
 
-For the user-observed run, `ipsw version` reported 3.1.749 and the cache
-inspection exited successfully with empty stderr.
+For the user-observed run, `ipsw version` reported 3.1.749 and both cache
+inspection commands exited successfully. The header/mapping output showed
+`dyld_v1   arm64`, iOS 16.7, 2,710 images, 42 subcaches, and the UUID above.
 
 ## Interpretation and limits
 
