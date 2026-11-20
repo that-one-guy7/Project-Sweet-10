@@ -47,3 +47,6 @@
   iPhone10,1 through iPhone10,6 restore targets are A11/T8015; iPhone9,1 is
   A10/T8010 and is not in that restore set. Exact manifest/component validation
   remains open; no device operation or compatibility claim was made.
+- 2026-11-20: Added a read-only BuildManifest evidence checklist. Exact donor
+  manifest identities and KernelCache/DeviceTree metadata remain uninspected;
+  no target-specific compatibility claim was added.
