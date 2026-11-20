@@ -15,7 +15,6 @@
 - [ios-sweet patch triage](ios-sweet-patch-triage.md)
 - [ios-sunstone cross-project comparison](ios-sunstone-comparison.md)
 - [ios-qemu 20H392 compatibility reference](ios-qemu-reference.md)
-- [ios-sailfish cross-port comparison](ios-sailfish-comparison.md)
-- [ios-alioth per-board status review](ios-alioth-status.md)
+- [iOS 16 device compatibility and 20H392 identity matrix](ios16-device-identity-matrix.md)
 
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.
