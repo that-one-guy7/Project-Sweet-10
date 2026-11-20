@@ -123,3 +123,14 @@ M6 remains in progress. M7 (SpringBoard on iPhone9,1) has not started.
 ## `ipsw` metadata boundary
 
 The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The separate `MultitouchHID.plugin` path must be verified from the matching 19H422 filesystem bundle, not inferred from the KernelCache KEXT JSON. The source-level basis and next evidence needed are recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
+
+
+## Linux filesystem extraction status
+
+The matching 19H422 filesystem plugin check is currently blocked at the host-side
+DMG mount stage. The user's ipsw 3.1.749 attempt reached filesystem DMG
+`098-68844-067.dmg`, then returned an HFS+ partition-probe error. The pinned
+source shows that this can be the secondary HFS+ fallback after an earlier
+APFS-FUSE failure; the APFS-FUSE failure itself has not yet been captured.
+See [the Linux DMG mount fallback audit](ipsw-linux-dmg-mount-fallback-audit.md).
+Do not interpret this output as evidence that the IPSW is HFS+ or corrupt.
