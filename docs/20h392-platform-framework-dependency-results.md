@@ -20,15 +20,40 @@ not provided for independent review.
 |---|---:|---:|---:|
 | `BoardServices` | 6 | 0 | 0 |
 | `BaseBoard` | 15 | 0 | 0 |
-| `GraphicsServices` | 6 | 0 | 1 (`unknown 3`) |
+| `GraphicsServices` | 6 | 0 | 1 (raw kind 3; likely weak-link + re-export) |
 | `RunningBoardServices` | 7 | 1 | 0 |
 | `AssertionServices` | 5 | 1 | 0 |
 | `IOSurface` | 5 | 0 | 0 |
-| **Total** | **44** | **2** | **1** |
+| **Total** | **44** | **2 explicit + 1 likely composite** | **1 raw kind-3 row** |
 
-Do not recast the `unknown 3` entry as a regular dependency or re-export.
-The supplied ipsw output does not explain that numeric kind. Preserve its
-original classification until the encoding is independently verified.
+### Interpreting the `unknown 3` formatter output
+
+The exact ipsw revision used in the earlier 20H392 inspection is pinned at
+`a7dfadbcaca8375b424c12a68dae40767e5e07c1`. Its
+`pkg/dyld/prebuilt_types.go` defines `DependentKind` values:
+normal = 0, weak-link = 1, re-export = 2, upward = 4, and delay-init = 8.
+Its `String()` method uses an exact-value switch, so a combined value of
+`1 | 2 = 3` falls through to the display text `unknown 3`.
+
+Apple dyld's `LinkedDylibAttributes::toString()` checks the `weakLink`
+and `reExport` attributes independently and appends both labels when both
+are present. This is consistent with interpreting raw kind 3 as a combined
+**weak-link + re-export** attribute set. Accordingly, the GraphicsServices
+row is best recorded as:
+
+- Raw ipsw display: `unknown 3`
+- Evidence-backed interpretation: likely `weak-link | re-export`
+- Confidence: strong source-level interpretation, but not yet independently
+  confirmed against the raw dependent-kind byte or a second parser
+
+Keep the original raw label in the evidence record. In derived graph summaries,
+do not treat this row as a normal strong dependency. Preserve both suspected
+attributes until the raw on-disk attribute and 20H392 format are independently
+checked.
+
+Sources:
+- [ipsw v3.1.749 parser at the exact inspected commit](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/prebuilt_types.go)
+- [Apple dyld LinkedDylibAttributes formatting](https://github.com/apple-oss-distributions/dyld/blob/main/mach_o/UnsafeHeader.cpp)
 
 ## Ordered dependent records
 
@@ -126,7 +151,7 @@ The newly supplied records add the following direct edges:
 - `BaseBoard` → `IOSurface` (regular)
 - `BaseBoard` → `IOKit` (regular)
 - `BaseBoard` → `CoreGraphics` (regular)
-- `GraphicsServices` → `FontServices/libGSFont.dylib` (kind unresolved; printed as `unknown 3`)
+- `GraphicsServices` → `FontServices/libGSFont.dylib` (raw kind 3; likely weak-link + re-export; retain the raw label until the stored attribute is independently checked)
 - `RunningBoardServices` → `BaseBoard` (weak link)
 - `AssertionServices` → `RunningBoardServices` (regular)
 - `AssertionServices` → `BaseBoard` (weak link)
@@ -142,8 +167,10 @@ metadata, not evidence that every subsystem is used by the Sweet-10 target.
 - The two weak-link entries explicitly name BaseBoard. Their weak-link status
   must be preserved; it does not mean the image is absent or that the weak
   dependency is necessarily required at runtime.
-- The `unknown 3` row must remain unclassified pending a source-level mapping
-  from dyld's dependency-kind encoding to ipsw's formatter.
+- The `unknown 3` row is likely the combined weak-link + re-export bitset:
+  ipsw's exact-value formatter does not name the combined value, while Apple
+  dyld's attribute formatter evaluates those flags independently. Preserve
+  this as a qualified interpretation until the raw byte is independently checked.
 - A framework dependency on IOKit does not identify a matching iPhone9,1
   kernel driver, IOKit personality, DeviceTree provider, interrupt, or register.
 - These records are not observations of successful loading, process launch,
