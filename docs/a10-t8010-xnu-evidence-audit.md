@@ -121,3 +121,80 @@ evidence for:
 
 Keep these items marked unknown until supported by authoritative source evidence.
 Do not fill the gaps with guessed constants or values copied from Qualcomm ports.
+
+
+## Historical T8010 profile comparison (tagged-source audit)
+
+A second, version-bounded review compared the same ARM64 board-configuration
+header across Apple-published XNU tags. This adds historical context to the
+pinned-8796 finding above; it does not change the conclusion for the selected
+iOS 16 baseline.
+
+| XNU reference | T8010 profile in board_config.h | H9.h at the historical path |
+|---|---|---|
+| xnu-7195.121.3 | Present | Present |
+| xnu-8019.80.24 | Absent | Not present at that path |
+| xnu-8796.141.3 | Absent | Not present at that path |
+| main (repository default branch at inspection) | Absent | Not present at that path |
+
+The exact tag or change where the profile was removed or refactored is not
+established by this snapshot comparison.
+
+### What the historical profile actually supplied
+
+In xnu-7195.121.3, the T8010 block is a **per-SoC configuration**. It:
+
+- includes the H9.h CPU configuration header;
+- sets MAX_CPUS to 3;
+- sets MAX_CPU_CLUSTERS to 1;
+- sets MAX_L2_CLINE to 7; and
+- under DEVELOPMENT or DEBUG, sets PMAP_CS to 1 and PMAP_CS_ENABLE to 0.
+
+The historical H9.h header defines the Hurricane-family CPU feature
+configuration, including KTRR, PAN, global-sleep-bit, CPMU, and related
+architecture feature flags. The old ARM64 pexpert Makefile lists H9.h in
+its header set. In the reviewed xnu-8796.141.3 version, the corresponding
+ARM64 pexpert Makefile does not list H9.h, and the historical header is not
+present at the same repository path.
+
+This is more than a missing conditional: the old profile depends on a CPU
+configuration header that is not available at the same path in the selected
+baseline. Any possible backport would require a dependency-by-dependency
+source review; copying the short SoC block alone would not be a supported
+porting change.
+
+### What this does not provide
+
+The historical T8010 block is not an iPhone 7 product identity or a D10AP
+board description. In the separately reviewed xnu-7195.121.3
+pexpert/arm/pe_identify_machine.c, no literal T8010 or D10AP identifier
+was found. The reviewed config/MASTER, config/MASTER.arm64, and
+config/MASTER.arm64.iPhoneOS files also contain no literal T8010.
+Those are bounded checks of named files, not an exhaustive search of every
+historical source file or Apple's private build inputs.
+
+The old SoC profile therefore provides evidence of historical ARM64 CPU/SoC
+configuration only. It does **not** supply an iPhone9,1 device tree, board
+selection, peripheral map, boot contract, or proof that the old code can be
+used with XNU 8796.
+
+### Historical source links
+
+- [XNU 7195 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/pexpert/pexpert/arm64/board_config.h)
+- [XNU 7195 H9 CPU configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/pexpert/pexpert/arm64/H9.h)
+- [XNU 7195 ARM64 pexpert Makefile](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/pexpert/pexpert/arm64/Makefile)
+- [XNU 7195 ARM platform identification](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/pexpert/arm/pe_identify_machine.c)
+- [XNU 8019 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.80.24/pexpert/pexpert/arm64/board_config.h)
+- [XNU 8796 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/board_config.h)
+- [XNU 8796 ARM64 pexpert Makefile](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/Makefile)
+
+### Updated interpretation
+
+The old xnu-7195.121.3 source proves that Apple published a T8010 SoC
+configuration in an earlier XNU generation. The absence of that profile and
+its H9 dependency from the reviewed xnu-8019.80.24 and xnu-8796.141.3
+paths means the historical profile cannot be treated as an iOS 16 baseline
+feature. The next source gate is to identify the full historical dependency
+set and compare interfaces, not to enable a guessed machine configuration.
+
+No kernel changes, device operations, or compatibility claims were made.
