@@ -20,6 +20,7 @@
 - [ARM64 platform-interface comparison](arm64-platform-interface-comparison.md)
 - [ARM64 interrupt and timer interface audit](interrupt-timer-interface-audit.md)
 - [Public iPhone9,1 stock DeviceTree artifact evidence](iphone91-stock-firmware-device-tree-evidence.md)
+- [iPhone9,1 19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md)
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)

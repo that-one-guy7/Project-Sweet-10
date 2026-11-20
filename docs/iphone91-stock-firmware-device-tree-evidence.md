@@ -60,20 +60,43 @@ Project Sweet-10.
 
 Public firmware indexes list the iPhone 7 Global restore image for
 `iPhone9,1` as iOS 15.8.8, build `19H422`, filename
-`iPhone_4.7_P3_15.8.8_19H422_Restore.ipsw`. The cited listing gives archive
-SHA-256:
+`iPhone_4.7_P3_15.8.8_19H422_Restore.ipsw`. The published full-archive
+SHA-256 is:
 
 `4d480918c4a3e6fa69177db706086d3bf00d6f83f311e55974fe54e90c170aab`
 
-This is currently the most relevant stock target firmware reference found
-during this audit. However, the checked fwkeydb snapshot's
-`keys/firmware/iPhone9,1/0x8010` directory does not contain a `19H422`
-record. Therefore this audit does **not** claim a 19H422 DeviceTree component
-digest, BuildIdentity details, or parsed tree values.
+The checked fwkeydb snapshot still does not contain a `19H422` record.
+However, the pinned public Orchard D10 firmware recipe publishes the
+following metadata for the exact target build:
+
+- `BuildManifest.plist` SHA-256:
+  `1eb426fd4da23fc8d133a06c15f697924537d09b9dc192e49e23accf8dd9d015`
+- `Firmware/all_flash/DeviceTree.d10ap.im4p` SHA-256:
+  `906a2708d3d15828c447ee1d7211f628dfeec7653a343384f3845153178c5906`
+
+The Orchard-published full-archive SHA-256 agrees with the IPSW.me listing.
+The BuildManifest and DeviceTree component hashes remain third-party
+published metadata; Project Sweet-10 has not independently recomputed them.
+
+A separate public inventory file in the Ios-emul repository is explicitly
+labeled `iPhone9,1 d10ap iOS 15.8.8 (19H422)`. Its accompanying
+`dt-survey.py` script describes reading the IPSW BuildManifest and
+DeviceTree component using HTTP range requests, selecting a matching erase
+identity, unwrapping/parsing the DeviceTree, and writing node paths,
+compatible strings, and register-pair count/size summaries. The script
+does not independently compare the archive or component hashes before
+writing the output. Its survey is secondary structural evidence, not a
+hash-verified parse performed by Project Sweet-10.
+
+See the detailed
+[19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md)
+for node findings, script provenance, checksum metadata, and remaining
+unknowns.
 
 - [IPSW.me iPhone9,1 iOS 15.8.8 (19H422) record](https://ipsw.me/download/iPhone9%2C1/19H422/)
-- [Signet iPhone 7 / iPhone9,1 device page](https://cpeoples.github.io/signet/iphone/iphone9-1/)
-- [The Apple Wiki iOS 15.8.8 OTA listing](https://theapplewiki.com/wiki/OTA_Updates/iPhone/15.8.8)
+- [Orchard D10 boot metadata](https://github.com/OrchardLinux/orchard/blob/7d33160c1ab73d365a7911f90ecdf5592749dcae/devices/d10/boot.json)
+- [Ios-emul 19H422 DeviceTree survey](https://github.com/vytska69/Ios-emul/blob/ade83f8fe550385c60a244b47982966e0da768e8/research/devicetrees/iPhone9,1-d10ap-19H422.txt)
+- [Ios-emul survey script](https://github.com/vytska69/Ios-emul/blob/4e2afb56f076473c54c720a607bb44cffc0ab04e/scripts/dt-survey.py)
 
 ## Relationship to the 20H392 project reference
 
@@ -88,22 +111,29 @@ make the iPhone X 20H392 kernelcache or DeviceTree interchangeable with it.
 
 ## How this changes the evidence status
 
-The previous statement “no verified iPhone9,1 DeviceTree source has yet been
-established” needs a narrower wording:
+The earlier audit stated that 19H422 DeviceTree metadata and parsed values
+were missing. The current evidence allows a more precise status:
 
-- **Now established:** public firmware metadata ties several
-  `DeviceTree.d10ap.im4p` component records to `iPhone9,1`, CPID `0x8010`,
-  BDID `0x08`, including an iOS 15.0 build.
-- **Still unknown:** any actual parsed `/cpus`, `arm-io`,
-  `interrupt-controller`, timer, memory, or panic-region properties for the
-  target.
-- **Still missing:** the matching 19H422 DeviceTree digest and parsed values,
-  exact BuildManifest identity details from that same build, and validation
-  of property encodings against XNU 8796 consumers.
+- **Now established at artifact-metadata level:** Orchard publishes the
+  19H422 IPSW, BuildManifest, and D10AP DeviceTree component hashes; the
+  published archive hash agrees with IPSW.me.
+- **Now reported at structural-summary level:** the Ios-emul survey labels
+  a tree iPhone9,1 / D10AP / 19H422 and lists 226 nodes, two
+  Hurricane-Zephyr CPU nodes, `arm-io,t8010`, an AIC node, and an
+  AIC-timebase node.
+- **Not independently verified by this project:** the archive and
+  component hashes have not been recalculated, and the raw DeviceTree
+  component has not been parsed by Project Sweet-10.
+- **Still unknown at property-value level:** register addresses and raw
+  `reg` cells, `ranges`, interrupt-controller and timer property values,
+  IRQ specifiers, CPU `reg` and `state`, clock frequencies, memory ranges,
+  and panic-region values.
 
-Accordingly, the existing per-property rows in
-`device-tree/PROPERTY_INVENTORY.md` remain marked **Unknown**. A component
-path and digest cannot fill a property-value cell.
+Accordingly, the individual property rows in
+`device-tree/PROPERTY_INVENTORY.md` remain marked **Unknown**. A survey
+showing a node or compatible string does not prove that all the property
+values required by XNU are correct. See the
+[19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md).
 
 ## Evidence-handling rules
 

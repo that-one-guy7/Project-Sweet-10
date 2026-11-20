@@ -105,4 +105,14 @@
   property values were parsed; existing property rows remain Unknown. Added
   docs/iphone91-stock-firmware-device-tree-evidence.md and updated the
   DeviceTree property inventory.
+- 2026-11-20: Audited public iPhone9,1 / D10AP / iOS 15.8.8
+  (19H422) DeviceTree evidence. Ios-emul's scripted survey reports 226 nodes,
+  two Hurricane-Zephyr CPU nodes, T8010 arm-io, an AIC child, and an
+  AIC-timebase child, but omits raw register addresses, IRQ specifiers,
+  timer properties, CPU state/topology values, and clock values. Orchard
+  publishes the 19H422 IPSW, BuildManifest, and DeviceTree hashes; Sweet-10
+  has not independently recomputed those hashes or parsed the binary.
+  Updated the artifact evidence audit and property inventory; all property
+  values remain Unknown. Added
+  docs/iphone91-19h422-device-tree-structure-audit.md.
 
