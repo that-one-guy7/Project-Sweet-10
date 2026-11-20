@@ -3,8 +3,8 @@
 | ID | Milestone | Exit criterion | Status |
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
-| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: generic XNU consumers mapped; pinned ARM64 board_config.h has no T8010 profile; iPhone9,1 hardware evidence remains incomplete |
-| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is corroborated by a downstream iPhone X 20H392 profile report; Apple-side mapping and reproducible baseline build remain open |
+| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: historical T8010/H9 profile found in xnu-7195.121.3 but absent at corresponding paths in xnu-8019.80.24 and xnu-8796.141.3; target-specific platform evidence remains incomplete |
+| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open |
 | M3 | Boot contract | Reviewed A10 handoff specification | Generic handoff categories documented; XNU entry ABI and all iPhone9,1 values remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Research inventory started; A10 implementation not started |
@@ -57,3 +57,8 @@
   only iPhone10,3 and iPhone10,6, with four erase/update identities across
   D22AP/D221AP and A11/T8015 chip ID 0x8015. KernelCache and per-board DeviceTree
   paths/digests were recorded; no iPhone9,1 identity or compatibility was inferred.
+- 2026-11-20: Compared historical Apple XNU T8010/H9 configuration across tags.
+  The old profile exists in xnu-7195.121.3 but is absent at corresponding paths in
+  xnu-8019.80.24 and xnu-8796.141.3. Added an explicit kernel-implementation
+  readiness gate; target kernel work remains blocked on source, build, platform,
+  device-tree, and handoff evidence.
