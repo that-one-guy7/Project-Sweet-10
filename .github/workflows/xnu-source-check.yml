@@ -20,6 +20,7 @@ on:
       - "xnu/history/**"
       - "tools/verify_xnu_source.py"
       - "tools/audit_xnu_machine_history.py"
+      - "tools/inspect_launchd_jobs.py"
       - "pongo/BASELINE.lock.json"
       - "tools/verify_pongo_source.py"
       - "tests/**"
