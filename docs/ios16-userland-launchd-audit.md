@@ -231,3 +231,28 @@ The reference observations above were checked against these files at
 The README's status is the upstream author's report. The helper-script findings
 are derived from the pinned source files; neither source category is a Sweet-10
 measurement.
+
+
+## Split dyld shared-cache inventory from the mounted SystemOS Cryptex (2026-11-20)
+
+The user mounted the separate iPhone X 20H392 SystemOS Cryptex and inspected
+`System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64` with ipsw
+3.1.749 (`a7dfadbcaca8375b424c12a68dae40767e5e07c1`). The command
+`ipsw dyld info -l` exited 0 with empty stderr. The cache header reports
+magic `dyld_v1   arm64`, platform iOS, OS version 16.7, 2,710 images,
+42 subcaches, and UUID `8F970452-C9E3-3E88-B114-FEB1864BC9E0`.
+
+The cache image list includes Foundation, CoreFoundation, CoreGraphics, Metal,
+IOKit, IOSurface, AVFoundation, BackBoardServices,
+BackBoardHIDEventFoundation, BackBoardHIDEventProcessors, RunningBoardServices,
+RunningBoard, SpringBoard, SpringBoardServices, and SpringBoardHome. Versions
+and exact image paths are recorded in
+[the split dyld cache inventory](20h392-dyld-cache-inventory.md).
+
+This closes the earlier **volume-location** question for those image-list
+entries: the relevant framework images are listed by the donor's SystemOS
+shared cache even though many ordinary paths were not found in the separately
+mounted OS root filesystem. It does not close the recursive dependency graph,
+prove every load command resolves at runtime, establish code-signing or closure
+validity, inventory all embedded XPC/IOKit requirements, or establish
+iPhone9,1 compatibility. The 20H392 image remains an iPhone X donor reference.
