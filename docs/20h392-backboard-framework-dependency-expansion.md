@@ -133,3 +133,17 @@ activation state, partition, or security setting is changed by this work.
 - [ipsw dyld guide](https://blacktop.github.io/ipsw/docs/guides/dyld/)
 - [20H392 split-cache inventory](20h392-dyld-cache-inventory.md)
 - [20H392 PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md)
+
+
+## Results collected
+
+All four requested ipsw dyld image queries exited 0. The supplied output has
+10 regular dependencies for BackBoardHIDEventFoundation, 9 for
+BackBoardHIDEventProcessors, 12 regular dependencies plus one re-export for
+BackBoardServices, and 4 regular dependencies for IOMobileFramebuffer.
+No weak-link rows appeared in these four blocks. See the
+[result inventory](20h392-backboard-framework-dependency-results.md) for
+the complete ordered lists and derived edges.
+
+The next inspection candidates are selected from those observed edges; they
+are not pre-asserted recursive requirements.
