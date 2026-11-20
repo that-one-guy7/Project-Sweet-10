@@ -149,19 +149,16 @@ throughout any graph rendering or summary.
 - The unrelated suspicious Swift/Objective-C section offsets in earlier
   output remain excluded pending independent parser validation.
 
-## Next bounded inspection
+## Completed FontServices/CoreText expansion
 
-The four observed font-chain loader images have now been inspected. Their ordered loader records are in [the FontServices and CoreText result inventory](20h392-fontservices-coretext-dependency-results.md). The next phase is target-side applicability, not another broad donor crawl.
+The four font-chain loader records named in the prior inspection plan have
+now been queried successfully. Their ordered dependency records, counts,
+and graph observations are documented in
+[the FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md).
 
-1. `/System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib`
-2. `/System/Library/PrivateFrameworks/FontServices.framework/FontServices`
-3. `/System/Library/PrivateFrameworks/FontServices.framework/libGSFontCache.dylib`
-4. `/System/Library/Frameworks/CoreText.framework/CoreText`
-
-The next inspection plan records the exact paths and preserves the dependent
-kind classifications. Avoid expanding generic libc/Foundation dependencies
-without a specific question. The userland graph should be bounded and useful,
-not an indiscriminate crawl of the entire cache.
+The next phase is a target-side applicability crosswalk against verified
+iPhone9,1 artifacts, not a further broad crawl of generic donor frameworks.
+See [the iPhone9,1 target-native hardware and service crosswalk](iphone9,1-target-hardware-crosswalk.md).
 
 M6 remains in progress. M7 (SpringBoard on iPhone 7) has not started.
 
