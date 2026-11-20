@@ -149,19 +149,16 @@ throughout any graph rendering or summary.
 - The unrelated suspicious Swift/Objective-C section offsets in earlier
   output remain excluded pending independent parser validation.
 
-## Next bounded inspection
+## Completed FontServices/CoreText expansion
 
-The next queries should resolve the four observed font-chain loader images:
+The four font-chain loader records named in the prior inspection plan have
+now been queried successfully. Their ordered dependency records, counts,
+and graph observations are documented in
+[the FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md).
 
-1. `/System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib`
-2. `/System/Library/PrivateFrameworks/FontServices.framework/FontServices`
-3. `/System/Library/PrivateFrameworks/FontServices.framework/libGSFontCache.dylib`
-4. `/System/Library/Frameworks/CoreText.framework/CoreText`
-
-The next inspection plan records the exact paths and preserves the dependent
-kind classifications. Avoid expanding generic libc/Foundation dependencies
-without a specific question. The userland graph should be bounded and useful,
-not an indiscriminate crawl of the entire cache.
+The next phase is a target-side applicability crosswalk against verified
+iPhone9,1 artifacts, not a further broad crawl of generic donor frameworks.
+See [the iPhone9,1 target-native hardware and service crosswalk](iphone9,1-target-hardware-crosswalk.md).
 
 M6 remains in progress. M7 (SpringBoard on iPhone 7) has not started.
 
@@ -171,3 +168,13 @@ M6 remains in progress. M7 (SpringBoard on iPhone 7) has not started.
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [20H392 BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md)
 - [Apple dyld4 design](https://github.com/apple-oss-distributions/dyld/blob/main/doc/dyld4.md)
+
+
+## Completed FontServices/CoreText expansion
+
+The user's four additional loader queries succeeded and are documented in
+[the FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md).
+The new records contain 37 regular dependencies, one explicit weak link, and
+six raw kind-3 rows mapped to weak-link + re-export from the pinned dyld
+attribute definition. The next task is to cross-check concrete donor-side
+requirements against iPhone9,1 target-native evidence.
