@@ -46,7 +46,7 @@ The pinned implementation contains more than the README-level Pongo/KPF descript
 
 The XNU driver also registers `loadx`. Its `pongo_copy_xnu()` handler locates the current in-memory KernelCache Mach-O header and copies uploaded bytes over that image. Its source comment explicitly leaves modification of `gEntryPoint` to the caller and lists Mach-O parsing/entry-point selection as a TODO. This is an incomplete in-place copy helper, not a complete validated kernel loader.
 
-Pongo's `pongo_entry_cached()` reads the supplied `arm-io/device_type` and includes a `t8010` SoC identifier branch. That establishes T8010 recognition in this source revision only; it does not prove all device drivers, boot stages, or runtime fields are correct for iPhone9,1.
+Pongo's `pongo_entry_cached()` reads the supplied `arm-io/device_type` and includes a `t8010` SoC identifier branch. The HAL registers a corresponding A10/T8010 platform driver with a USB resource provider, and the source includes T8010-specific AES/Recfg paths. This is more than name recognition, but it is still source-level evidence: the HAL selector uses DeviceTree-derived `socnum`, and no runtime PongoOS test on iPhone9,1 has been performed. See the [T8010 platform-backend audit](pongo-t8010-platform-backend-audit.md).
 
 These findings refine, but do not remove, the custom-loader blocker. They identify a possible raw-stage extension point and an incomplete kernel-copy helper. See the detailed [PongoOS raw-payload and KernelCache-copy audit](pongo-raw-payload-and-copyx-audit.md). Neither path is a ready-to-run Sweet-10 XNU loader.
 
