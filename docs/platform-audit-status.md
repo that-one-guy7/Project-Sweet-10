@@ -20,7 +20,9 @@ source for the Project Sweet-10 iPhone9,1 research target.
 ## Evidence gaps
 
 - Exact kernel build metadata corresponding to iOS 16.7.16 build 20H392.
-- Reliable iPhone9,1 device-tree evidence.
+- Parsed, build-matched iPhone9,1 DeviceTree property values. Public
+  artifact-level metadata now exists for older iPhone9,1 builds; the actual
+  target tree and 19H422 component digest remain unparsed/unverified.
 - Board configuration header generation/selection.
 - A reproducible unmodified XNU build.
 - A verified source-to-target compatibility assessment.
@@ -55,3 +57,12 @@ modern hardware timebase read has a nonspeculative counter selection and a
 sleep/wake race retry. Neither source version supplies verified iPhone9,1 IRQ
 assignments, interrupt-controller addresses, timer mappings, or counter
 frequency. Those remain open target-evidence gates.
+
+## iPhone9,1 DeviceTree artifact metadata
+
+Public metadata now identifies `DeviceTree.d10ap.im4p` components for
+`iPhone9,1` / CPID `0x8010` / BDID `0x08` in several stock builds. This is
+artifact-level evidence only. No property values have been parsed, and the
+current stock reference `19H422` is not represented in the checked fwkeydb
+snapshot. See [the artifact evidence audit](iphone91-stock-firmware-device-tree-evidence.md)
+and the [property inventory](../device-tree/PROPERTY_INVENTORY.md).
