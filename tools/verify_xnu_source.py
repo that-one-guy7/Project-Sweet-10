@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only verification of a local XNU checkout against the project source lock."""
+"""Read-only verification of a local XNU checkout against a project source lock."""
 import json
 import re
 import subprocess
@@ -7,31 +7,40 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LOCK = ROOT / "xnu" / "BASELINE.lock.json"
+DEFAULT_LOCK = ROOT / "xnu" / "BASELINE.lock.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python3 tools/verify_xnu_source.py PATH_TO_XNU_CHECKOUT")
+    if len(sys.argv) not in (2, 3):
+        print(
+            "Usage: python3 tools/verify_xnu_source.py "
+            "PATH_TO_XNU_CHECKOUT [PATH_TO_LOCK_JSON]"
+        )
         return 2
+
     checkout = Path(sys.argv[1]).resolve()
-    if not LOCK.is_file():
-        print(f"Missing source lock: {LOCK}")
+    lock_path = Path(sys.argv[2]).resolve() if len(sys.argv) == 3 else DEFAULT_LOCK
+
+    if not lock_path.is_file():
+        print("Missing source lock: {}".format(lock_path))
         return 1
     if not (checkout / ".git").exists():
-        print(f"Not a Git checkout: {checkout}")
+        print("Not a Git checkout: {}".format(checkout))
         return 1
 
     try:
-        lock = json.loads(LOCK.read_text(encoding="utf-8"))
+        lock = json.loads(lock_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        print(f"Cannot read source lock: {exc}")
+        print("Cannot read source lock: {}".format(exc))
         return 1
 
     expected = lock.get("commit_sha")
     if not isinstance(expected, str) or not SHA_RE.fullmatch(expected):
-        print("Invalid or missing commit_sha in source lock (expected 40 lowercase hex characters).")
+        print(
+            "Invalid or missing commit_sha in source lock "
+            "(expected 40 lowercase hex characters)."
+        )
         return 1
 
     try:
@@ -41,13 +50,15 @@ def main():
             stderr=subprocess.STDOUT,
         ).strip()
     except subprocess.CalledProcessError as exc:
-        print(f"Cannot read XNU checkout revision: {exc.output.strip()}")
+        print("Cannot read XNU checkout revision: {}".format(exc.output.strip()))
         return 1
 
-    print(f"Expected XNU commit: {expected}")
-    print(f"Actual XNU commit:   {actual}")
+    label = lock.get("tag", "XNU")
+    print("Source lock:          {}".format(lock_path))
+    print("Expected {} commit: {}".format(label, expected))
+    print("Actual commit:         {}".format(actual))
     if actual != expected:
-        print("FAIL: checkout does not match the pinned XNU commit.")
+        print("FAIL: checkout does not match the pinned source commit.")
         return 1
     print("PASS: checkout matches the pinned source commit.")
     print("NOTE: source identity does not prove iPhone9,1 support or a kernel build.")
