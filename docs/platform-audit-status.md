@@ -45,3 +45,13 @@ remain recognizable, while the modern CPU topology parser and CPU lifecycle
 accounting have evolved. Both versions depend on DeviceTree CPU properties and
 register ranges. No iPhone9,1 property values or peripheral mappings are supplied
 by the generic interface comparison.
+
+## Interrupt and timer interface comparison
+
+The [ARM64 interrupt and timer interface audit](interrupt-timer-interface-audit.md)
+compares XNU 7195 and 8796. The generic DeviceTree register-mapping helper and
+ARM64 interrupt/timebase registration interfaces remain unchanged, while the
+modern hardware timebase read has a nonspeculative counter selection and a
+sleep/wake race retry. Neither source version supplies verified iPhone9,1 IRQ
+assignments, interrupt-controller addresses, timer mappings, or counter
+frequency. Those remain open target-evidence gates.
