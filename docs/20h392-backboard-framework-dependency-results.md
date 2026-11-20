@@ -150,5 +150,5 @@ M6 remains in progress; M7 (SpringBoard on the iPhone 7) has not started.
 - [Apple dyld4 design](https://github.com/apple-oss-distributions/dyld/blob/main/doc/dyld4.md)
 - [ipsw dyld guide](https://blacktop.github.io/ipsw/docs/guides/dyld/)
 - [20H392 split dyld shared-cache inventory](20h392-dyld-cache-inventory.md)
-- [20H392 PrebuiltLoaderSet audit](20h-prebuilt-loader-audit.md)
+- [20H392 PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md)
 - [BackBoard framework dependency expansion plan](20h392-backboard-framework-dependency-expansion.md)
