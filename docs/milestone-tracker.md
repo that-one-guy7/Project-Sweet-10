@@ -178,8 +178,9 @@
   record; runningboardd lists six regular dependents and SpringBoard lists
   four. Bind-target records are present in the latter two outputs. Several
   Swift/Objective-C section offsets look implausible and are excluded pending
-  independent parser validation. The backboardd excerpt is limited to the
-  first 60 lines and is not a complete count. These are donor-side static
+  independent parser validation. Only the first 60 lines of backboardd output
+  were shared for review; the complete ipsw output was redirected to a local
+  file and may contain more entries. These are donor-side static
   loader records only; no iPhone9,1 runtime compatibility or SpringBoard
   milestone is established. Added
   docs/20h392-prebuilt-loader-audit.md.
