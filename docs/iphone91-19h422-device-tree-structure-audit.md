@@ -18,8 +18,8 @@ This is not yet a project-verified DeviceTree. Project Sweet-10 has not independ
 ## Source A: public 19H422 tree survey
 
 The file
-[`iPhone9,1-d10ap-19H422.txt`](https://github.com/vytska69/Ios-emul/blob/ade83f8fe550385c60a244b47982966e0da768e8/research/devicetrees/iPhone9,1-d10ap-19H422.txt)
-is in the public `vytska69/Ios-emul` repository. Its header identifies
+[`iPhone9,1-d10ap-19H422.txt`](https://github.com/vytska69/Ios-emul/blob/4e2afb56f076473c54c720a607bb44cffc0ab04e/research/devicetrees/iPhone9,1-d10ap-19H422.txt)
+is in the public `vytska69/Ios-emul` repository. Its addition is recorded in the same pinned commit as the survey generator. Its header identifies
 `iPhone9,1`, `d10ap`, iOS 15.8.8 (`19H422`), root-compatible strings
 `D10AP, iPhone9,1, AppleARM`, and 226 nodes.
 
@@ -41,6 +41,14 @@ does not emit the `reg` address values, `ranges`, `interrupts`,
 `interrupt-controller`, `device_type`, or clock-frequency properties.
 The `0x0` total for CPU/pram summary rows must not be interpreted as a
 verified hardware address or usable memory range.
+
+**Additional parser caveat:** the script computes `reg` summaries using a
+fixed 16-byte record and reads each size as a little-endian 64-bit integer.
+It does not resolve the parent node's `#address-cells` / `#size-cells`
+or validate that this fixed layout matches the Apple payload. Therefore
+its pair counts and total-size figures are heuristics, not verified register
+extents. See the [survey methodology review](iphone91-19h422-survey-methodology-review.md)
+for the exact limitation and the validation needed before using any values.
 
 ### Survey-generation method
 
@@ -65,6 +73,9 @@ format to a named script. However, the script does not independently
 recompute and compare the full IPSW SHA-256 or the DeviceTree component
 SHA-256 before writing the summary. The summary is therefore useful
 secondary evidence, not a cryptographic verification by Project Sweet-10.
+The script's fixed-width `reg` calculation is also not schema-aware; its
+reported sizes must not be treated as decoded hardware windows until the
+Apple payload encoding is independently established.
 
 The inventory was added in a GitHub Actions bot commit
 [`4e2afb56f076473c54c720a607bb44cffc0ab04e`](https://github.com/vytska69/Ios-emul/commit/4e2afb56f076473c54c720a607bb44cffc0ab04e),

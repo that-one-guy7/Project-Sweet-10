@@ -48,7 +48,15 @@ A separate public 19H422 survey file reports 226 nodes, two
 compatible strings, and register-pair count/size summaries only. It does
 not publish raw `reg` values, `ranges`, interrupt properties, timer
 `device_type`, or CPU clock/topology values. Project Sweet-10 has not
-independently parsed the raw component.
+independently parsed the raw component. Its printed `reg` totals are not
+validated extents: the generator assumes fixed 16-byte little-endian
+64-bit address/size pairs and does not inspect parent cell-count properties.
+See the [survey methodology review](../docs/iphone91-19h422-survey-methodology-review.md).
+
+Under the generic Devicetree specification, the parent node's
+`#address-cells` and `#size-cells` determine the number of 32-bit cells
+used for each child's `reg` address and size. The Apple payload's exact
+encoding must be confirmed independently before promoting any such value.
 
 See [19H422 DeviceTree structure audit](../docs/iphone91-19h422-device-tree-structure-audit.md)
 and [public iPhone9,1 stock DeviceTree artifact evidence](../docs/iphone91-stock-firmware-device-tree-evidence.md).
