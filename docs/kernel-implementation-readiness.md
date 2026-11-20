@@ -28,7 +28,7 @@ target manifest for iPhone9,1.
 | Gate | Required evidence | Current status |
 |---|---|---|
 | G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; Apple source-to-kernelcache mapping is not established |
-| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Historical T8010/H9 profile and normal ARM64 machine selection exist in xnu-7195.121.3; both are absent from the corresponding xnu-8796.141.3 source paths/lists; dependency migration not reviewed completely |
+| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Public source presence/absence is pinned and checked across xnu-7195.121.3, xnu-8019.80.24, and xnu-8796.141.3; the full historical dependency graph and migration remain incomplete |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; no target-specific values are approved |
 | G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Not established; current inventory documents consumers only |
@@ -80,6 +80,7 @@ partition writes, or recovery operations.
 - [XNU baseline selection](xnu-baseline-selection.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
+- [Historical T8010 XNU profile CI verification](xnu-machine-history-ci.md)
 - [A10/T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
 - [ARM64 platform audit status](platform-audit-status.md)
 - [iPhone9,1 device-tree property inventory](../device-tree/PROPERTY_INVENTORY.md)
