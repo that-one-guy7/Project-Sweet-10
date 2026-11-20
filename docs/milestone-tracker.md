@@ -3,8 +3,8 @@
 | ID | Milestone | Exit criterion | Status |
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
-| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: historical T8010/H9 profile found in xnu-7195.121.3 but absent at corresponding paths in xnu-8019.80.24 and xnu-8796.141.3; target-specific platform evidence remains incomplete |
-| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open |
+| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; target platform evidence remains incomplete |
+| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open; xnu-8796.141.3 normal ARM64 machine allowlist omits T8010 |
 | M3 | Boot contract | Reviewed A10 handoff specification | Generic handoff categories documented; XNU entry ABI and all iPhone9,1 values remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Research inventory started; A10 implementation not started |
@@ -62,3 +62,10 @@
   xnu-8019.80.24 and xnu-8796.141.3. Added an explicit kernel-implementation
   readiness gate; target kernel work remains blocked on source, build, platform,
   device-tree, and handoff evidence.
+
+- 2026-11-20: Compared XNU MakeInc.def machine allowlists across tags. T8010 is
+  listed in xnu-7195.121.3 but absent from xnu-8019.80.24 and xnu-8796.141.3.
+  The pinned MakeInc.kernel validates machine selections against that allowlist.
+  MakeInc.top optionally uses the SDK embedded-device-map database to map target
+  products to KernelPlatform; this database has not been inspected. No machine
+  override or target-specific kernel configuration was added.
