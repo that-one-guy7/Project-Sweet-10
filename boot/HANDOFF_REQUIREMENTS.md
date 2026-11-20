@@ -9,7 +9,7 @@ device-tree payload, or boot commands.
 | Kernel identity | Exact XNU source/build corresponding to selected OS build | Candidate xnu-8796.141.3 only; 20H392 match unverified | Open |
 | Pre-boot/loader role | Separate Pongo shell, KPF-assisted XNU path, raw-payload entry, KernelCache-copy helper, and complete Sweet-10 XNU loader | Pinned PongoOS source has `bootr` raw-payload entry and `loadx` in-place copy helper; `loadx` leaves entry-point selection to another component. Neither implements the complete Sweet-10 image/boot-argument contract | Open |
 | Entry state | Required exception level, execution state, CPU register assumptions | Not yet verified against selected XNU revision | Open |
-| Boot arguments | Required boot-argument structure, version, flags, and memory location | Generic XNU source consumers need review | Open |
+| Boot arguments | Required boot-argument structure, version, flags, and memory location | PongoOS iOS13 layout matches pinned XNU 8796 ARM64 field offsets and 608-byte command line at source level; live revision/version/field values and target memory location remain unknown | Open |
 | Device tree | Format, version, root properties, required nodes and properties | Consumer-name inventory only; target values unknown | Open |
 | Memory map | Usable memory, reserved regions, alignment, ownership and lifetime | No verified iPhone9,1 map | Open |
 | CPU topology | CPU identities, startup method, per-CPU data and coherency assumptions | ARM64 source reviewed; target topology unverified | Open |
