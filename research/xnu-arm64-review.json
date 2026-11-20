@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "xnu": {
+    "tag": "xnu-8796.141.3",
+    "commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "source": "https://github.com/apple-oss-distributions/xnu"
+  },
+  "reviewed_files": [
+    {
+      "path": "osfmk/arm64/start.s",
+      "sha": "e5336e5a1cce791baefa1e96c8dc5ae71c79a605",
+      "topic": "ARM64 reset and early CPU startup",
+      "status": "source-reviewed"
+    },
+    {
+      "path": "osfmk/arm64/cpu.c",
+      "sha": "94e91306b14364f720ea80e46d853035aabd78e6",
+      "topic": "CPU lifecycle and platform coordination",
+      "status": "source-reviewed"
+    },
+    {
+      "path": "osfmk/arm64/arm_vm_init.c",
+      "sha": "d89b0f19cff72967d8f83d22c75ebd916c14f00a",
+      "topic": "Bootstrap VM and memory layout",
+      "status": "source-reviewed"
+    },
+    {
+      "path": "pexpert/arm/pe_identify_machine.c",
+      "sha": "aa75c0afeeecaa8e660adde0e49f88a62126e2df",
+      "topic": "Device-tree CPU and arm-io property consumers",
+      "status": "source-reviewed"
+    },
+    {
+      "path": "pexpert/arm/pe_init.c",
+      "sha": "04dda5336f933390fbb5cb4a7510e830ad02eea0",
+      "topic": "Platform-expert early initialization and panic-region discovery",
+      "status": "source-reviewed"
+    },
+    {
+      "path": "osfmk/arm64/machine_cpuid.h",
+      "sha": "2e91848e06e5366960549d97ffc368605977056c",
+      "topic": "ARM64 CPU feature data structures",
+      "status": "source-reviewed"
+    }
+  ],
+  "target": {
+    "model": "iPhone9,1",
+    "soc_family": "A10",
+    "target_device_tree_evidence": "not-established"
+  },
+  "userland": {
+    "build": "20H392",
+    "family": "iPhone X",
+    "exact_kernel_source_match": "unverified"
+  },
+  "project_status": {
+    "source_checkout_verified": false,
+    "unmodified_kernel_build": false,
+    "device_boot_test": false,
+    "device_modified": false
+  }
+}
