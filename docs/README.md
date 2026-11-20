@@ -22,6 +22,7 @@
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)
 - [20H392 FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md)
 - [iPhone9,1 target-native hardware and service crosswalk](iphone9,1-target-hardware-crosswalk.md)
+- [iPhone9,1 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md)
 - [iOS 16.7.16 (20H392) userland reference](userland-reference-20H392.md)
 - [20H392 restore identity audit](20h392-restore-identity-audit.md)
 - [Uploaded 20H392 BuildManifest audit](uploaded-20h392-buildmanifest-audit.md)
