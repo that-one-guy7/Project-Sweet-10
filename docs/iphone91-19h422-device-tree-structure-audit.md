@@ -13,7 +13,7 @@ A public DeviceTree survey file exists for the exact target and stock build:
 
 The survey provides a useful **structural inventory**. It shows that the tree has two CPU nodes, an `arm-io` node compatible with T8010, an `aic` child, and an `aic-timebase` child. It does not publish raw property bytes, physical register addresses, interrupt specifiers, clock values, or complete CPU topology data.
 
-This is not yet a project-verified DeviceTree. Project Sweet-10 has not independently fetched the component, recalculated its hash, or parsed the binary. The source script and recipe metadata below give a path to independent verification, but their published output is treated as secondary evidence.
+The extracted BuildManifest and D10AP DeviceTree component have now been independently hashed by Project Sweet-10. Both SHA-256 values match the pinned Orchard metadata, and the component SHA-384 matches the D10AP BuildManifest Digest field. The IM4P wrapper and LZFSE marker are verified, but the compressed payload has not yet been decompressed or parsed; no node-property values are promoted. See the [artifact verification record](iphone91-19h422-artifact-verification.md).
 
 ## Source A: public 19H422 tree survey
 
@@ -101,10 +101,12 @@ publishes the following values in `devices/d10/boot.json`:
 | DeviceTree SHA-256 | `906a2708d3d15828c447ee1d7211f628dfeec7653a343384f3845153178c5906` |
 
 The published full-archive SHA-256 agrees with the IPSW.me listing for
-`iPhone9,1 / 19H422`. This is a useful cross-source consistency check for
-the archive identifier. The BuildManifest and DeviceTree component hashes
-above are Orchard-published values; Project Sweet-10 has not independently
-downloaded the archive or recalculated either component hash.
+`iPhone9,1 / 19H422`. Project Sweet-10 did not receive the full archive, so
+that archive hash remains unverified locally. However, the supplied standalone
+BuildManifest and D10AP DeviceTree IM4P were independently hashed, and both
+component SHA-256 values match Orchard's published metadata. The component's
+SHA-384 also matches the D10AP BuildManifest Digest. The raw LZFSE payload
+remains to be decompressed and parsed; see the [artifact verification record](iphone91-19h422-artifact-verification.md).
 
 - [Orchard D10 boot metadata](https://github.com/OrchardLinux/orchard/blob/7d33160c1ab73d365a7911f90ecdf5592749dcae/devices/d10/boot.json)
 - [Orchard D10 firmware metadata](https://github.com/OrchardLinux/orchard/blob/7d33160c1ab73d365a7911f90ecdf5592749dcae/devices/d10/firmware.json)

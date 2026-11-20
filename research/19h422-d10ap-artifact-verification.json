@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "inspection_date": "2026-11-20",
+  "source": "user-supplied extracted members; original IPSW archive not supplied",
+  "product_version": "15.8.8",
+  "product_build_version": "19H422",
+  "supported_product_types": [
+    "iPhone9,1",
+    "iPhone9,3"
+  ],
+  "build_identity_count": 4,
+  "d10ap_build_identities": [
+    {
+      "index": 1,
+      "restore_behavior": "Erase",
+      "variant": "Customer Erase Install (IPSW)",
+      "device_tree_path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+      "device_tree_digest_hex": "d7cb7c692e20013c28602c6c3e05eb045294b6dee12daadff8822fd17fc1b79f8d7098a95d90fcf2636e7ff7d3db6096",
+      "kernel_cache_path": "kernelcache.release.iphone9",
+      "personalize": true,
+      "is_firmware_payload": true
+    },
+    {
+      "index": 3,
+      "restore_behavior": "Update",
+      "variant": "Customer Upgrade Install (IPSW)",
+      "device_tree_path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+      "device_tree_digest_hex": "d7cb7c692e20013c28602c6c3e05eb045294b6dee12daadff8822fd17fc1b79f8d7098a95d90fcf2636e7ff7d3db6096",
+      "kernel_cache_path": "kernelcache.release.iphone9",
+      "personalize": true,
+      "is_firmware_payload": true
+    }
+  ],
+  "build_manifest": {
+    "filename": "BuildManifest-19H422.plist",
+    "size_bytes": 337447,
+    "sha256": "1eb426fd4da23fc8d133a06c15f697924537d09b9dc192e49e23accf8dd9d015",
+    "published_sha256_match": true
+  },
+  "device_tree_component": {
+    "filename": "DeviceTree.d10ap.im4p",
+    "size_bytes": 29568,
+    "sha256": "906a2708d3d15828c447ee1d7211f628dfeec7653a343384f3845153178c5906",
+    "published_sha256_match": true,
+    "sha384": "d7cb7c692e20013c28602c6c3e05eb045294b6dee12daadff8822fd17fc1b79f8d7098a95d90fcf2636e7ff7d3db6096",
+    "build_manifest_digest_match": true,
+    "im4p": {
+      "marker": "IM4P",
+      "component_type": "dtre",
+      "description": "EmbeddedDeviceTrees-6331.140.11.700.2",
+      "payload_length_bytes": 29499,
+      "compression_marker": "bvx2",
+      "compression_family": "LZFSE",
+      "trailing_octet_strings_after_payload": 0,
+      "decompressed": false
+    },
+    "extracted_lzfse_payload_sha256": "15955dbc03548ed18de9c28bd4ee1976507a5997272e06bfd8da62fa559c0b7b"
+  },
+  "full_ipsw_sha256": null,
+  "device_tree_properties_parsed": false,
+  "notes": [
+    "The full IPSW archive was not supplied.",
+    "D10AP per-identity Info does not expose ApBoardID or ApChipID in this BuildManifest.",
+    "No hardware property values are promoted.",
+    "The 19H422 DeviceTree is an iOS 15.8.8 target-hardware reference, not an iOS 16 donor kernel or userland image."
+  ]
+}\n

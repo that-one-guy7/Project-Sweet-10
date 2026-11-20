@@ -75,8 +75,10 @@ following metadata for the exact target build:
   `906a2708d3d15828c447ee1d7211f628dfeec7653a343384f3845153178c5906`
 
 The Orchard-published full-archive SHA-256 agrees with the IPSW.me listing.
-The BuildManifest and DeviceTree component hashes remain third-party
-published metadata; Project Sweet-10 has not independently recomputed them.
+Project Sweet-10 has now independently recalculated the SHA-256 of the supplied
+standalone BuildManifest and D10AP DeviceTree component. Both match Orchard's
+published component metadata, and the component's SHA-384 matches the
+48-byte BuildManifest Digest field. The full IPSW archive itself was not supplied.
 
 A separate public inventory file in the Ios-emul repository is explicitly
 labeled `iPhone9,1 d10ap iOS 15.8.8 (19H422)`. Its accompanying
@@ -112,7 +114,7 @@ make the iPhone X 20H392 kernelcache or DeviceTree interchangeable with it.
 ## How this changes the evidence status
 
 The earlier audit stated that 19H422 DeviceTree metadata and parsed values
-were missing. The current evidence allows a more precise status:
+were missing. The supplied extracted members now allow a more precise status:
 
 - **Now established at artifact-metadata level:** Orchard publishes the
   19H422 IPSW, BuildManifest, and D10AP DeviceTree component hashes; the
@@ -121,9 +123,13 @@ were missing. The current evidence allows a more precise status:
   a tree iPhone9,1 / D10AP / 19H422 and lists 226 nodes, two
   Hurricane-Zephyr CPU nodes, `arm-io,t8010`, an AIC node, and an
   AIC-timebase node.
-- **Not independently verified by this project:** the archive and
-  component hashes have not been recalculated, and the raw DeviceTree
-  component has not been parsed by Project Sweet-10.
+- **Independently verified by this project:** the supplied standalone
+  BuildManifest SHA-256 and D10AP DeviceTree component SHA-256 match the
+  pinned Orchard metadata; the component SHA-384 also matches the
+  BuildManifest Digest field. The full IPSW archive hash was not recalculated
+  because the archive was not supplied.
+- **Not yet parsed by this project:** the compressed DeviceTree payload has
+  been identified as LZFSE but has not been decompressed into raw properties.
 - **Still unknown at property-value level:** register addresses and raw
   `reg` cells, `ranges`, interrupt-controller and timer property values,
   IRQ specifiers, CPU `reg` and `state`, clock frequencies, memory ranges,
