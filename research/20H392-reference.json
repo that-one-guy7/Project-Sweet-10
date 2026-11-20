@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "userland": {
+    "marketing_version": "iOS 16.7.16",
+    "build": "20H392",
+    "reference_device_family": "iPhone X",
+    "reference_model_identifier": "iPhone10,3",
+    "reference_board_identifier": "D22AP",
+    "source_project": "https://github.com/dipa-studio/ios-sweet",
+    "source_project_revision": "45263bee51df4a0f55cdf9c649af886399488ddb",
+    "status": "selected-reference"
+  },
+  "target": {
+    "marketing_name": "iPhone 7",
+    "model_identifier": "iPhone9,1",
+    "status": "unsupported-by-stock-ios-16; experimental-port-target"
+  },
+  "kernel": {
+    "candidate_tag": "xnu-8796.141.3",
+    "candidate_commit": "1b191cb58250d0705d8a51287127505aa4bc0789",
+    "exact_match_to_20H392": "unverified"
+  },
+  "constraints": [
+    "Do not treat the iPhone X userland as an iPhone7 firmware image.",
+    "Do not infer exact kernel compatibility from the xnu-8796 family label.",
+    "Do not claim iPhone9,1 support from a source checkout or generic build."
+  ]
+}

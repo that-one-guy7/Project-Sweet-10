@@ -1,0 +1,36 @@
+name: Verify pinned XNU source
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "xnu/BASELINE.lock.json"
+      - "tools/verify_xnu_source.py"
+      - ".github/workflows/xnu-source-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "xnu/BASELINE.lock.json"
+      - "tools/verify_xnu_source.py"
+      - ".github/workflows/xnu-source-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Project Sweet-10
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check out pinned Apple XNU source
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: 1b191cb58250d0705d8a51287127505aa4bc0789
+          path: xnu/upstream
+          persist-credentials: false
+      - name: Verify exact source revision
+        run: python3 tools/verify_xnu_source.py xnu/upstream
