@@ -21,10 +21,7 @@ generation, and its XNU README describes that family as the iOS 16 generation. A
 version mapping for macOS 13.5 identifies xnu-8796.141.3. This makes it a sensible
 candidate for source-level study.
 
-This is not proof that the exact kernel build matches iOS 16.7.16 on any target device,
-and it does not imply iPhone9,1 platform support. Before any kernel build configuration
-is chosen, record the target userland build and verify the corresponding kernel version
-from authoritative build metadata.
+This is not proof of iPhone9,1 platform support. A later UniXNU device record independently reports this same XNU tag and commit in a locally authored iPhone X D22AP 20H392 profile; see [the UniXNU reference review](unixnu-reference.md). This strengthens the candidate's relevance to the selected iPhone X reference, but remains downstream profile evidence rather than an Apple-published build-to-source mapping. The exact donor BuildManifest and kernelcache identity still need to be independently tied to the source revision.
 
 ## Build environment observations from ios-sweet
 
