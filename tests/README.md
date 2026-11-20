@@ -36,3 +36,11 @@ labels, executable paths, MachServices provider names, selected KeepAlive and
 scheduling metadata, and environment-variable names (not values). It does not
 execute jobs or modify the root. Synthetic tests use generated plist fixtures;
 they do not validate the actual 20H392 donor image.
+
+
+The dyld loader-record collector uses the local ipsw CLI to capture raw
+PrebuiltLoader text for a prioritized list of donor frameworks. Its synthetic
+tests mock the subprocess and use a placeholder cache file; they verify output
+handling and error reporting but do not exercise ipsw or a real shared cache.
+The collector writes only into the output directory selected by the user and
+never interacts with an iOS device.
