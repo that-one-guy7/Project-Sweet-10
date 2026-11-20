@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: donor inventory reviewed (532 LaunchDaemons; 1,668 Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); iPhone X 20H392 SystemOS dyld cache parsed (2,710 images; 42 subcaches) and contains key CoreFoundation/Foundation, BackBoard HID, RunningBoard, SpringBoard, IOKit, IOSurface, Metal, and framebuffer images; recursive link graph, embedded XPC/IOKit matching, and iPhone9,1 service compatibility remain unverified |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor inventory reviewed (532 LaunchDaemons; 1,668 Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); iPhone X 20H392 SystemOS dyld cache parsed (2,710 images; 42 subcaches); prebuilt loader records inspected for backboardd (45 regular dependents plus one weak-link record with unresolved install name), runningboardd (6), and SpringBoard (4); suspicious section offsets excluded pending parser validation; recursive dependency graph, embedded XPC/IOKit matching, and iPhone9,1 service compatibility remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -170,3 +170,17 @@
   donor-side static cache metadata only; it does not establish transitive
   dependencies or iPhone9,1 runtime compatibility. Added
   docs/20h392-dyld-cache-inventory.md.
+
+
+- 2026-11-20: Inspected the 20H392 SystemOS PrebuiltLoaderSet records for
+  backboardd, runningboardd, and SpringBoard with ipsw 3.1.749. The complete
+  backboardd Dependents block later supplied by the user contains 45 regular
+  install names plus one weak-link record whose install name is unresolved;
+  runningboardd lists six regular dependents and SpringBoard lists four.
+  Bind-target records are present in the latter two outputs. Several
+  Swift/Objective-C section offsets look implausible and are excluded pending
+  independent parser validation. The earlier first-60-lines display was only
+  a terminal excerpt; the later complete block resolves the backboardd
+  dependent count. These are donor-side static loader records only; no
+  iPhone9,1 runtime compatibility or SpringBoard milestone is established. Added
+  docs/20h392-prebuilt-loader-audit.md.

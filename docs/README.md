@@ -13,6 +13,7 @@
 - [Kernel/userland matching](kernel-userland-match.md)
 - [iOS 16 userland and launchd dependency audit](ios16-userland-launchd-audit.md)
 - [20H392 split dyld shared-cache inventory](20h392-dyld-cache-inventory.md)
+- [20H392 dyld PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md)
 - [iOS 16.7.16 (20H392) userland reference](userland-reference-20H392.md)
 - [20H392 restore identity audit](20h392-restore-identity-audit.md)
 - [Uploaded 20H392 BuildManifest audit](uploaded-20h392-buildmanifest-audit.md)
