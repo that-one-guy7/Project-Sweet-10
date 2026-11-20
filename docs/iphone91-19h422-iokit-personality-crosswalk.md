@@ -34,7 +34,7 @@ The checked-in privacy-filtered summary is `research/iphone91-19h422-devicetree-
 | `/arm-io/spi2/multi-touch` | `hid-transport,k1` |
 | `/arm-io/i2c0/lm3539` | `backlight,lm3539` |
 
-The summary is allowlist-filtered and deliberately omits arbitrary properties. The existing inspector selected `/arm-io/mipi-dsim` and `/arm-io/disp0`, but its first output schema did not include the parent's `compatible` value or the `backlight-control` flag. A small allowlist-only parser update now reports those two items without exposing any other new DeviceTree properties; the user's raw-tree inspection result is pending.
+The summary is allowlist-filtered and deliberately omits arbitrary properties. The follow-up run of the updated inspector against the raw target tree confirmed that `/arm-io/mipi-dsim` has `compatible = mipi-dsim-1,synopsys`. It also showed that `/arm-io/disp0` has no `backlight-control` property in the inspector's allowlisted property output. The run covered all 227 nodes (160,572 bytes), parsed all bytes with no trailing data, and preserved privacy filtering (`arbitrary_properties_emitted = false`). The raw tree itself is not included in this repository.
 
 ## Direct IONameMatch overlaps
 
@@ -43,6 +43,7 @@ These rows compare the personality's literal `IONameMatch` value with a compatib
 | Target node | KEXT / personality | IOKit provider class | Personality IONameMatch | Static result |
 |---|---|---|---|---|
 | `/arm-io/disp0` | `AppleMobileDispH9P` / `AppleADBE0-8970X` | `AppleARMIODevice` | `disp0,t8010`, `disp1,t8010` | Exact overlap with `disp0,t8010` |
+| `/arm-io/mipi-dsim` | `AppleSynopsysMIPIDSI` / `AppleSynopsysMIPIDSIController` | `AppleARMIODevice` | `mipi-dsim-1,synopsys` | Exact overlap confirmed by the follow-up raw-tree inspection |
 | `/arm-io/spi2` | `AppleSamsungSPI` / `AppleSamsungSPIController` | `AppleARMIODevice` | `spi-1,samsung` | Exact overlap |
 | `/arm-io/spi2/multi-touch` | `AppleHIDTransportSPI` / `AppleHIDTransportDeviceSPI` | `AppleARMSPIDevice` | `hid-transport,k1`, `hid-transport,spi` | Exact overlap with `hid-transport,k1` |
 | `/arm-io/mipi-dsim/lcd` | `ApplePinotLCD` / `ApplePinotLCD` | `AppleARMMIPIDSIDevice` | `lcd,pinot` | Exact overlap |
@@ -51,6 +52,7 @@ These rows compare the personality's literal `IONameMatch` value with a compatib
 ### Interpretation
 
 - The display personality matches the target display node by name and advertises `AppleARMIODevice` as its provider class.
+- The Synopsys MIPI-DSI controller personality now has an exact compatible-string overlap with the target parent node `/arm-io/mipi-dsim`; its provider class is also `AppleARMIODevice`.
 - The Samsung SPI personality matches the target SPI controller node by name and also uses `AppleARMIODevice`.
 - The SPI HID transport personality matches the target K1 touch node's compatible string and expects an `AppleARMSPIDevice` provider. This is the clearest target-specific touch-transport personality overlap in the supplied data.
 - The Pinot LCD personality matches the target panel compatible string and expects an `AppleARMMIPIDSIDevice` provider.
@@ -68,7 +70,7 @@ The `AppleSynopsysMIPIDSI` bundle reports the personality:
 - Provider class: `AppleARMIODevice`.
 - `IONameMatch`: `mipi-dsim-1,synopsys`.
 
-The target DeviceTree summary includes the path `/arm-io/mipi-dsim/lcd`, but does not include the compatible value of its `mipi-dsim` parent. Therefore, the controller's exact name match is **not yet confirmed** by the checked-in allowlist summary. Do not infer it from the path name alone.
+The follow-up raw-tree inspection confirms that `/arm-io/mipi-dsim` has `compatible = mipi-dsim-1,synopsys`, exactly matching the `AppleSynopsysMIPIDSIController` personality's `IONameMatch`. This is a sixth direct static name-level overlap. It remains evidence of metadata compatibility only; it does not prove that the controller KEXT loads or attaches at runtime.
 
 ### Multitouch HID service and SPI plugin
 
@@ -88,7 +90,7 @@ The general `AppleHIDTransport` bundle reports a dummy transport personality mat
 
 ### Display/backlight relationship hint
 
-The `AppleMobileDispH9P` personality contains a `BacklightMatching` dictionary with an `IOPropertyMatch` requiring `backlight-control = true`. The checked-in allowlist DeviceTree summary does not establish whether that property is present on the target display node. Record this as a relationship hint only; do not claim the condition is satisfied.
+The `AppleMobileDispH9P` personality contains a `BacklightMatching` dictionary with an `IOPropertyMatch` requiring `backlight-control = true`. The follow-up inspector output does not report this property on `/arm-io/disp0`, so the target DeviceTree does not establish that this additional backlight-matching condition is met on that node. This does **not** erase the direct `disp0,t8010` personality overlap; it leaves the separate display-to-backlight association unconfirmed. Independently, `/arm-io/i2c0/lm3539` still has the exact `backlight,lm3539` match for the `AppleLMBacklight` personality.
 
 The `AppleLMBacklight` bundle also exposes a separate `AppleSPMIBacklight` personality for `pmu,d2483` and `pmu,d2652`. That SPMI personality is distinct from the I2C `backlight,lm3539` match relevant to this target.
 
@@ -102,23 +104,22 @@ The text KEXT listing printed `AppleMobileDispH9P (140.0.0)`, while the JSON res
 |---|---|
 | KEXT bundle exists in 19H422 KernelCache | Confirmed for all nine requested candidate IDs |
 | IOKit personality dictionary returned | Confirmed for eight of the nine; no field was returned for `AppleMultitouchSPI` |
-| Exact IONameMatch overlap with target DeviceTree | Confirmed for display, Samsung SPI, K1 SPI HID transport, Pinot LCD, and LM3539 backlight |
-| MIPI-DSI controller exact compatible overlap | Unresolved; parent compatible value is not in the allowlist summary |
-| Backlight-control property condition | Unresolved; target property value is not in the allowlist summary |
+| Exact IONameMatch overlap with target DeviceTree | Confirmed for display, Synopsys MIPI-DSI, Samsung SPI, K1 SPI HID transport, Pinot LCD, and LM3539 backlight |
+| Display `backlight-control` property condition | Not present in the allowlisted `/arm-io/disp0` output; the extra display-to-backlight association is not established |
 | IOKit provider actually attaches at runtime | Not tested |
 | Display, touch, or backlight operation | Not tested |
 | Compatibility of these iOS 15 KEXTs with the separate 20H392 donor userland/kernel | Not established |
 
 ## What this advances
 
-The M5 static research is now materially stronger: five target hardware nodes have exact name-level overlaps with personalities from the target-native 19H422 KernelCache, including the display, panel, Samsung SPI controller, K1 touch transport, and LM3539 backlight. The multitouch metadata also records the HID-interface/plugin relationship that deserves further static study.
+The M5 static research is now materially stronger: six target hardware nodes have exact name-level overlaps with personalities from the target-native 19H422 KernelCache, including the display subsystem, Synopsys MIPI-DSI controller, Pinot panel, Samsung SPI controller, K1 touch transport, and LM3539 backlight. The multitouch metadata also records the HID-interface/plugin relationship that deserves further static study. The separate display-to-backlight `backlight-control` property condition remains unconfirmed.
 
 This is still evidence from the iOS 15.8.8 target reference. It does not solve the separate XNU 8796 T8010 machine-profile gap, the static DeviceTree's zero clock/memory/panic fields, the custom loader handoff, or 20H392 userland compatibility.
 
 ## Next bounded host-side checks
 
-1. Run the updated privacy-filtered parser on the existing raw 19H422 DeviceTree. It now emits only the `/arm-io/mipi-dsim` `compatible` value and `backlight-control` presence/encoded-length marker for `/arm-io/disp0`, in addition to the prior allowlist. Do not dump arbitrary properties or the raw tree.
-2. Inspect the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin` metadata from the host-side KernelCache extraction, if ipsw exposes that nested plugin as a separate metadata object. Keep it as a plugin reference until confirmed.
+1. Inspect the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin` metadata from the host-side KernelCache extraction, if ipsw exposes that nested plugin as a separate metadata object. Keep it as a plugin reference until confirmed.
+2. Review the target display/backlight personality dictionaries together with the allowlisted DeviceTree result to clarify whether the missing `backlight-control` marker is a hard requirement, optional association, or property expected on a different registry object. Do not infer runtime attachment from plist metadata.
 3. Compare these target 19H422 personality records against the 20H392 donor's corresponding framework/service requirements at the metadata level only. Keep donor-versus-target version and platform differences explicit.
 
 No device connection, firmware update, restore, partition write, exploit, or boot operation is part of these checks. Synthetic tests cover both new fields and verify that an unrelated display-node serial-number field remains excluded.
