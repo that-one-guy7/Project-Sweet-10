@@ -48,7 +48,7 @@ The user-supplied complete ipsw listing reported 230 KEXT entries. The following
 |---|---|---:|---|---|
 | Display pipeline | `com.apple.driver.AppleMobileDispH9P` | 140.0.0 | `/arm-io/disp0` is `disp0,t8010` | KEXT presence; provider role still needs personality validation |
 | LCD panel | `com.apple.driver.ApplePinotLCD` | 1.0.0 | MIPI-DSI child panel is `lcd,pinot` | Strong name-level correspondence; IOKit match unverified |
-| MIPI-DSI | `com.apple.driver.AppleSynopsysMIPIDSI` | 1.0.0 | DeviceTree contains the MIPI-DSI panel path | KEXT presence; exact provider match unverified |
+| MIPI-DSI | `com.apple.driver.AppleSynopsysMIPIDSI` | 1.0.0 | `/arm-io/mipi-dsim` is `mipi-dsim-1,synopsys` | Exact static `IONameMatch` overlap confirmed; runtime provider attach untested |
 | SPI controller | `com.apple.driver.AppleSamsungSPI` | 1 | `/arm-io/spi2` reports Samsung SPI | Strong name-level correspondence; personality match unverified |
 | Touch transport | `com.apple.driver.AppleHIDTransport` | 5100.32 | Touch node uses `hid-transport,k1` | KEXT presence; provider chain unverified |
 | SPI HID transport | `com.apple.driver.AppleHIDTransportSPI` | 5100.32 | Touch node is below the SPI controller | KEXT presence; provider chain unverified |
@@ -81,15 +81,15 @@ The separate 19H422 DeviceTree audit records:
 - Touch child: `/arm-io/spi2/multi-touch`, compatible with `hid-transport,k1`.
 - Backlight node: `/arm-io/i2c0/lm3539`, compatible with `backlight,lm3539`.
 
-The KEXT inventory and personality metadata now establish exact static IONameMatch overlaps for display (`disp0,t8010`), LCD (`lcd,pinot`), Samsung SPI (`spi-1,samsung`), K1 SPI HID transport (`hid-transport,k1`), and backlight (`backlight,lm3539`). Other relationships and runtime attachment remain separate questions.
+The KEXT inventory and personality metadata now establish six exact static IONameMatch overlaps: display (`disp0,t8010`), Synopsys MIPI-DSI (`mipi-dsim-1,synopsys`), LCD (`lcd,pinot`), Samsung SPI (`spi-1,samsung`), K1 SPI HID transport (`hid-transport,k1`), and backlight (`backlight,lm3539`). The separate `AppleMobileDispH9P` BacklightMatching condition requiring `backlight-control = true` is not confirmed: the allowlist-filtered target output did not report that property on `/arm-io/disp0`. Other relationships and runtime attachment remain separate questions.
 
 ## Evidence levels and limits
 
 Keep these levels separate:
 
 1. **KEXT presence:** the bundle ID appears in the KernelCache inventory. This is now confirmed for the identifiers listed above.
-2. **Personality presence:** confirmed for eight of the nine requested candidate KEXTs in the user's JSON output. `AppleMultitouchSPI` had no `io_kit_personalities` field in that output.
-3. **Match-property overlap:** exact `IONameMatch` overlap is confirmed for five target nodes: display, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight. The MIPI-DSI controller parent-compatible and display `backlight-control` property remain unresolved.
+2. **Personality metadata in the JSON:** eight of the nine requested candidate KEXT records contained an `io_kit_personalities` field in the user's output. `AppleMultitouchSPI` did not. This is only a statement about the serialized KernelCache prelink metadata returned by the tool; it does not prove the filesystem bundle has no nested plugin or that the driver has no related role. See the [KernelCache/plugin metadata boundary note](ipsw-kernelcache-plugin-metadata-boundary.md).
+3. **Match-property overlap:** exact `IONameMatch` overlap is confirmed for six target nodes: display, Synopsys MIPI-DSI, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight. The display `backlight-control` property condition is not present in the allowlisted `/arm-io/disp0` output.
 4. **Provider relationship:** the relevant IOKit service actually matches and attaches to the intended hardware. Static metadata alone may support a candidate relationship, but runtime binding and working hardware operation have not been validated.
 
 Do not state that display, touch, or backlight is working. Do not infer that these iOS 15 KEXTs can be copied into, substituted for, or used as drop-in drivers in the 20H392 donor system. The donor's XNU/userland generation and board are different.
@@ -115,6 +115,11 @@ No KEXT binary or KernelCache is committed to the repository.
 
 **Completed:** the user supplied the KernelCache file identity, SHA-256, exact Darwin/XNU version, T8010 release target string, ipsw version, and 230-entry KEXT inventory. Candidate target hardware KEXTs are now cross-referenced against the sanitized 19H422 DeviceTree.
 
-**Still open:** runtime IOKit provider attachment, the target `/arm-io/mipi-dsim` parent compatible and `backlight-control` property, nested plugin verification, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
+**Still open:** runtime IOKit provider attachment, the display/backlight association, nested `MultitouchHID.plugin` filesystem metadata, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
 
 M6 remains in progress. M7 (SpringBoard on iPhone9,1) has not started.
+
+
+## `ipsw` metadata boundary
+
+The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The separate `MultitouchHID.plugin` path must be verified from the matching 19H422 filesystem bundle, not inferred from the KernelCache KEXT JSON. The source-level basis and next evidence needed are recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
