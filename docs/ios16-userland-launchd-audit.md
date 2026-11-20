@@ -109,24 +109,64 @@ Run host tests:
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
+## Results from the mounted 20H392 donor image (2026-11-20)
+
+The user ran the read-only inventory against the mounted donor root and supplied
+the resulting JSON for review. The report identifies:
+
+- **532** entries in the central `LaunchDaemons` dictionary.
+- **1,668** distinct advertised Mach service names.
+- Input plist SHA-256:
+  `810070302b5c4d7c5f00bdc8df20aaea2dd33cd8342d2402fcdf7ff6397d374c`.
+- The filtered focus list includes `backboardd`, `runningboardd`,
+  `SpringBoard`, `configd`, `notifyd`, `mediaserverd`, `wifid`,
+  `bluetoothd`, `mobileactivationd`, Setup Assistant, and CommCenter
+  (including separate cellular and non-cellular entries).
+
+Selected donor-side records:
+
+| Job | Program path | Advertised services | Static launch policy |
+|---|---|---:|---|
+| `com.apple.backboardd` | `/usr/libexec/backboardd` | 18 | RunAtLoad; KeepAlive always |
+| `com.apple.runningboardd` | `/usr/libexec/runningboardd` | 3 | RunAtLoad; KeepAlive always |
+| `com.apple.SpringBoard` | `/System/Library/CoreServices/SpringBoard.app/SpringBoard` | 33 | RunAtLoad; KeepAlive always |
+| `com.apple.configd` | `/usr/libexec/configd` | 9 | KeepAlive always |
+| `com.apple.notifyd` | `/usr/sbin/notifyd` | 1 | KeepAlive unspecified |
+| `com.apple.mediaserverd` | `/usr/sbin/mediaserverd` | 87 | KeepAlive always |
+
+The provider index associates the backboard HID, display, touch-delivery, and
+IOHID event-system endpoints with `com.apple.backboardd`; SpringBoard advertises
+its SpringBoard and FrontBoard-related endpoints; and `com.apple.runningboard`
+is advertised by `com.apple.runningboardd`. The provider index also reports
+21 service names with more than one provider label, so service-name presence
+alone must not be treated as proof of an unambiguous or successful runtime
+registration.
+
+**Interpretation boundary:** these are static configuration facts from the
+iPhone X donor image. They do not prove that each executable exists in the
+mounted root, that a daemon starts successfully, which clients consume each
+Mach service, or that any provider works on iPhone 7 `iPhone9,1`. The report
+covers only the central LaunchDaemons dictionary; it does not inventory
+LaunchAgents, embedded XPC bundles, IOKit personalities, or runtime processes.
+The full JSON was reviewed locally and is not committed to this repository.
+
 ## M6 status and next evidence needed
 
-**M6 remains in progress.** The reference review and static inventory tool
-establish a repeatable way to inspect launchd metadata, but the actual 20H392
-root filesystem has not been provided to this repository's host tests and no
-iPhone9,1 runtime logs exist.
+**M6 remains in progress.** The actual 20H392 donor root has now been inventoried
+locally and reviewed as static metadata. No iPhone9,1 runtime logs or target-side
+service matching evidence exist.
 
-The next M6 evidence should be collected from the exact iPhone X 20H392 donor
-root filesystem and recorded with its source hash:
+The next M6 evidence should:
 
-1. Inventory launchd jobs, MachServices, and selected scheduling metadata.
-2. Identify executable paths and bundle ownership without executing donor binaries.
-3. Cross-reference the candidate GUI chain (launchd, backboardd, SpringBoard,
-   LaunchServices) against the corresponding XPC and IOKit service metadata.
-4. Keep configured jobs separate from observed runtime processes and successful
+1. Check whether the selected daemon executable paths are present in the mounted
+   donor root, accounting for APFS mount layout and symlinks; do not execute them.
+2. Cross-reference the GUI chain (launchd, backboardd, SpringBoard,
+   LaunchServices) against embedded XPC bundles and IOKit personality metadata.
+3. Keep configured jobs separate from observed runtime processes and successful
    service registration.
-5. Record each service requirement as confirmed, reference-only, missing, or
-   unverified for iPhone9,1.
+4. Compare each donor-side requirement with iPhone9,1-specific DeviceTree and
+   stock-firmware evidence; classify it as target-confirmed, donor-reference-only,
+   missing, or unverified.
 6. Keep Home-button, Touch ID/SEP, audio, cellular, Wi-Fi, Bluetooth, display,
    battery, and power dependencies as distinct target-specific rows.
 

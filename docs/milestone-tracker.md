@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: pinned Sunstone 20H392 root-tweak and launchd logging helpers reviewed; a sanitized, read-only LaunchDaemons inventory tool and synthetic tests added; actual donor-root inventory and iPhone9,1 service matching remain unverified |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: the mounted iPhone X 20H392 donor root has now been inventoried locally (532 LaunchDaemons; 1,668 advertised Mach service names; source plist SHA-256 recorded in `docs/ios16-userland-launchd-audit.md`); executable-path presence, embedded XPC/IOKit dependencies, and iPhone9,1 service matching remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -143,3 +143,11 @@
   environment values are omitted. Synthetic tests do not use an Apple root
   filesystem. Actual 20H392 rootfs inventory and iPhone9,1 dependency mapping
   remain open.
+
+- 2026-11-20: Reviewed the user's actual mounted iPhone X 20H392 launchd
+  inventory. The central plist contains 532 LaunchDaemons and advertises
+  1,668 distinct Mach service names; the source plist SHA-256 is recorded in
+  the M6 audit. Core donor launchd entries include backboardd, runningboardd,
+  SpringBoard, configd, notifyd and mediaserverd. This is donor-side static
+  configuration only; executable presence, runtime registration and
+  iPhone9,1 compatibility remain unverified.
