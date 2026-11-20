@@ -23,6 +23,7 @@
 - [Public iPhone9,1 stock DeviceTree artifact evidence](iphone91-stock-firmware-device-tree-evidence.md)
 - [iPhone9,1 19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md)
 - [iPhone9,1 19H422 artifact verification](iphone91-19h422-artifact-verification.md)
+- [iPhone9,1 19H422 parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
 - [iPhone9,1 19H422 DeviceTree survey methodology review](iphone91-19h422-survey-methodology-review.md)
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
 - [XNU configuration selection audit](xnu-config-selection.md)

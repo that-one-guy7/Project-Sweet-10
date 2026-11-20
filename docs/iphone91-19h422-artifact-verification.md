@@ -56,7 +56,7 @@ The supplied component parses as a complete DER sequence with:
 - Payload prefix: `bvx2`
 - Trailing OCTET STRING count after the payload: zero
 
-The `bvx2` marker identifies an LZFSE-family compressed payload. Apple's open-source [LZFSE reference implementation](https://github.com/lzfse/lzfse) provides a Linux Makefile and command-line decoder. This project has extracted and hashed the compressed payload, but has **not yet decompressed it or parsed the flattened DeviceTree**.
+The `bvx2` marker identifies an LZFSE-family compressed payload. Apple's open-source [LZFSE reference implementation](https://github.com/lzfse/lzfse) provides a Linux Makefile and command-line decoder. This project has extracted and hashed the compressed payload and has now independently decompressed and parsed the flattened DeviceTree. See the [parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md).
 
 ## Reproducible local verification
 
@@ -71,7 +71,7 @@ python3 tools/verify_d10ap_19h422_artifacts.py \
   --extract-payload DeviceTree.d10ap.lzfse
 ```
 
-The optional extracted file is the compressed LZFSE payload only; it is not yet the raw DeviceTree.
+The optional extracted file is the compressed LZFSE payload. Decompress it with the command above to produce `DeviceTree.d10ap.raw`; that raw file was subsequently parsed with `tools/inspect_apple_dt.py`.
 
 ### Decompress on Ubuntu
 
@@ -104,16 +104,23 @@ The decoder is run on the extracted data file on the computer. It is not run on 
 - The manifest contains D10AP Erase and Update identities referencing the same target DeviceTree component.
 - The component is an IM4P `dtre` wrapper with an LZFSE-family `bvx2` payload.
 
+**Now verified from the static target DeviceTree:**
+
+- Complete parse: 227 nodes including root, 160,572 bytes, zero trailing bytes.
+- Root identity `D10AP / iPhone9,1 / AppleARM` and `/arm-io` compatibility `arm-io,t8010`.
+- CPU0/CPU1 state and `reg`/`cpu-id` values.
+- `/arm-io/ranges` value used by the pinned XNU SoC-base helper.
+- AIC master-controller metadata, register windows, and AIC-timebase register window used by the generic XNU mapper.
+- Presence of display, LCD, SPI touchscreen, and backlight nodes.
+
 **Still unverified:**
 
-- Raw DeviceTree nodes and properties.
-- The parent cell-count rules and actual values for `reg` and `ranges`.
-- CPU `reg`, state, topology and clock properties.
-- AIC interrupt-controller properties and interrupt specifiers.
-- AIC-timebase register mapping and timebase frequency.
-- Memory map, panic region, and any boot-environment-provided values.
+- Final runtime clock values: CPU0 frequency properties are zero in the static component.
+- Final memory and panic regions: `/memory`, `/pram`, and `/vram` are zero-filled, and `/chosen/embedded-panic-log-size` is absent.
+- The final DeviceTree and `boot_args` that a PongoOS custom loader would hand to XNU.
+- Full interrupt routing and actual AIC/timer operation.
 - Whether the iOS 15.8.8 DeviceTree is directly reusable with an iOS 16-era XNU build.
 
 This artifact is a target-hardware reference from iOS 15.8.8. It is not the iOS 16 donor KernelCache, not a 20H392 iPhone 7 manifest, and not proof that XNU 8796 supports T8010.
 
-No individual property-value row is promoted in `device-tree/PROPERTY_INVENTORY.md` until the payload is decompressed, parsed with validated bounds and encodings, and checked against the pinned XNU consumers.
+Selected property-value rows are now populated in `device-tree/PROPERTY_INVENTORY.md` where the static tree bytes and pinned XNU consumer agree. Runtime-dependent or zero-filled fields remain unresolved.

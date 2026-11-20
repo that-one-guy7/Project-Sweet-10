@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "format": "Apple flattened DeviceTree node/property stream",
+  "input_size_bytes": 160572,
+  "input_sha256": "39331154d60f05923da0b2c5dc9ac6395da6a8276f0952e997dbdcfa81c2420e",
+  "parsed_bytes": 160572,
+  "node_count_including_root": 227,
+  "node_count_excluding_root": 226,
+  "trailing_bytes": 0,
+  "privacy": {
+    "mode": "allowlist",
+    "arbitrary_properties_emitted": false,
+    "unique_identifiers_and_machine_specific_blobs_emitted": false
+  },
+  "integer_interpretation": "Raw hex is authoritative. Little-endian numeric views are supplied for comparison with pinned XNU ARM64 native pointer reads. Do not treat every reg/ranges field as a generic FDT tuple.",
+  "root_compatible": [
+    "D10AP",
+    "iPhone9,1",
+    "AppleARM"
+  ],
+  "soc": {
+    "path": "/arm-io",
+    "compatible": "arm-io,t8010",
+    "device_type": "t8010-io",
+    "address_cells": 2,
+    "size_cells": 2,
+    "ranges_u64le": [
+      0,
+      8589934592,
+      4294967296,
+      25769803776,
+      25769803776,
+      8589934592
+    ],
+    "xnu_soc_base_phys": "0x0000000200000000"
+  },
+  "cpus": [
+    {
+      "path": "/cpus/cpu0",
+      "reg": 0,
+      "cpu_id": 0,
+      "state": "running",
+      "compatible": [
+        "apple,hurricane-zephyr",
+        "ARM,v8"
+      ],
+      "frequency_fields_8byte_zero": [
+        "timebase-frequency",
+        "bus-frequency",
+        "memory-frequency",
+        "peripheral-frequency",
+        "fixed-frequency",
+        "clock-frequency"
+      ]
+    },
+    {
+      "path": "/cpus/cpu1",
+      "reg": 1,
+      "cpu_id": 1,
+      "state": "waiting",
+      "compatible": [
+        "apple,hurricane-zephyr",
+        "ARM,v8"
+      ]
+    }
+  ],
+  "aic": {
+    "path": "/arm-io/aic",
+    "compatible": "aic,1",
+    "device_type": "interrupt-controller",
+    "interrupt_controller": "master",
+    "interrupt_cells": 1,
+    "main_cpus": 2,
+    "aic_version": 2,
+    "shared_timestamps": 16,
+    "reg_u64le": [
+      235929600,
+      32768,
+      235962368,
+      4096
+    ],
+    "xnu_first_mapping_offset": "0x000000000e100000",
+    "xnu_first_mapping_size": "0x8000",
+    "xnu_derived_physical_address": "0x000000020e100000"
+  },
+  "timer": {
+    "path": "/arm-io/aic-timebase",
+    "device_type": "timer",
+    "reg_u64le": [
+      235962368,
+      4096
+    ],
+    "xnu_derived_physical_address": "0x000000020e108000"
+  },
+  "memory": {
+    "memory_reg_zero": true,
+    "pram_reg_zero": true,
+    "vram_reg_zero": true,
+    "chosen_embedded_panic_log_size_present": false
+  },
+  "peripherals": [
+    {
+      "path": "/arm-io/disp0",
+      "compatible": "disp0,t8010",
+      "device_type": "display-subsystem",
+      "reg_entry_count": 9
+    },
+    {
+      "path": "/arm-io/mipi-dsim/lcd",
+      "compatible": "lcd,pinot",
+      "device_type": "lcd"
+    },
+    {
+      "path": "/arm-io/spi2",
+      "compatible": "spi-1,samsung",
+      "device_type": "spi"
+    },
+    {
+      "path": "/arm-io/spi2/multi-touch",
+      "compatible": "hid-transport,k1",
+      "device_type": "multi-touch",
+      "reg_length_bytes": 32,
+      "parent_address_cells": 1,
+      "parent_size_cells": 7
+    },
+    {
+      "path": "/arm-io/i2c0/lm3539",
+      "compatible": "backlight,lm3539",
+      "device_type": "backlight"
+    }
+  ],
+  "limitations": [
+    "No full IPSW archive supplied.",
+    "The raw tree is a static IPSW component; final runtime DeviceTree values may differ.",
+    "Zero clock fields, memory/pram/vram reg fields, and absent embedded-panic-log-size do not provide runtime values.",
+    "AIC and timer mapping inputs do not prove working interrupt/timer services.",
+    "No XNU build or device boot was performed."
+  ]
+}

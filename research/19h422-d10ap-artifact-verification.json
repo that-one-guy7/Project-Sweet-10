@@ -57,11 +57,94 @@
     "extracted_lzfse_payload_sha256": "15955dbc03548ed18de9c28bd4ee1976507a5997272e06bfd8da62fa559c0b7b"
   },
   "full_ipsw_sha256": null,
-  "device_tree_properties_parsed": false,
+  "device_tree_properties_parsed": true,
   "notes": [
     "The full IPSW archive was not supplied.",
     "D10AP per-identity Info does not expose ApBoardID or ApChipID in this BuildManifest.",
-    "No hardware property values are promoted.",
-    "The 19H422 DeviceTree is an iOS 15.8.8 target-hardware reference, not an iOS 16 donor kernel or userland image."
-  ]
-}\n
+    "The 19H422 DeviceTree is an iOS 15.8.8 target-hardware reference, not an iOS 16 donor kernel or userland image.",
+    "The raw DeviceTree is not committed; the checked-in summary is allowlist-filtered to omit unique identifiers and machine-specific blobs."
+  ],
+  "decompressed_devicetree": {
+    "filename": "DeviceTree.d10ap.raw",
+    "size_bytes": 160572,
+    "sha256": "39331154d60f05923da0b2c5dc9ac6395da6a8276f0952e997dbdcfa81c2420e",
+    "parser": "tools/inspect_apple_dt.py",
+    "parser_result": "complete",
+    "node_count_including_root": 227,
+    "node_count_excluding_root": 226,
+    "trailing_bytes": 0,
+    "privacy_filtered_summary": "research/iphone91-19h422-devicetree-summary.json",
+    "selected_findings": {
+      "root_compatible": [
+        "D10AP",
+        "iPhone9,1",
+        "AppleARM"
+      ],
+      "arm_io_compatible": "arm-io,t8010",
+      "arm_io_device_type": "t8010-io",
+      "cpus": [
+        {
+          "path": "/cpus/cpu0",
+          "reg": 0,
+          "cpu_id": 0,
+          "state": "running"
+        },
+        {
+          "path": "/cpus/cpu1",
+          "reg": 1,
+          "cpu_id": 1,
+          "state": "waiting"
+        }
+      ],
+      "xnu_soc_base_phys": "0x0000000200000000",
+      "aic": {
+        "path": "/arm-io/aic",
+        "compatible": "aic,1",
+        "interrupt_controller": "master",
+        "interrupt_cells": 1,
+        "main_cpus": 2,
+        "aic_version": 2,
+        "shared_timestamps": 16,
+        "reg_u64le": [
+          235929600,
+          32768,
+          235962368,
+          4096
+        ],
+        "xnu_mapping_address": "0x000000020e100000",
+        "xnu_mapping_length": "0x8000"
+      },
+      "aic_timebase": {
+        "path": "/arm-io/aic-timebase",
+        "reg_u64le": [
+          235962368,
+          4096
+        ],
+        "xnu_mapping_address": "0x000000020e108000",
+        "xnu_mapping_length": "0x1000"
+      },
+      "cpu0_frequency_fields_all_zero": true,
+      "memory_pram_vram_reg_fields_all_zero": true,
+      "chosen_embedded_panic_log_size_present": false,
+      "display_input_nodes": [
+        "disp0,t8010",
+        "lcd,pinot",
+        "spi-1,samsung",
+        "hid-transport,k1",
+        "backlight,lm3539"
+      ],
+      "touchscreen_parent_cells": {
+        "address_cells": 1,
+        "size_cells": 7,
+        "reg_length_bytes": 32
+      }
+    },
+    "limitations": [
+      "The full IPSW archive was not supplied.",
+      "Final runtime DeviceTree values may differ from this static IPSW component.",
+      "CPU frequency fields are zero and memory/panic-region values are zero or absent in this static component.",
+      "AIC/timer mapping inputs do not prove operational interrupt or timer services.",
+      "No XNU build or device boot was performed."
+    ]
+  }
+}

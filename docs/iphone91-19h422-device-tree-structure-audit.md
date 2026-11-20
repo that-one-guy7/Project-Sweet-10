@@ -171,19 +171,27 @@ to populate the project's property inventory.
 - The survey-generation script is available for inspection and explains
   how the summary was obtained from a BuildManifest-selected DeviceTree.
 
-### Still unverified by Project Sweet-10
+### Verified by Project Sweet-10
 
-- The full IPSW archive hash and DeviceTree component hash have not been
-  recalculated by this project.
-- The raw 19H422 DeviceTree component has not been parsed independently by
-  this project.
-- The target's `arm-io` `ranges`, AIC and timer `reg` addresses and
-  sizes as raw values, interrupt-controller property, timer `device_type`,
-  interrupt IDs/specifiers, trigger modes, routing, and EOI requirements
-  remain unverified.
-- CPU `reg`, `state`, topology/cache properties, timebase and other clock
-  frequencies, memory ranges, panic-region values, and exact property
-  encodings remain unverified.
+- The full IPSW archive hash was not recalculated because the full archive was
+  not supplied. The extracted BuildManifest and DeviceTree component hashes
+  were independently verified.
+- The raw 19H422 DeviceTree component has been decompressed and parsed:
+  227 nodes including root, with no trailing bytes.
+- `/arm-io/ranges`, the AIC master node, the AIC register pairs, and the
+  AIC-timebase register pair have been extracted and compared with the pinned
+  XNU 8796 generic mapper. See the parsed DeviceTree audit.
+- CPU0/CPU1 `reg` and `state` values are known in the static tree.
+- The tree identifies display, LCD, SPI touchscreen, and backlight nodes.
+
+### Still open
+
+- CPU0 frequency fields are present but zero; runtime clock values remain unknown.
+- `/memory`, `/pram`, and `/vram` `reg` values are zero in this static tree,
+  and `/chosen/embedded-panic-log-size` is absent. Final runtime memory and
+  panic-region values remain unverified.
+- Full interrupt specifier semantics, trigger modes, routing, EOI requirements,
+  and live CPU topology remain unverified.
 - The XNU 8796 T8010/H9 machine configuration blocker described in earlier
   audits is unchanged. A DeviceTree inventory does not restore missing
   T8010 source support in XNU 8796.
@@ -192,14 +200,14 @@ to populate the project's property inventory.
 
 ## Decision
 
-Promote 19H422 D10AP DeviceTree **structure and node-presence evidence** from
-Unknown to externally reported, provisional evidence. Keep every target
-property value requiring raw data marked Unknown in
-`device-tree/PROPERTY_INVENTORY.md` until a hash-verified component has
-been parsed and each property's encoding, width, endianness, and units have
-been recorded.
+Promote the independently parsed 19H422 D10AP properties and the XNU-correlated
+ARM-IO/AIC/timer mapping inputs recorded in `device-tree/PROPERTY_INVENTORY.md`.
+Keep zero-filled and runtime-dependent fields unresolved. The parsed tree is a
+static IPSW component, not proof of the final iBoot/PongoOS handoff DeviceTree.
 
 Do not infer target values from the unversioned YAML, iPhone X/A11 data,
 Qualcomm SWEET data, or generic XNU fallbacks. This document is a static
 source audit only; it does not claim a bootable iPhone 7 kernel or a
 successful device boot.
+
+See the [independent parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md) for raw values, XNU source comparisons, zero-valued runtime fields, and the display/input node inventory.
