@@ -98,7 +98,7 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
 
     def test_rejects_truncated_node_header(self):
         with self.assertRaisesRegex(DeviceTreeFormatError, "Truncated node header"):
-            parse_tree(b"\\x01\\x02\\x03")
+            parse_tree(bytes([1, 2, 3]))
 
     def test_rejects_property_that_runs_past_file(self):
         malformed = struct.pack("<II", 1, 0) + b"test" + b"\x00" * 28 + struct.pack("<I", 100)
