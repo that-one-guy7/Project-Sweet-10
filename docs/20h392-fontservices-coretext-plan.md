@@ -2,9 +2,10 @@
 
 ## Scope
 
-This is a read-only host-side inspection plan for the iPhone X iOS 16.7.16
-(20H392) donor SystemOS shared cache. It follows four font-chain images named
-by the user's successful loader queries:
+This read-only host-side inspection of the iPhone X iOS 16.7.16 (20H392)
+donor SystemOS cache is complete. The four font-chain loader records are
+summarized in [the result inventory](20h392-fontservices-coretext-dependency-results.md).
+The inspected images were:
 
 - `libFontParser.dylib`
 - `FontServices`
@@ -102,3 +103,20 @@ M6 remains in progress; M7 has not started.
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [Apple dyld LinkedDylibAttributes](https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/mach_o/UnsafeHeader.h)
 - [ipsw 3.1.749 dependent-kind formatter](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/prebuilt_types.go)
+
+
+## Results collected
+
+All four requested queries reported exit status 0. The observed records
+contain 37 regular dependency rows, one explicit weak link to
+SpringBoardServices, and six raw kind-3 rows source-mapped to weak-link +
+re-export. See [the complete ordered inventory](20h392-fontservices-coretext-dependency-results.md).
+
+The donor graph includes reciprocal CoreGraphics/libFontParser references
+with different kinds, plus a FontServices/CoreText/libGSFont family of
+weak-link/re-export references. Preserve each edge's kind; do not flatten
+this graph into ordinary strong dependencies.
+
+This bounded donor crawl is complete. Further generic framework expansion is
+deferred in favor of the
+[iPhone9,1 target-native crosswalk](iphone9,1-target-hardware-crosswalk.md).
