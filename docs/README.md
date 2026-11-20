@@ -10,6 +10,7 @@
 - [Kernel/userland matching](kernel-userland-match.md)
 - [iOS 16.7.16 (20H392) userland reference](userland-reference-20H392.md)
 - [20H392 restore identity audit](20h392-restore-identity-audit.md)
+- [Uploaded 20H392 BuildManifest audit](uploaded-20h392-buildmanifest-audit.md)
 - [BuildManifest evidence checklist](buildmanifest-evidence-checklist.md)
 - [Read-only BuildManifest inspector](buildmanifest-inspector.md)
 - [XNU ARM64 source map](xnu-arm64-source-map.md)
