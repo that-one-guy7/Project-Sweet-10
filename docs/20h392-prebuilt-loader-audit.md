@@ -41,7 +41,8 @@ are not runtime memory measurements from iPhone9,1.
 
 ### backboardd
 
-The visible excerpt lists these regular dependent install names:
+The complete Dependents block supplied by the user contains **45 regular
+dependent install names** in the order shown below:
 
 1. /System/Library/PrivateFrameworks/StudyLog.framework/StudyLog
 2. /System/Library/PrivateFrameworks/ButtonResolver.framework/ButtonResolver
@@ -64,21 +65,43 @@ The visible excerpt lists these regular dependent install names:
 19. /System/Library/Frameworks/Metal.framework/Metal
 20. /System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary
 21. /System/Library/Frameworks/AVFoundation.framework/AVFoundation
+22. /System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices
+23. /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+24. /System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness
+25. /System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics
+26. /System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
+27. /System/Library/Frameworks/CoreMotion.framework/CoreMotion
+28. /System/Library/Frameworks/CoreText.framework/CoreText
+29. /System/Library/PrivateFrameworks/DataMigration.framework/DataMigration
+30. /System/Library/Frameworks/Foundation.framework/Foundation
+31. /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
+32. /System/Library/Frameworks/ImageIO.framework/ImageIO
+33. /System/Library/Frameworks/CoreServices.framework/CoreServices
+34. /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+35. /System/Library/Frameworks/IOSurface.framework/IOSurface
+36. /usr/lib/libAccessibility.dylib
+37. /usr/lib/libMobileGestalt.dylib
+38. /System/Library/PrivateFrameworks/ProgressUI.framework/ProgressUI
+39. /System/Library/Frameworks/Security.framework/Security
+40. /System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration
+41. /usr/lib/libobjc.A.dylib
+42. /usr/lib/libc++.1.dylib
+43. /usr/lib/libSystem.B.dylib
+44. /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
+45. /System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking
 
-The same excerpt includes one weak-link record reported as
-index 32767 (missing weak image). This is recorded as a weak-linked image
-entry in the donor loader metadata. Its absence must not be generalized into
-a claim that an ordinary required dependency is missing; the exact weak
-install name and any runtime symbol use have not been established here.
+The same block contains one weak-link record:
 
-**Completeness note:** the text shared for this review showed only the first
-60 lines because the terminal display used head -60. The shell command
-redirected the complete ipsw output to backboardd-closure.txt before displaying
-that excerpt, so the saved file may contain additional dependent entries.
-The 21 regular paths above are only the entries visible in the shared excerpt,
-not a verified complete dependent list. Do not treat this list as a final
-count; inspect the saved file before closing the inventory.
+`weak-link ) index: 32767 (missing weak image)`
 
+The output does not expose an install name for that weak-link index, so this
+audit leaves its identity unresolved. Do not treat the weak-link marker as a
+missing regular dependency or infer which library it represents without
+additional evidence.
+
+The full Dependents block was subsequently supplied, so this list is no
+longer limited to the earlier first-60-lines terminal excerpt. There are 45
+regular install names plus one weak-link record in the supplied block.
 ### runningboardd
 
 The supplied output shows six regular dependent install names:
@@ -142,7 +165,7 @@ Not established:
 - That these dependencies are all available in the same form on iPhone9,1.
 - That the iPhone 7 has matching IOKit providers, framebuffer/HID services,
   entitlements, launchd endpoints, or hardware implementations.
-- That the visible backboardd list is complete.
+- That the weak-link index resolves to a particular install name or is used at runtime.
 - That the suspect section metadata is correctly decoded.
 - That the 20H392 donor userland can be used unchanged on an A10/T8010 device.
 
