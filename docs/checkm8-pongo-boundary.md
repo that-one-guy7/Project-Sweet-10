@@ -28,7 +28,7 @@ Reaching a pre-boot shell would establish only that an earlier stage executed. I
 4. that storage, display, touch, audio, baseband, SEP, or other device services are supported;
 5. that launchd, SpringBoard, or the rest of the iOS userland can start and remain stable.
 
-The upstream PongoOS README describes separate build artifacts and distinguishes a Pongo shell from a configuration that invokes the checkra1n kernel patchfinder and proceeds to XNU. That distinction is important: it does not mean an arbitrary custom XNU build or an unsupported iOS release can be booted successfully.
+At the inspected upstream revision `4c9b7541629234147fcc778f0ce4162482aaccef`, the PongoOS README lists Pongo-only and Pongo-plus-KPF outputs. It describes the Pongo-only image as reaching the Pongo shell and the consolidated Pongo/KPF image as automatically running KPF before proceeding to XNU. The KPF source contains callbacks that search and patch existing kernel instruction streams (including dyld, AMFI/trust-cache, and root-mount paths). This does not document a general loader for an arbitrary custom XNU image. See [the source-based Pongo/XNU handoff analysis](pongo-xnu-handoff-analysis.md).
 
 ## Relevance to iPhone 7 / T8010
 
@@ -51,6 +51,7 @@ A search result showing the string `T8010` in an XNU test source file must not b
 - [ ] Exact 20H392 kernel metadata independently established.
 - [ ] iPhone9,1 XNU platform support established from authoritative source.
 - [ ] A10-specific handoff contract established from reliable evidence.
+- [ ] Custom Sweet-10 XNU image-loading contract separated from PongoOS's documented KPF-assisted XNU path.
 - [ ] Any controlled hardware validation: not started and outside this documentation milestone.
 
 No device was connected or changed for this review. No firmware, boot payload, exploit tool, device data, or proprietary image is included.
