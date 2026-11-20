@@ -58,10 +58,10 @@ and [property inventory](../device-tree/PROPERTY_INVENTORY.md).
 | Requirement area | 20H392 donor evidence | iPhone9,1 target evidence from 19H422 | Assessment |
 |---|---|---|---|
 | Board / SoC identity | Donor is iPhone X, D22AP, A11/T8015 | Root identifies iPhone9,1 / D10AP; `/arm-io` identifies T8010 | **Target-confirmed identity**; donor is a different board and SoC |
-| Display subsystem | Donor cache/loader records include IOMobileFramebuffer, CoreGraphics, Metal, and IOSurface | `/arm-io/disp0` is `disp0,t8010`; MIPI-DSI child is `lcd,pinot` | **Target-confirmed node names**; matching driver/provider and working display path are unverified |
-| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `/arm-io/spi2` identifies a Samsung SPI controller; child `multi-touch` identifies `hid-transport,k1` | **Target-confirmed node names**; target HID provider, protocol handling, and BackBoard integration are unverified |
-| Backlight | Donor GUI/graphics inventory does not identify a target backlight provider | `/arm-io/i2c0/lm3539` identifies `backlight,lm3539` | **Target-confirmed node name**; driver/provider match is unverified |
-| IOKit provider matching | Donor contains the IOKit framework and framework dependencies | DeviceTree gives candidate hardware nodes, but the target KEXT bundle/personality inventory has not yet been correlated | **Unverified** |
+| Display subsystem | Donor cache/loader records include IOMobileFramebuffer, CoreGraphics, Metal, and IOSurface | `/arm-io/disp0` is `disp0,t8010`; target 19H422 KernelCache contains `AppleMobileDispH9P`, `ApplePinotLCD`, and `AppleSynopsysMIPIDSI` | **Target-confirmed node and KEXT presence**; IOKit personality match and working display path remain unverified |
+| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `/arm-io/spi2` identifies Samsung SPI; child `multi-touch` identifies `hid-transport,k1`; 19H422 KernelCache contains `AppleSamsungSPI`, `AppleHIDTransport`, `AppleHIDTransportSPI`, `AppleMultitouchSPI`, and `AppleMultitouchDriver` | **Target-confirmed node and KEXT presence**; IOKit matching, protocol behavior, and BackBoard integration remain unverified |
+| Backlight | Donor GUI/graphics inventory does not identify a target backlight provider | `/arm-io/i2c0/lm3539` identifies `backlight,lm3539`; 19H422 KernelCache contains `AppleLMBacklight` | **Target-confirmed node and candidate KEXT presence**; LM3539 personality match is unverified |
+| IOKit provider matching | Donor contains the IOKit framework and framework dependencies | Target 19H422 KernelCache has a 230-entry KEXT inventory with candidate display/touch/backlight bundles; personality JSON has not yet been inspected | **KEXT presence confirmed; personality and provider matching unverified** |
 | BackBoard / RunningBoard services | Donor contains BackBoardServices, RunningBoardServices, RunningBoard, and SpringBoard images | No target-native provider or service equivalence follows from the DeviceTree node names | **Donor-only service evidence**; target service compatibility is unverified |
 | CPU / memory / early platform | Donor is A11/T8015; its cache does not supply D10AP platform values | 19H422 static tree identifies two CPU nodes and T8010; static CPU clock values are zero, memory/PRAM/VRAM ranges are zero, and panic-log size is absent | **Target-confirmed static identity/structure**; runtime clock, memory, and panic handoff values remain unknown |
 | XNU machine configuration | Candidate XNU 8796 is relevant to the iOS 16 generation | Reviewed XNU 8796 ARM64 machine allowlist and board header omit T8010; historical T8010/H9 source exists in older XNU 7195, not as a ready 8796 profile | **Known source/build blocker**; historical profile presence does not prove a compatible backport |
@@ -75,17 +75,23 @@ property. Its parent advertises `#address-cells = 1` and
 The parsed audit records this as a format caveat, not as a decoded hardware
 resource.
 
-## What this establishes
+## Target 19H422 KernelCache evidence
 
-The crosswalk now has target-side evidence for the names and placement of the
-iPhone 7 display, panel, SPI touchscreen transport, and backlight nodes. It
-also confirms that the selected 20H392 donor cache contains the corresponding
-high-level GUI/HID framework families.
+The extracted iPhone9,1 KernelCache is reported as Darwin 21.6.0,
+`xnu-8020.241.44~1/RELEASE_ARM64_T8010`, with 230 KEXT entries. Its SHA-256 is
+`7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`.
+The inventory includes target-side candidates for the display, LCD, MIPI-DSI,
+Samsung SPI, HID transport, SPI multitouch, and backlight subsystems. Exact
+bundle IDs, versions, and evidence limits are recorded in the
+[19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md).
 
-It does **not** establish that a donor framework can bind to a target driver.
-DeviceTree node presence is not a driver implementation; a framework image in
-the donor cache is not a target KEXT; and a matching string alone is not proof
-of an IOKit service match. No display, touch, or backlight operation has been
+This target kernel evidence is from iOS 15.8.8, not the iPhone X 20H392 donor.
+Its `RELEASE_ARM64_T8010` build string does not establish that the separate
+XNU 8796.141.3 donor kernel has a compatible T8010 machine profile.
+
+The crosswalk therefore now has evidence of target KEXT presence, but not
+proof that a particular KEXT personality matches a DeviceTree node or attaches
+to a live IOKit provider. No display, touch, or backlight operation has been
 validated on the target.
 
 The XNU 8796 T8010 machine-profile gap, static DeviceTree runtime-value gaps,
@@ -94,28 +100,29 @@ and custom kernel handoff requirements remain separate blockers. See the
 
 ## Next host-side evidence
 
-The next bounded task is to inventory the KEXTs and IOKit personality metadata
-from the already identified iPhone9,1 19H422 KernelCache component:
+The next bounded task is to inspect IOKit personality metadata for the
+identified iPhone9,1 19H422 candidate KEXTs. The KEXT inventory and hash are
+now recorded; the remaining work is to:
 
 1. Use the existing 19H422 IPSW on the analysis computer; do not connect,
    restore, update, or alter the phone.
-2. Extract the target KernelCache component to a host-side research directory.
-3. Record the KernelCache hash and enumerate its KEXT bundle identifiers.
-4. Inspect only the relevant candidate metadata for display, touch/HID,
-   backlight, and IOKit matching properties.
-5. Compare those records with the sanitized 19H422 DeviceTree node names and
-   compatible strings. Keep a provider relationship **unverified** until the
-   actual matching metadata supports it.
-6. Commit only sanitized names, bundle identifiers, hashes, and conclusions;
+2. Export the KEXT inventory as JSON using `ipsw kernel kexts --json`.
+3. Inspect the `io_kit_personalities` dictionaries for the candidate display,
+   touch/HID, SPI, and backlight bundles.
+4. Compare actual provider classes and match properties with the sanitized
+   DeviceTree node names and compatible strings. Keep a provider relationship
+   **unverified** until the metadata supports it.
+5. Commit only sanitized names, bundle identifiers, hashes, and conclusions;
    do not add firmware binaries, device-specific identifiers, or raw DeviceTree
    data to the repository.
 
-The `ipsw` CLI documents KernelCache extraction and KEXT listing. Those are
-offline file-analysis operations; they are not device commands.
+The `ipsw` CLI documents JSON KEXT output with each bundle's IOKit personality
+metadata. This is offline file analysis; it is not a device operation.
 
 ## Status
 
 M6 remains in progress. The donor framework inventory is substantially
-expanded and the target static DeviceTree is parsed, but target KEXT/provider
-matching and userland service compatibility are not complete. M7 (SpringBoard
-on iPhone9,1) has **not started**.
+expanded and the target static DeviceTree plus target-native 19H422 KEXT
+inventory are recorded. IOKit personality/provider matching and 20H392
+userland service compatibility are not complete. M7 (SpringBoard on
+iPhone9,1) has **not started**.
