@@ -50,3 +50,6 @@
 - 2026-11-20: Added a read-only BuildManifest evidence checklist. Exact donor
   manifest identities and KernelCache/DeviceTree metadata remain uninspected;
   no target-specific compatibility claim was added.
+- 2026-11-20: Added a standard-library read-only IPSW BuildManifest inspector and
+  synthetic unit tests. It reports every BuildIdentity without selecting a donor;
+  no IPSW or device was accessed during the test design.
