@@ -60,6 +60,13 @@ jobs:
           ref: ${{ steps.source-lock.outputs.commit_sha }}
           path: xnu/upstream
           persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
       - name: Verify exact source revision
         run: python3 tools/verify_xnu_source.py xnu/upstream
       - name: Check out historical XNU 7195 source
@@ -69,6 +76,13 @@ jobs:
           ref: ${{ steps.historical-xnu-lock.outputs.commit_sha }}
           path: xnu/historical-7195
           persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
       - name: Verify historical XNU source revision
         run: python3 tools/verify_xnu_source.py xnu/historical-7195 xnu/history/xnu-7195.121.3.lock.json
       - name: Check out transition XNU 8019 source
@@ -78,6 +92,13 @@ jobs:
           ref: ${{ steps.transition-xnu-lock.outputs.commit_sha }}
           path: xnu/transition-8019
           persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
       - name: Verify transition XNU source revision
         run: python3 tools/verify_xnu_source.py xnu/transition-8019 xnu/history/xnu-8019.80.24.lock.json
       - name: Audit historical T8010 machine-profile transition
