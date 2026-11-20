@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "references": [
+    {
+      "name": "ios-sweet",
+      "repository": "https://github.com/dipa-studio/ios-sweet",
+      "role": "Initial iOS 16-era XNU and userland reference",
+      "hardware": "Redmi Note 10 Pro, Qualcomm SM7150",
+      "reuse": "Research methods and subsystem decomposition only",
+      "hardware_code_portable": false
+    },
+    {
+      "name": "ios-sunstone",
+      "repository": "https://github.com/14sea/ios-sunstone",
+      "branch": "sunstone",
+      "reviewed_revision": "e0471191ddbfb17fde6674db41320bffa832a85b",
+      "reviewed_date": "2026-10-22",
+      "role": "Later-stage XNU 8796 plus iPhone X 20H392 userland reference",
+      "hardware": "Redmi Note 12 5G, Qualcomm SM4375 / Snapdragon 4 Gen 1",
+      "reported_milestone": "SpringBoard with touch, keys, display, battery and eight CPU cores",
+      "reuse": "Architecture, build reproducibility, patch ordering, diagnostics and subsystem checklist",
+      "hardware_code_portable": false,
+      "reported_limitations": [
+        "Some radio and sensor functions are kernel-only",
+        "Several hardware services are unavailable",
+        "Security model is experimental and incomplete",
+        "Not a usable phone OS"
+      ]
+    },
+    {
+      "name": "Project Sandcastle",
+      "repository": "https://github.com/corellium/projectsandcastle",
+      "role": "Boot-environment research reference",
+      "reuse": "Conceptual boot environment study only",
+      "hardware_code_portable": false
+    }
+  ],
+  "project_target": {
+    "model": "iPhone9,1",
+    "soc": "A10/T8010",
+    "userland_reference": "20H392",
+    "note": "The iPhone X userland reference does not establish iPhone7 platform or UI compatibility."
+  }
+}
