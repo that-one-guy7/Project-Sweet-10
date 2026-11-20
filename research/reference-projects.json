@@ -19,12 +19,22 @@
       "hardware": "Redmi Note 12 5G, Qualcomm SM4375 / Snapdragon 4 Gen 1",
       "reported_milestone": "SpringBoard with touch, keys, display, battery and eight CPU cores",
       "reuse": "Architecture, build reproducibility, patch ordering, diagnostics and subsystem checklist",
+      "hardware_code_portable": false
+    },
+    {
+      "name": "ios-qemu",
+      "repository": "https://github.com/lgrachov/ios-qemu",
+      "reviewed_date": "2026-11-20",
+      "role": "Virtualized iPhone X 20H392 userland and XNU 8796 compatibility reference",
+      "hardware": "QEMU virt machine with emulated devices on Apple Silicon",
+      "reported_milestone": "iOS 16.7.16 (20H392) userland, launchd, SpringBoard, Settings and Safari",
+      "reuse": "Userland dependency research, XNU patch categorization, build reproducibility and subsystem boundaries",
       "hardware_code_portable": false,
       "reported_limitations": [
-        "Some radio and sensor functions are kernel-only",
-        "Several hardware services are unavailable",
-        "Security model is experimental and incomplete",
-        "Not a usable phone OS"
+        "No GPU",
+        "No Secure Enclave",
+        "No microphone, camera, Bluetooth, cellular, location or Face ID",
+        "Experimental security model with permissive code-signing and sandbox behavior"
       ]
     },
     {
@@ -39,6 +49,6 @@
     "model": "iPhone9,1",
     "soc": "A10/T8010",
     "userland_reference": "20H392",
-    "note": "The iPhone X userland reference does not establish iPhone7 platform or UI compatibility."
+    "note": "The iPhone X userland reference and QEMU virtual-device support do not establish iPhone7 platform or UI compatibility."
   }
 }

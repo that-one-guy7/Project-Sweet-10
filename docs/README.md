@@ -13,5 +13,6 @@
 - [XNU baseline build inputs](xnu-build-inputs.md)
 - [ios-sweet patch triage](ios-sweet-patch-triage.md)
 - [ios-sunstone cross-project comparison](ios-sunstone-comparison.md)
+- [ios-qemu 20H392 compatibility reference](ios-qemu-reference.md)
 
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.

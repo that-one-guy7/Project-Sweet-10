@@ -17,8 +17,11 @@
 - Reviewed `ios-sunstone` revision
   `e0471191ddbfb17fde6674db41320bffa832a85b` as a later-stage XNU 8796 plus
   iPhone X 20H392 reference. It reports SpringBoard on Qualcomm SM4375 hardware.
-- Recorded why neither project's Qualcomm hardware implementation is portable to
-  iPhone 7 A10/T8010.
+- Reviewed `ios-qemu` as a virtualized iPhone X 20H392 userland reference. It reports
+  SpringBoard on QEMU virtual hardware using a rebuilt XNU 8796-generation kernel.
+- These projects are useful for source organization, patch discipline, build
+  reproducibility, and userland dependency research. Their Qualcomm or QEMU-specific
+  hardware implementations are not portable A10/T8010 code.
 
 ## Change log
 
@@ -29,3 +32,5 @@
   target hardware evidence, and a reproducible baseline build remain open.
 - 2026-11-20: Added the ios-sunstone cross-project comparison. Its SpringBoard result
   is an upstream report on SM4375 hardware, not evidence of A10 support.
+- 2026-11-20: Added the ios-qemu reference study. Its reported 20H392 SpringBoard
+  result is on a QEMU virtual board and does not establish iPhone9,1 support.
