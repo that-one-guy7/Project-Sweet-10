@@ -5,6 +5,7 @@
 - [Boot architecture](boot-architecture.md)
 - [Project Sandcastle loader review](sandcastle-loader-review.md)
 - [checkm8 and PongoOS architecture boundary](checkm8-pongo-boundary.md)
+- [PongoOS and XNU handoff analysis](pongo-xnu-handoff-analysis.md)
 - [Milestone tracker](milestone-tracker.md)
 - [XNU baseline selection](xnu-baseline-selection.md)
 - [Kernel/userland matching](kernel-userland-match.md)
