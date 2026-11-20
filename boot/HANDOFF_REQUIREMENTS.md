@@ -7,7 +7,7 @@ device-tree payload, or boot commands.
 | Area | Information to establish | Current evidence | Status |
 |---|---|---|---|
 | Kernel identity | Exact XNU source/build corresponding to selected OS build | Candidate xnu-8796.141.3 only; 20H392 match unverified | Open |
-| Pre-boot/loader role | Separate Pongo shell, KPF-assisted XNU path, and custom Sweet-10 XNU image loader | PongoOS README documents Pongo-only and Pongo-plus-KPF outputs; arbitrary custom XNU image loading is not established | Open |
+| Pre-boot/loader role | Separate Pongo shell, KPF-assisted XNU path, raw-payload entry, KernelCache-copy helper, and complete Sweet-10 XNU loader | Pinned PongoOS source has `bootr` raw-payload entry and `loadx` in-place copy helper; `loadx` leaves entry-point selection to another component. Neither implements the complete Sweet-10 image/boot-argument contract | Open |
 | Entry state | Required exception level, execution state, CPU register assumptions | Not yet verified against selected XNU revision | Open |
 | Boot arguments | Required boot-argument structure, version, flags, and memory location | Generic XNU source consumers need review | Open |
 | Device tree | Format, version, root properties, required nodes and properties | Consumer-name inventory only; target values unknown | Open |
@@ -36,4 +36,4 @@ not authorize a device boot attempt or changes to boot components.
 
 ## PongoOS-specific evidence
 
-The public PongoOS README documents a Pongo shell image and a consolidated PongoOS + checkra1n KPF image that proceeds to XNU. The pinned KPF source contains in-place kernel pattern-search and patch callbacks. This does not establish a general custom-XNU loader or populate the Apple `boot_args` structure for iPhone9,1. Sweet-10 must treat the pre-boot environment, image-loading layer, and A10 XNU platform as independent contracts. See [PongoOS/XNU handoff analysis](../docs/pongo-xnu-handoff-analysis.md).
+The public PongoOS README documents a Pongo shell image and a consolidated PongoOS + checkra1n KPF image that proceeds to XNU. The pinned implementation also contains a `bootr` raw-payload entry path and a `loadx` helper that copies bytes over the existing KernelCache while leaving entry-point selection to another component. These are not a complete custom-XNU loader and do not populate/validate the target Apple `boot_args`, memory map, or runtime DeviceTree. Sweet-10 must treat the pre-boot environment, raw-stage/image-loading layer, and A10 XNU platform as independent contracts. See the [PongoOS/XNU handoff analysis](../docs/pongo-xnu-handoff-analysis.md) and [raw-payload/copy helper audit](../docs/pongo-raw-payload-and-copyx-audit.md).
