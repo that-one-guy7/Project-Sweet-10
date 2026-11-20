@@ -7,8 +7,8 @@
 | M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open; xnu-8796.141.3 normal ARM64 machine allowlist omits T8010 |
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
-| M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; target-native 19H422 KernelCache (XNU 8020.241.44~1, `RELEASE_ARM64_T8010`) includes candidate display/touch/backlight KEXTs (`ApplePinotLCD`, `AppleMobileDispH9P`, `AppleSamsungSPI`, `AppleMultitouchSPI`, `AppleLMBacklight`); IOKit personality/provider matches and runtime operation remain unverified |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: donor-side inventory covers 532 LaunchDaemons, 1,668 advertised Mach services, six ARM64 GUI/core executables, direct links for backboardd/runningboardd/SpringBoard, the 2,710-image 20H392 SystemOS cache, PrebuiltLoaderSet records, and framework dependency layers through BackBoard, service/graphics, IOKit, FontServices, and CoreText; target-side 19H422 DeviceTree is independently hash-verified and parsed (227 nodes), confirming D10AP/T8010 display, Pinot LCD, Samsung SPI/K1 multitouch, and LM3539 backlight node identities; the 19H422 KernelCache is extracted and inspected on the host (44,924,928 bytes; SHA-256 `7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`; Darwin 21.6.0 / XNU `8020.241.44~1` / `RELEASE_ARM64_T8010`; 230 KEXT entries, including candidate display/touch/backlight bundles); IOKit personality/provider matching and 20H392 service compatibility remain unverified |
+| M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; target-native 19H422 KernelCache (XNU 8020.241.44~1, `RELEASE_ARM64_T8010`) includes candidate display/touch/backlight KEXTs; target IOKit personalities show exact `IONameMatch` overlaps for `disp0,t8010`, `lcd,pinot`, `spi-1,samsung`, `hid-transport,k1`, and `backlight,lm3539`; runtime provider attachment and hardware operation remain unverified |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor-side inventory covers 532 LaunchDaemons, 1,668 advertised Mach services, six ARM64 GUI/core executables, direct links for backboardd/runningboardd/SpringBoard, the 2,710-image 20H392 SystemOS cache, PrebuiltLoaderSet records, and framework dependency layers through BackBoard, service/graphics, IOKit, FontServices, and CoreText; target-side 19H422 DeviceTree is independently hash-verified and parsed (227 nodes), confirming D10AP/T8010 display, Pinot LCD, Samsung SPI/K1 multitouch, and LM3539 backlight node identities; the 19H422 KernelCache is extracted and inspected on the host (44,924,928 bytes; SHA-256 `7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`; Darwin 21.6.0 / XNU `8020.241.44~1` / `RELEASE_ARM64_T8010`; 230 KEXT entries, including candidate display/touch/backlight bundles); static personality metadata now confirms five exact target `IONameMatch` overlaps (display, LCD, SPI controller, K1 HID transport, backlight); runtime IOKit attachment and 20H392 service compatibility remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -248,3 +248,16 @@
   cross-referenced with the parsed DeviceTree. IOKit personality metadata and
   provider matching remain pending. No KernelCache or KEXT binary is committed;
   no phone operation was performed.
+
+
+- 2026-11-20: Inspected the 19H422 target KernelCache JSON IOKit personalities.
+  Found exact `IONameMatch` overlaps between target DeviceTree compatible
+  strings and the AppleMobileDispH9P display personality, ApplePinotLCD panel
+  personality, AppleSamsungSPI controller personality, AppleHIDTransportSPI
+  K1 transport personality, and AppleLMBacklight LM3539 personality. The
+  AppleMultitouchDriver metadata references the AppleMultitouchSPI
+  MultitouchHID plugin path; the AppleMultitouchSPI JSON item itself exposed
+  no personality field. The target MIPI-DSI parent compatible and display
+  backlight-control property remain absent from the allowlist summary.
+  Runtime IOKit attachment and hardware operation remain untested. Added
+  docs/iphone91-19h422-iokit-personality-crosswalk.md.

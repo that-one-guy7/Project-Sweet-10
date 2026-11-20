@@ -42,7 +42,7 @@ These results are not contradictory: the production 19H422 kernel is reported as
 
 ## Target KEXT candidates found
 
-The user-supplied complete ipsw listing reported 230 KEXT entries. The following entries are present in that target KernelCache. They are recorded as candidate bundles based on their identifiers and their relationship to the already parsed DeviceTree; their IOKit personalities have not yet been inspected.
+The user-supplied complete ipsw listing reported 230 KEXT entries. The following entries are present in that target KernelCache. Their embedded IOKit personality metadata has now been inspected for the candidate display, touch/HID, SPI, and backlight bundles. Exact name-level overlaps are summarized in the [target IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md).
 
 | Subsystem | Bundle identifier | Reported version | Related 19H422 DeviceTree evidence | Evidence level |
 |---|---|---:|---|---|
@@ -81,69 +81,40 @@ The separate 19H422 DeviceTree audit records:
 - Touch child: `/arm-io/spi2/multi-touch`, compatible with `hid-transport,k1`.
 - Backlight node: `/arm-io/i2c0/lm3539`, compatible with `backlight,lm3539`.
 
-The KEXT inventory now establishes that the target's 19H422 KernelCache contains plausible platform, display, SPI, HID, multitouch, and backlight driver bundles alongside those DeviceTree nodes. The next test is to inspect each bundle's IOKit personality metadata and compare actual match keys/values—not merely similar names.
+The KEXT inventory and personality metadata now establish exact static IONameMatch overlaps for display (`disp0,t8010`), LCD (`lcd,pinot`), Samsung SPI (`spi-1,samsung`), K1 SPI HID transport (`hid-transport,k1`), and backlight (`backlight,lm3539`). Other relationships and runtime attachment remain separate questions.
 
 ## Evidence levels and limits
 
 Keep these levels separate:
 
 1. **KEXT presence:** the bundle ID appears in the KernelCache inventory. This is now confirmed for the identifiers listed above.
-2. **Personality presence:** the KEXT's embedded Info.plist contains one or more IOKit personalities. This has not yet been inspected.
-3. **Match-property overlap:** a personality's provider class, name-match, compatible, or property-match metadata overlaps with the target DeviceTree. This has not yet been inspected.
+2. **Personality presence:** confirmed for eight of the nine requested candidate KEXTs in the user's JSON output. `AppleMultitouchSPI` had no `io_kit_personalities` field in that output.
+3. **Match-property overlap:** exact `IONameMatch` overlap is confirmed for five target nodes: display, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight. The MIPI-DSI controller parent-compatible and display `backlight-control` property remain unresolved.
 4. **Provider relationship:** the relevant IOKit service actually matches and attaches to the intended hardware. Static metadata alone may support a candidate relationship, but runtime binding and working hardware operation have not been validated.
 
 Do not state that display, touch, or backlight is working. Do not infer that these iOS 15 KEXTs can be copied into, substituted for, or used as drop-in drivers in the 20H392 donor system. The donor's XNU/userland generation and board are different.
 
-## Reproduction and next static query
+## Reproduction
 
-The user used:
-
-```sh
-KC="$HOME/19H422-kernel-inspect/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3"
-ipsw kernel version "$KC"
-ipsw kernel kexts "$KC"
-```
-
-The ipsw documentation describes JSON output for the KEXT inventory and exposes each KEXT's Info.plist IOKit personalities through `io_kit_personalities`. The next bounded query is:
+The target personality report was exported from the already extracted 19H422
+KernelCache with ipsw 3.1.749:
 
 ```sh
 KC="$HOME/19H422-kernel-inspect/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3"
 OUT="$HOME/19H422-kernel-inspect/analysis"
 mkdir -p "$OUT"
-
 ipsw kernel kexts --json "$KC" > "$OUT/kexts.json"
-
-jq '
-  .[] | . as $k
-  | select([
-      "com.apple.driver.AppleMobileDispH9P",
-      "com.apple.driver.ApplePinotLCD",
-      "com.apple.driver.AppleSynopsysMIPIDSI",
-      "com.apple.driver.AppleSamsungSPI",
-      "com.apple.driver.AppleHIDTransport",
-      "com.apple.driver.AppleHIDTransportSPI",
-      "com.apple.driver.AppleMultitouchSPI",
-      "com.apple.driver.AppleMultitouchDriver",
-      "com.apple.driver.AppleLMBacklight"
-    ] | index($k.id) != null)
-  | {
-      bundle_id: $k.id,
-      version: $k.version,
-      personalities: ($k.io_kit_personalities // {})
-    }
-' "$OUT/kexts.json" > "$OUT/target-hardware-personalities.json"
 ```
 
-Review the resulting JSON as static metadata. If the installed ipsw build rejects `--json`, first check `ipsw kernel kexts --help`; do not guess at a different schema. The current upstream ipsw kernel guide documents the JSON KEXT output and the `io_kit_personalities` field.
+The user's JSON output is summarized in the
+[IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md).
+No KEXT binary or KernelCache is committed to the repository.
 
-References:
-- [ipsw kernelcache analysis guide](https://github.com/blacktop/ipsw-skill/blob/main/ipsw/references/kernel.md)
-- [ipsw kernel parsing guide](https://blacktop.github.io/ipsw/docs/guides/kernel/)
 
 ## Status
 
 **Completed:** the user supplied the KernelCache file identity, SHA-256, exact Darwin/XNU version, T8010 release target string, ipsw version, and 230-entry KEXT inventory. Candidate target hardware KEXTs are now cross-referenced against the sanitized 19H422 DeviceTree.
 
-**Still open:** IOKit personality metadata, match-property overlap, provider relationships, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
+**Still open:** runtime IOKit provider attachment, the target `/arm-io/mipi-dsim` parent compatible and `backlight-control` property, nested plugin verification, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
 
 M6 remains in progress. M7 (SpringBoard on iPhone9,1) has not started.
