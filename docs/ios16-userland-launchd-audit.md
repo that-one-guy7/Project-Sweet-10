@@ -266,15 +266,14 @@ commands exited 0. Each output reported PrebuiltLoaderSet version 4d2b8647
 and an app loader with flags
 prebuilt|objc|ro-data|never-unload|pre-2022.
 
-The visible backboardd excerpt lists 21 regular dependent install names,
-including StudyLog, ButtonResolver, Haptics, BiometricKit, CarKit,
-IOMobileFramebuffer, BackBoardHIDEventFoundation,
-BackBoardHIDEventProcessors, BoardServices, Metal, and AVFoundation. The same
-excerpt records one weak-link entry as index 32767 (missing weak image).
-The text shared for review displayed only the first 60 lines via head -60;
-the shell command had redirected the full ipsw output to a local file first.
-The 21 paths are therefore only the visible excerpt, not a complete dependency
-count; the saved file may contain additional entries.
+The complete Dependents block supplied for backboardd contains 45 regular
+dependent install names plus one weak-link record reported as
+index 32767 (missing weak image). The weak-link record does not include an
+install name in the supplied output, so its identity remains unresolved. The
+full ordered list is recorded in
+[the dedicated PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md).
+The earlier terminal excerpt displayed only the first 60 lines, but the later
+full Dependents block resolves the inventory count for this record.
 
 The supplied runningboardd record lists six regular dependents: Foundation,
 RunningBoard, RunningBoardServices, libobjc, libSystem, and CoreFoundation.
@@ -291,7 +290,8 @@ for the paths and caveats.
 
 The ipsw output also prints implausible section offsets/sizes for several
 Swift and Objective-C sections. Those fields are excluded pending independent
-parser validation. The backboardd list is incomplete because only the first
-60 output lines were retained. None of these observations establishes
-iPhone9,1 compatibility, hardware-provider availability, or a successful
-iPhone 7 launch. M6 remains in progress and M7 has not started.
+parser validation. The complete backboardd dependency list now contains 45
+regular paths plus one weak-link record, but the exact weak-link install name
+is unresolved. None of these observations establishes iPhone9,1 compatibility,
+hardware-provider availability, or a successful iPhone 7 launch. M6 remains
+in progress and M7 has not started.
