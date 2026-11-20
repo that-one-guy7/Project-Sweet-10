@@ -78,7 +78,11 @@ INTEGER_PROPERTIES = {
     "usbphy-frequency",
 }
 RAW_PROPERTIES = {"reg", "ranges", "interrupts"}
-SELECTED_PROPERTIES = STRING_PROPERTIES | INTEGER_PROPERTIES | RAW_PROPERTIES
+# This Apple DeviceTree flag is intentionally allowlisted as a presence-only field.
+BOOLEAN_PROPERTIES = {"backlight-control"}
+SELECTED_PROPERTIES = (
+    STRING_PROPERTIES | INTEGER_PROPERTIES | RAW_PROPERTIES | BOOLEAN_PROPERTIES
+)
 
 
 class DeviceTreeFormatError(ValueError):
@@ -230,6 +234,15 @@ def index_tree(root: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def _render_property(name: str, value: bytes) -> dict[str, Any]:
+    if name in BOOLEAN_PROPERTIES:
+        # Preserve only presence and encoded length; do not infer more than the
+        # raw property marker supports. Empty values are common for DT booleans.
+        return {
+            "present": True,
+            "length_bytes": len(value),
+            "hex": value.hex(),
+            "zero_length_marker": len(value) == 0,
+        }
     if name in STRING_PROPERTIES:
         return {
             "length_bytes": len(value),
