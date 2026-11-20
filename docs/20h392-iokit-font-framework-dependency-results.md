@@ -151,7 +151,7 @@ throughout any graph rendering or summary.
 
 ## Next bounded inspection
 
-The next queries should resolve the four observed font-chain loader images:
+The four observed font-chain loader images have now been inspected. Their ordered loader records are in [the FontServices and CoreText result inventory](20h392-fontservices-coretext-dependency-results.md). The next phase is target-side applicability, not another broad donor crawl.
 
 1. `/System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib`
 2. `/System/Library/PrivateFrameworks/FontServices.framework/FontServices`
@@ -171,3 +171,13 @@ M6 remains in progress. M7 (SpringBoard on iPhone 7) has not started.
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [20H392 BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md)
 - [Apple dyld4 design](https://github.com/apple-oss-distributions/dyld/blob/main/doc/dyld4.md)
+
+
+## Completed FontServices/CoreText expansion
+
+The user's four additional loader queries succeeded and are documented in
+[the FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md).
+The new records contain 37 regular dependencies, one explicit weak link, and
+six raw kind-3 rows mapped to weak-link + re-export from the pinned dyld
+attribute definition. The next task is to cross-check concrete donor-side
+requirements against iPhone9,1 target-native evidence.
