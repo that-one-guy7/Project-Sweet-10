@@ -20,12 +20,12 @@ source for the Project Sweet-10 iPhone9,1 research target.
 ## Evidence gaps
 
 - Exact kernel build metadata corresponding to iOS 16.7.16 build 20H392.
-- Independently hash-verified and parsed iPhone9,1 DeviceTree property
-  values. A third-party 19H422 structure summary and Orchard-published
-  component digest now exist, but Project Sweet-10 has not recomputed the
-  hash or parsed the raw component and the summary omits required property
-  values. Its reported `reg` totals are fixed-width parser heuristics, not
-  verified register extents.
+- Independently parsed iPhone9,1 DeviceTree property values. The supplied
+  19H422 BuildManifest and D10AP IM4P SHA-256 values are verified against
+  published metadata, and the IM4P SHA-384 matches the manifest Digest.
+  The LZFSE payload has not yet been decompressed or parsed, so required
+  property values remain unknown. The public survey's `reg` totals are
+  fixed-width parser heuristics, not verified register extents.
 - Board configuration header generation/selection.
 - A reproducible unmodified XNU build.
 - A verified source-to-target compatibility assessment.
@@ -66,10 +66,11 @@ frequency. Those remain open target-evidence gates.
 Public metadata and a third-party survey now give the project a provisional
 19H422 D10AP DeviceTree structure reference. The survey reports the CPU nodes,
 T8010 `arm-io`, AIC child, and AIC-timebase child. Orchard publishes the
-BuildManifest and DeviceTree component hashes, but Project Sweet-10 has not
-recomputed those hashes or parsed the raw component. The survey does not
-expose the raw values required by XNU's CPU/clock and interrupt/timer
-consumers. Its `reg` size summaries assume fixed 64-bit address/size pairs
+BuildManifest and DeviceTree component hashes. Project Sweet-10 independently
+verified the supplied extracted-file SHA-256 values and confirmed the
+component SHA-384 matches the manifest Digest. The compressed LZFSE payload
+has not yet been decompressed or parsed. The survey does not expose the raw
+values required by XNU's CPU/clock and interrupt/timer consumers. Its `reg` size summaries assume fixed 64-bit address/size pairs
 without validating the parent cell-count contract. All individual target
 property values remain Unknown.
 
