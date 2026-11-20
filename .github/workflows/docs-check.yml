@@ -1,0 +1,24 @@
+name: Documentation scaffold checks
+
+on:
+  push:
+    branches: [main, "research/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run read-only scaffold checks
+        run: python3 tools/check_project.py
