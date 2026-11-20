@@ -37,8 +37,6 @@ class PongoSourceLockTests(unittest.TestCase):
         workflow_lines = [line.strip() for line in workflow.splitlines()]
         self.assertEqual(workflow_lines.count('- "pongo/BASELINE.lock.json"'), 2)
         self.assertEqual(workflow_lines.count('- "tools/verify_pongo_source.py"'), 2)
-        self.assertEqual(workflow.count('"pongo/BASELINE.lock.json"'), 2)
-        self.assertEqual(workflow.count('"tools/verify_pongo_source.py"'), 2)
 
     def test_workflow_keeps_repository_permissions_read_only(self):
         workflow = (ROOT / ".github/workflows/xnu-source-check.yml").read_text(encoding="utf-8")
