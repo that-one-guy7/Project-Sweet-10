@@ -295,3 +295,16 @@ regular paths plus one weak-link record, but the exact weak-link install name
 is unresolved. None of these observations establishes iPhone9,1 compatibility,
 hardware-provider availability, or a successful iPhone 7 launch. M6 remains
 in progress and M7 has not started.
+
+
+## Next framework-level inspection
+
+The dedicated [BackBoard framework dependency expansion plan](20h392-backboard-framework-dependency-expansion.md)
+defines the next donor-cache queries for BackBoardHIDEventFoundation,
+BackBoardHIDEventProcessors, BackBoardServices, and IOMobileFramebuffer.
+These four images were selected because their install names appear in the
+user-supplied backboardd PrebuiltLoaderSet dependents and in the donor cache
+inventory. Their individual loader outputs have not yet been collected.
+The plan keeps dependent edges, weak-link records, and bind targets separate,
+and explicitly requires iPhone9,1 compatibility to be established from
+target-specific evidence rather than donor-cache presence.
