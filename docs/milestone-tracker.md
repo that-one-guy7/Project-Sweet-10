@@ -273,3 +273,15 @@
 
 
 - 2026-11-20: Completed the user's host-side run of the privacy-filtered inspector on the iPhone9,1 / 19H422 DeviceTree. The parsed stream contained 227 nodes across 160,572 bytes, matched the previously recorded SHA-256 `39331154d60f05923da0b2c5dc9ac6395da6a8276f0952e997dbdcfa81c2420e`, and had zero trailing bytes. It confirmed `/arm-io/mipi-dsim` compatible `mipi-dsim-1,synopsys`, adding a sixth exact target-native `IONameMatch` overlap for `AppleSynopsysMIPIDSI`. The allowlisted output did not report `backlight-control` on `/arm-io/disp0`; the separate display-to-backlight association remains unconfirmed. The output confirms that arbitrary DeviceTree properties and unique identifiers were not emitted. The raw tree is not committed. No runtime IOKit attachment or hardware operation is claimed.
+
+
+- 2026-11-20: Audited the pinned ipsw 3.1.749 implementation for KEXT JSON output
+  and KEXT extraction. `kernel kexts --json` serializes the KernelCache
+  `__PRELINK_INFO.__info` bundle records; `io_kit_personalities` is an
+  optional `omitempty` field. The absence of that key from the
+  `AppleMultitouchSPI` JSON record therefore does not prove that the KEXT's
+  nested `MultitouchHID.plugin` is absent or unused. The plugin must be checked
+  separately in the matching 19H422 filesystem bundle. Updated the target KEXT
+  inventory to distinguish KernelCache metadata from filesystem-plugin
+  metadata. No KEXT or plugin binary is committed, and no device or firmware
+  operation was performed.
