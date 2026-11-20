@@ -34,7 +34,7 @@ The checked-in privacy-filtered summary is `research/iphone91-19h422-devicetree-
 | `/arm-io/spi2/multi-touch` | `hid-transport,k1` |
 | `/arm-io/i2c0/lm3539` | `backlight,lm3539` |
 
-The summary is allowlist-filtered and deliberately omits arbitrary properties. The parent `/arm-io/mipi-dsim` compatible value and any `backlight-control` property on the relevant display node are not included in this summary.
+The summary is allowlist-filtered and deliberately omits arbitrary properties. The existing inspector selected `/arm-io/mipi-dsim` and `/arm-io/disp0`, but its first output schema did not include the parent's `compatible` value or the `backlight-control` flag. A small allowlist-only parser update now reports those two items without exposing any other new DeviceTree properties; the user's raw-tree inspection result is pending.
 
 ## Direct IONameMatch overlaps
 
@@ -117,11 +117,11 @@ This is still evidence from the iOS 15.8.8 target reference. It does not solve t
 
 ## Next bounded host-side checks
 
-1. Inspect the existing raw 19H422 DeviceTree with the project's privacy-filtered parser extended only to report the `compatible` value for `/arm-io/mipi-dsim` and the presence/value of `backlight-control` on the relevant display node. Do not dump arbitrary properties or the raw tree.
+1. Run the updated privacy-filtered parser on the existing raw 19H422 DeviceTree. It now emits only the `/arm-io/mipi-dsim` `compatible` value and `backlight-control` presence/encoded-length marker for `/arm-io/disp0`, in addition to the prior allowlist. Do not dump arbitrary properties or the raw tree.
 2. Inspect the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin` metadata from the host-side KernelCache extraction, if ipsw exposes that nested plugin as a separate metadata object. Keep it as a plugin reference until confirmed.
 3. Compare these target 19H422 personality records against the 20H392 donor's corresponding framework/service requirements at the metadata level only. Keep donor-versus-target version and platform differences explicit.
 
-No device connection, firmware update, restore, partition write, exploit, or boot operation is part of these checks.
+No device connection, firmware update, restore, partition write, exploit, or boot operation is part of these checks. Synthetic tests cover both new fields and verify that an unrelated display-node serial-number field remains excluded.
 
 ## References
 
