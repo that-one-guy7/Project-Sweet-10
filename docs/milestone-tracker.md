@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: the mounted iPhone X 20H392 donor root has now been inventoried locally (532 LaunchDaemons; 1,668 advertised Mach service names; source plist SHA-256 recorded in `docs/ios16-userland-launchd-audit.md`); executable-path presence, embedded XPC/IOKit dependencies, and iPhone9,1 service matching remain unverified |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor inventory reviewed (532 LaunchDaemons; 1,668 Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); transitive framework closure, complete split-volume resolution, embedded XPC/IOKit dependencies, and iPhone9,1 service matching remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -151,3 +151,11 @@
   SpringBoard, configd, notifyd and mediaserverd. This is donor-side static
   configuration only; executable presence, runtime registration and
   iPhone9,1 compatibility remain unverified.
+
+- 2026-11-20: Inspected the donor ARM64 Mach-O files for backboardd,
+  runningboardd, and SpringBoard. Direct linked-library counts are 46, 6,
+  and 4 respectively. backboardd directly references HID/display, IOMobileFramebuffer,
+  Metal, graphics, IOKit, biometric and accessory frameworks. SpringBoard
+  declares @executable_path/Frameworks; no LC_RPATH entries were reported for
+  backboardd or runningboardd. This is load-command metadata only; the recursive
+  dependency closure and full split-volume resolution remain unverified.
