@@ -83,4 +83,10 @@
   XNU 8796 H13 uses CTRR rather than H9's KTRR declaration. This bounded source
   review does not establish target compatibility or provide a complete
   dependency graph. Added docs/h9-feature-macro-consumer-audit.md.
+- 2026-11-20: Compared the ARM64 platform interfaces in xnu-7195.121.3 and
+  xnu-8796.141.3. The visible boot_args field order and PE_init_platform
+  signature remain, while CPU topology parsing has newer cpumask/cluster
+  accounting and split CPU count updates. Both versions parse DeviceTree CPU
+  nodes and map CPU/cluster register ranges; iPhone9,1 values remain unknown.
+  Added docs/arm64-platform-interface-comparison.md.
 
