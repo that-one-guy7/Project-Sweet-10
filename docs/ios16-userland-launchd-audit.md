@@ -356,3 +356,29 @@ The next bounded donor inspection targets IOKit, CoreGraphics, and the
 FontServices image named by the unknown-kind row. These cache records remain
 static iPhone X donor evidence, not iPhone9,1 driver or SpringBoard proof.
 M6 remains in progress; M7 has not started.
+
+
+## IOKit, CoreGraphics, and FontServices loader results (2026-11-20)
+
+The user inspected the iPhone X 20H392 donor SystemOS loaders for IOKit,
+CoreGraphics, and FontServices `libGSFont.dylib`. All three commands reported
+exit status 0 and the pasted output showed no stderr messages. The supplied
+blocks contain 25 regular dependency rows, one explicit CoreAnalytics weak
+link from CoreGraphics, and three FontServices `unknown 3` entries naming
+CoreText, FontServices, and libGSFontCache.
+
+The raw kind-3 classification was checked against the exact ipsw v3.1.749
+source commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1` and Apple dyld commit
+`fd8d0c4d52320ebf64db34f3cb280310d905c5ae`. ipsw defines weak-link=1 and
+re-export=2 but its String method switches on exact values, so combined value
+3 prints as `unknown 3`. Apple's `LinkedDylibAttributes` defines weakLink
+and reExport as independent bitfields and its formatter appends both flags.
+The kind-3 entries are therefore source-mapped to weak-link + re-export; the
+original raw ipsw label is retained. This is a parser/source interpretation,
+not an independent extraction of the raw byte from the cache.
+
+Complete ordered records are in
+[the IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md).
+The next bounded inspection follows libFontParser, FontServices,
+libGSFontCache, and CoreText. These remain donor static records and do not
+establish iPhone9,1 graphics or font runtime compatibility.
