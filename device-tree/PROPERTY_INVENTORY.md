@@ -37,11 +37,15 @@ Public firmware metadata establishes that
 `15A402`, and `19A346`. Those older entries have separate per-build
 digest pairs.
 
-For the newer iOS 15.8.8 build `19H422`, Orchard publishes the D10AP
-DeviceTree component path and SHA-256. The same full IPSW SHA-256 is listed
-by IPSW.me. These are third-party published metadata values; Project
-Sweet-10 has not independently recomputed the hashes.
+For iOS 15.8.8 build `19H422`, the supplied standalone BuildManifest and
+D10AP DeviceTree IM4P have been independently hashed. Their SHA-256 values
+match the pinned Orchard metadata. The component SHA-384 also matches the
+48-byte `Digest` value in the D10AP BuildManifest identities. The full IPSW
+archive itself was not supplied and its archive hash remains unverified.
 
+The supplied component parses as an IM4P `dtre` wrapper with description
+`EmbeddedDeviceTrees-6331.140.11.700.2` and an LZFSE-family `bvx2`
+payload. The compressed payload has not yet been decompressed or parsed.
 A separate public 19H422 survey file reports 226 nodes, two
 `apple,hurricane-zephyr` CPU nodes, an `arm-io,t8010` node, an
 `aic,1` child, and an `aic-timebase` child. Its script emits node names,
@@ -73,7 +77,10 @@ or a third-party digest does not populate a property-value cell.
 4. Which platform values are provided by the boot environment rather than static source?
 5. Are any consumers conditional on build flags or platform-expert selection?
 
-No individual property values are promoted because Project Sweet-10 has not
-independently hash-verified and parsed a build-matched iPhone9,1 DeviceTree.
-The public 19H422 structural survey is summarized above, but it omits the raw
-values required by the XNU consumers.
+No individual property values are promoted yet. Project Sweet-10 has
+independently verified the extracted artifact hashes, but the payload still
+needs to be decompressed and parsed, and every property must be checked
+against the relevant XNU consumer. The public 19H422 structural survey is
+secondary evidence and does not expose the required raw values.
+
+See the [19H422 artifact verification record](../docs/iphone91-19h422-artifact-verification.md) and run the read-only validator at `tools/verify_d10ap_19h422_artifacts.py`.
