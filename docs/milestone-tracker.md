@@ -76,3 +76,11 @@
   reviewed paths. This narrows the public snapshot transition but does not
   reveal Apple's internal rationale or prove a downstream/private implementation.
   Added docs/t8010-public-source-transition.md.
+- 2026-11-20: Compared historical H9 feature macros and selected consumers
+  between xnu-7195.121.3 and xnu-8796.141.3. Generic PAN, 16K-page, global
+  sleep, and some PMU conditionals remain; the old MIGSTS and single-step
+  workaround conditionals were not found in the corresponding reviewed files.
+  XNU 8796 H13 uses CTRR rather than H9's KTRR declaration. This bounded source
+  review does not establish target compatibility or provide a complete
+  dependency graph. Added docs/h9-feature-macro-consumer-audit.md.
+

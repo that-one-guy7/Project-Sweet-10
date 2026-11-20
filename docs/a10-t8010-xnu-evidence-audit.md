@@ -196,6 +196,21 @@ used with XNU 8796.
 - [XNU 8796 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/board_config.h)
 - [XNU 8796 ARM64 pexpert Makefile](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/Makefile)
 
+### H9 feature-macro consumer review
+
+A separate file-by-file comparison now traces the historical H9 feature macros
+into selected XNU 7195 and XNU 8796 consumers. The results are mixed: generic
+16K-page, PAN, global-sleep, and PMU paths remain, while the old MIGSTS exception
+branch and single-step retirement workaround are absent from the corresponding
+reviewed newer files. XNU 8796's H13 profile uses CTRR rather than H9's KTRR
+declaration. Some Hurricane-specific conditionals remain in shared source even
+though the selected 8796 board configuration does not select H9/T8010.
+
+This was a bounded source-file review, not a complete dependency graph. It does
+not justify copying H9.h or asserting that a missing conditional means the
+underlying hardware feature is unsupported. See the
+[H9 feature-macro consumer audit](h9-feature-macro-consumer-audit.md).
+
 ### Public-history follow-up
 
 - [XNU 8019.41.5 import and T8010 transition audit](t8010-public-source-transition.md)
