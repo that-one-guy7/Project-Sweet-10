@@ -143,6 +143,12 @@ class LaunchdInventoryTests(unittest.TestCase):
             with self.assertRaises(InventoryError):
                 inspect_root(root)
 
+    def test_workflow_triggers_when_launchd_inspector_changes(self):
+        workflow = (
+            ROOT / ".github/workflows/xnu-source-check.yml"
+        ).read_text(encoding="utf-8")
+        self.assertEqual(workflow.count('- "tools/inspect_launchd_jobs.py"'), 2)
+
     def test_command_line_emits_json_and_does_not_modify_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
