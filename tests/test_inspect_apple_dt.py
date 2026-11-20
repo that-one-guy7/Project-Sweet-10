@@ -37,6 +37,21 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
             "reg": struct.pack("<I", 0),
             "timebase-frequency": struct.pack("<Q", 0),
         })
+        mipi_lcd = node({
+            "name": b"lcd\x00",
+            "compatible": b"lcd,pinot\x00",
+            "device_type": b"lcd\x00",
+        })
+        mipi_dsim = node({
+            "name": b"mipi-dsim\x00",
+            "compatible": b"mipi-dsim-1,synopsys\x00",
+        }, [mipi_lcd])
+        display = node({
+            "name": b"disp0\x00",
+            "compatible": b"disp0,t8010\x00",
+            "backlight-control": b"",
+            "serial-number": b"PRIVATE-DISPLAY-ID\x00",
+        })
         aic = node({
             "name": b"aic\x00",
             "compatible": b"aic,1\x00",
@@ -54,7 +69,7 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
             "#address-cells": struct.pack("<I", 2),
             "#size-cells": struct.pack("<I", 2),
             "ranges": struct.pack("<QQQ", 0, 0x200000000, 0x100000000),
-        }, [aic])
+        }, [aic, mipi_dsim, display])
         chosen = node({
             "name": b"chosen\x00",
             "embedded-panic-log-size": struct.pack("<I", 0x80000),
@@ -77,15 +92,28 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
     def test_parses_entire_tree_and_indexes_nodes(self):
         raw = self.fixture()
         parsed = parse_tree(raw)
-        self.assertEqual(parsed["_node_count"], 6)
+        self.assertEqual(parsed["_node_count"], 9)
         report = inspect_tree(raw)
         self.assertEqual(report["parsed_bytes"], len(raw))
-        self.assertEqual(report["node_count_including_root"], 6)
+        self.assertEqual(report["node_count_including_root"], 9)
         nodes = {item["path"]: item for item in report["nodes"]}
         self.assertTrue(nodes["/arm-io/aic"]["present"])
         self.assertEqual(
             nodes["/arm-io/aic"]["properties"]["#main-cpus"]["u32_le_cells"],
             [2],
+        )
+        self.assertEqual(
+            nodes["/arm-io/mipi-dsim"]["properties"]["compatible"]["strings"],
+            ["mipi-dsim-1,synopsys"],
+        )
+        self.assertEqual(
+            nodes["/arm-io/disp0"]["properties"]["backlight-control"],
+            {
+                "present": True,
+                "length_bytes": 0,
+                "hex": "",
+                "zero_length_marker": True,
+            },
         )
 
     def test_report_does_not_emit_unique_identifiers(self):
@@ -94,6 +122,7 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
         self.assertNotIn("PRIVATE-TEST-ID", rendered)
         self.assertNotIn("PRIVATE-ROOT-ID", rendered)
         self.assertNotIn("serial-number", rendered)
+        self.assertNotIn("PRIVATE-DISPLAY-ID", rendered)
         self.assertFalse(report["privacy"]["arbitrary_properties_emitted"])
 
     def test_rejects_truncated_node_header(self):
