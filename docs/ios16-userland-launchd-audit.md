@@ -150,6 +150,46 @@ covers only the central LaunchDaemons dictionary; it does not inventory
 LaunchAgents, embedded XPC bundles, IOKit personalities, or runtime processes.
 The full JSON was reviewed locally and is not committed to this repository.
 
+## Mach-O direct-link inventory for the GUI chain (2026-11-20)
+
+The user also inspected the donor executables with LLVM `llvm-objdump` using
+`--macho --dylibs-used` and `--macho --rpaths`. The output reports these
+direct load-command dependencies:
+
+| Executable | Direct linked dylibs reported | Notable links |
+|---|---:|---|
+| `/usr/libexec/backboardd` | 46 | BackBoard HID event foundation/processors and services; IOMobileFramebuffer; IOKit; IOSurface; Metal; CoreGraphics; CoreBrightness; BiometricKit; ButtonResolver; RunningBoardServices |
+| `/usr/libexec/runningboardd` | 6 | Foundation; RunningBoard; RunningBoardServices; CoreFoundation; libobjc; libSystem |
+| `SpringBoard.app/SpringBoard` | 4 | SpringBoard.framework; Foundation; libobjc; libSystem |
+
+The `backboardd` output marks `/usr/appleinternal/lib/liblinkguard.dylib`
+as a weak dependency. The reported runtime search paths are empty for
+`backboardd` and `runningboardd`; SpringBoard reports
+`@executable_path/Frameworks`.
+
+### Interpretation
+
+- This is the direct dependency list recorded in each Mach-O image, not a
+  recursive dependency closure. Frameworks such as SpringBoard.framework and
+  BackBoardServices.framework have their own dependencies that still need
+  separate inspection.
+- A dependency's install name is not proof that its file is present in the
+  mounted root, loadable from the donor's split system volume layout, or
+  compatible with iPhone9,1.
+- The empty `LC_RPATH` result for two binaries does not mean they have no
+  dependencies; their output contains absolute install names. SpringBoard's
+  executable-relative Frameworks path must be checked against the app bundle.
+- The backboard dependency set flags display, HID, graphics, biometric, and
+  accessory integration as major areas for later target-specific compatibility
+  research. It does not identify the implementation or register interface of
+  those drivers on iPhone 7.
+
+**Next static check:** resolve the absolute install names against the mounted
+donor root, inspect SpringBoard.app/Frameworks, and separately account for any
+system frameworks supplied by the companion SystemOS Cryptex. Missing paths in
+the root filesystem alone must not be classified as absent from the complete
+donor system.
+
 ## M6 status and next evidence needed
 
 **M6 remains in progress.** The actual 20H392 donor root has now been inventoried
@@ -167,7 +207,7 @@ The next M6 evidence should:
 4. Compare each donor-side requirement with iPhone9,1-specific DeviceTree and
    stock-firmware evidence; classify it as target-confirmed, donor-reference-only,
    missing, or unverified.
-6. Keep Home-button, Touch ID/SEP, audio, cellular, Wi-Fi, Bluetooth, display,
+5. Keep Home-button, Touch ID/SEP, audio, cellular, Wi-Fi, Bluetooth, display,
    battery, and power dependencies as distinct target-specific rows.
 
 Until those checks are complete, the 20H392 donor's reported SpringBoard boot
