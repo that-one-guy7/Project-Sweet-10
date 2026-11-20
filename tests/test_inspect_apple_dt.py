@@ -14,9 +14,9 @@ def prop(name: str, value: bytes) -> bytes:
     encoded = name.encode("ascii")
     if len(encoded) > 31:
         raise ValueError("property name too long for fixture")
-    name_field = encoded + b"\\x00" * (32 - len(encoded))
+    name_field = encoded + b"\x00" * (32 - len(encoded))
     value_header = struct.pack("<I", len(value))
-    padding = b"\\x00" * ((-len(value)) % 4)
+    padding = b"\x00" * ((-len(value)) % 4)
     return name_field + value_header + value + padding
 
 
@@ -30,45 +30,45 @@ def node(properties: dict[str, bytes], children: list[bytes] | None = None) -> b
 class AppleDeviceTreeInspectorTests(unittest.TestCase):
     def fixture(self):
         cpu0 = node({
-            "name": b"cpu0\\x00",
-            "device_type": b"cpu\\x00",
-            "state": b"running\\x00",
-            "compatible": b"apple,hurricane-zephyr\\x00ARM,v8\\x00",
+            "name": b"cpu0\x00",
+            "device_type": b"cpu\x00",
+            "state": b"running\x00",
+            "compatible": b"apple,hurricane-zephyr\x00ARM,v8\x00",
             "reg": struct.pack("<I", 0),
             "timebase-frequency": struct.pack("<Q", 0),
         })
         aic = node({
-            "name": b"aic\\x00",
-            "compatible": b"aic,1\\x00",
-            "device_type": b"interrupt-controller\\x00",
-            "interrupt-controller": b"master\\x00",
+            "name": b"aic\x00",
+            "compatible": b"aic,1\x00",
+            "device_type": b"interrupt-controller\x00",
+            "interrupt-controller": b"master\x00",
             "#interrupt-cells": struct.pack("<I", 1),
             "#main-cpus": struct.pack("<I", 2),
             "aic-version": struct.pack("<I", 2),
             "reg": struct.pack("<QQ", 0x0E100000, 0x8000),
         })
         arm_io = node({
-            "name": b"arm-io\\x00",
-            "compatible": b"arm-io,t8010\\x00",
-            "device_type": b"t8010-io\\x00",
+            "name": b"arm-io\x00",
+            "compatible": b"arm-io,t8010\x00",
+            "device_type": b"t8010-io\x00",
             "#address-cells": struct.pack("<I", 2),
             "#size-cells": struct.pack("<I", 2),
             "ranges": struct.pack("<QQQ", 0, 0x200000000, 0x100000000),
         }, [aic])
         chosen = node({
-            "name": b"chosen\\x00",
+            "name": b"chosen\x00",
             "embedded-panic-log-size": struct.pack("<I", 0x80000),
-            "serial-number": b"PRIVATE-TEST-ID\\x00",
+            "serial-number": b"PRIVATE-TEST-ID\x00",
         })
         cpus = node({
-            "name": b"cpus\\x00",
+            "name": b"cpus\x00",
             "#address-cells": struct.pack("<I", 1),
             "#size-cells": struct.pack("<I", 0),
         }, [cpu0])
         root = node({
-            "name": b"device-tree\\x00",
-            "compatible": b"D10AP\\x00iPhone9,1\\x00AppleARM\\x00",
-            "serial-number": b"PRIVATE-ROOT-ID\\x00",
+            "name": b"device-tree\x00",
+            "compatible": b"D10AP\x00iPhone9,1\x00AppleARM\x00",
+            "serial-number": b"PRIVATE-ROOT-ID\x00",
             "#address-cells": struct.pack("<I", 2),
             "#size-cells": struct.pack("<I", 2),
         }, [chosen, cpus, arm_io])
@@ -101,19 +101,19 @@ class AppleDeviceTreeInspectorTests(unittest.TestCase):
             parse_tree(b"\\x01\\x02\\x03")
 
     def test_rejects_property_that_runs_past_file(self):
-        malformed = struct.pack("<II", 1, 0) + b"test" + b"\\x00" * 28 + struct.pack("<I", 100)
+        malformed = struct.pack("<II", 1, 0) + b"test" + b"\x00" * 28 + struct.pack("<I", 100)
         with self.assertRaisesRegex(DeviceTreeFormatError, "extends beyond input"):
             parse_tree(malformed)
 
     def test_rejects_trailing_bytes(self):
         with self.assertRaisesRegex(DeviceTreeFormatError, "trailing bytes remain"):
-            parse_tree(self.fixture() + b"\\x00")
+            parse_tree(self.fixture() + b"\x00")
 
     def test_rejects_duplicate_property_names(self):
         encoded = (
             struct.pack("<II", 2, 0)
-            + prop("name", b"device-tree\\x00")
-            + prop("name", b"duplicate\\x00")
+            + prop("name", b"device-tree\x00")
+            + prop("name", b"duplicate\x00")
         )
         with self.assertRaisesRegex(DeviceTreeFormatError, "Duplicate property"):
             parse_tree(encoded)
