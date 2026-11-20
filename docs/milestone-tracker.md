@@ -5,7 +5,7 @@
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
 | M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: XNU source consumers mapped; target hardware evidence incomplete |
 | M2 | XNU baseline | Exact revision and reproducible host build | Candidate XNU source pinned; exact 20H392 kernel revision and reproducible build not yet established |
-| M3 | Boot contract | Reviewed A10 handoff specification | Not started |
+| M3 | Boot contract | Reviewed A10 handoff specification | Generic handoff categories documented; XNU entry ABI and all iPhone9,1 values remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Research inventory started; A10 implementation not started |
 | M6 | Root/userland research | launchd dependencies documented | 20H392 reference selected; dependency analysis not started |
@@ -19,8 +19,11 @@
   iPhone X 20H392 reference. It reports SpringBoard on Qualcomm SM4375 hardware.
 - Reviewed `ios-qemu` as a virtualized iPhone X 20H392 userland reference. It reports
   SpringBoard on QEMU virtual hardware using a rebuilt XNU 8796-generation kernel.
+- Reviewed Corellium's Sandcastle README and `loader/load-linux.c`. Its loader is
+  explicitly Linux/PongoOS-specific. It is useful for boot-environment architecture,
+  not as an XNU loader or source of iPhone9,1 hardware values.
 - These projects are useful for source organization, patch discipline, build
-  reproducibility, and userland dependency research. Their Qualcomm or QEMU-specific
+  reproducibility, and subsystem boundaries. Their Qualcomm or QEMU-specific
   hardware implementations are not portable A10/T8010 code.
 
 ## Change log
@@ -34,3 +37,5 @@
   is an upstream report on SM4375 hardware, not evidence of A10 support.
 - 2026-11-20: Added the ios-qemu reference study. Its reported 20H392 SpringBoard
   result is on a QEMU virtual board and does not establish iPhone9,1 support.
+- 2026-11-20: Added a Sandcastle loader source review and an XNU handoff evidence
+  checklist. No boot implementation or target-specific values were added.

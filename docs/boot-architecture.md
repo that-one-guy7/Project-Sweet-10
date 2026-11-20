@@ -20,4 +20,24 @@ This is a design checklist, not a boot procedure.
 - Which interrupt controller and timer interfaces are used?
 - Which display and HID services are needed for a first visible UI?
 
-Do not copy hardware values from ios-sweet: its target is Qualcomm SM7150.
+## Project Sandcastle boundary
+
+Corellium's public Sandcastle README describes its loader as loading a Linux kernel
+and device tree via PongoOS. Its `loader/load-linux.c` is a USB host utility that
+transfers a device-tree blob and a Linux image through a PongoOS-specific protocol.
+That establishes a useful architectural separation between host transport, early
+boot environment, kernel image, and device-tree input.
+
+It does not establish an XNU handoff contract. The Linux image format, USB protocol,
+PongoOS command strings, and Sandcastle device-tree assumptions must not be treated as
+XNU ABI or iPhone9,1 platform data.
+
+See [the source review](sandcastle-loader-review.md) and
+[the handoff evidence checklist](../boot/HANDOFF_REQUIREMENTS.md).
+
+## Evidence status
+
+The project has not yet verified the exact 20H392 kernel source revision, XNU entry
+requirements for the selected revision, or iPhone9,1 device-tree and memory-map values.
+All target-specific addresses, interrupt IDs, frequencies, and hardware constants
+remain unknown. Do not copy hardware values from ios-sweet: its target is Qualcomm SM7150.
