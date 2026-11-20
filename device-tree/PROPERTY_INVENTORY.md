@@ -65,6 +65,7 @@ or a third-party digest does not populate a property-value cell.
 4. Which platform values are provided by the boot environment rather than static source?
 5. Are any consumers conditional on build flags or platform-expert selection?
 
-No individual property values are supplied because the project has not yet
-parsed an authenticated, build-matched iPhone9,1 DeviceTree. Artifact-level
-metadata is now available; see the section above for its limits.
+No individual property values are promoted because Project Sweet-10 has not
+independently hash-verified and parsed a build-matched iPhone9,1 DeviceTree.
+The public 19H422 structural survey is summarized above, but it omits the raw
+values required by the XNU consumers.
