@@ -157,7 +157,7 @@ def inspect_artifacts(
         raise ValueError(
             f"Unexpected ProductBuildVersion: expected {EXPECTED_BUILD}, got {product_build!r}"
         )
-    if "iPhone9,1" not in supported_products:
+    if not isinstance(supported_products, list) or "iPhone9,1" not in supported_products:
         raise ValueError("BuildManifest does not list iPhone9,1 in SupportedProductTypes.")
 
     identities = manifest.get("BuildIdentities")
