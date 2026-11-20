@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: donor inventory reviewed (532 LaunchDaemons; 1,668 Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); iPhone X 20H392 SystemOS dyld cache parsed (2,710 images; 42 subcaches); prebuilt loader records inspected for backboardd (45 regular dependents plus one weak-link record with unresolved install name), runningboardd (6), and SpringBoard (4); suspicious section offsets excluded pending parser validation; recursive dependency graph, embedded XPC/IOKit matching, and iPhone9,1 service compatibility remain unverified; four framework loader records collected successfully (BackBoardHIDEventFoundation: 10 regular; BackBoardHIDEventProcessors: 9 regular; BackBoardServices: 12 regular plus one re-export; IOMobileFramebuffer: 4 regular); the next donor-side layer is selected from these observed edges; target service compatibility remains unverified; a subsequent six-image layer was collected (BoardServices, BaseBoard, GraphicsServices, RunningBoardServices, AssertionServices, IOSurface: 44 regular, two weak-link, one raw kind-3 record likely combining weak-link and re-export attributes (pending raw-byte validation)); IOKit/CoreGraphics/FontServices inspection is next |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor inventory reviewed (532 LaunchDaemons; 1,668 Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); iPhone X 20H392 SystemOS dyld cache parsed (2,710 images; 42 subcaches); prebuilt loader records inspected for backboardd (45 regular dependents plus one weak-link record with unresolved install name), runningboardd (6), and SpringBoard (4); suspicious section offsets excluded pending parser validation; recursive dependency graph, embedded XPC/IOKit matching, and iPhone9,1 service compatibility remain unverified; four framework loader records collected successfully (BackBoardHIDEventFoundation: 10 regular; BackBoardHIDEventProcessors: 9 regular; BackBoardServices: 12 regular plus one re-export; IOMobileFramebuffer: 4 regular); the next donor-side layer is selected from these observed edges; target service compatibility remains unverified; a subsequent six-image layer was collected (BoardServices, BaseBoard, GraphicsServices, RunningBoardServices, AssertionServices, IOSurface: 44 regular, two weak-link, one raw kind-3 record source-mapped to weak-link + re-export (original ipsw label retained)); IOKit/CoreGraphics/FontServices inspection is next |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -199,3 +199,17 @@
   so this is a strong but not raw-byte-verified interpretation. No
   iPhone9,1 runtime compatibility is established. Added
   docs/20h392-platform-framework-dependency-results.md.
+
+- 2026-11-20: Inspected the exact ipsw v3.1.749 source commit and Apple dyld
+  LinkedDylibAttributes source. ipsw's exact-value formatter prints combined
+  kind 3 as unknown, while Apple's one-byte bitfield defines weakLink as bit 0
+  and reExport as bit 1 and formats them independently. The previously observed
+  GraphicsServices kind-3 edge is therefore source-mapped as weak-link plus
+  re-export; raw ipsw output remains preserved. Added the source explanation
+  to the donor framework audit.
+
+- 2026-11-20: Collected 20H392 donor loader records for IOKit, CoreGraphics,
+  and libGSFont.dylib. The supplied output contains 25 regular dependencies,
+  one explicit weak link, and three kind-3 entries mapped to weak-link plus
+  re-export. Added the full result inventory and a bounded FontServices/CoreText
+  follow-up plan. No iPhone9,1 runtime compatibility is established.
