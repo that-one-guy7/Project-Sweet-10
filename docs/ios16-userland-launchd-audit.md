@@ -134,3 +134,20 @@ Until those checks are complete, the 20H392 donor's reported SpringBoard boot
 is a compatibility reference, not evidence that SpringBoard will start on
 iPhone9,1. No machine configuration, launchd plist, activation state, security
 policy, firmware, or device partition is changed by this audit.
+
+
+## Pinned upstream source files
+
+The reference observations above were checked against these files at
+`e0471191ddbfb17fde6674db41320bffa832a85b`:
+
+- [Sunstone README](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/README.md)
+- [Root-filesystem tweaks](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/tools/sweet-root-tweaks.py)
+- [launchd logging helper](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/tools/patch-launchd-plist.py)
+- [Early userspace diagnostic](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/tools/sweet-init.S)
+- [SpringBoard crash scan patch](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/xnu/patches/0053-sweet-crash-scan-springboard.patch)
+- [HID event service patch](https://github.com/14sea/ios-sunstone/blob/e0471191ddbfb17fde6674db41320bffa832a85b/xnu/patches/0058-sweet-hid-event-services.patch)
+
+The README's status is the upstream author's report. The helper-script findings
+are derived from the pinned source files; neither source category is a Sweet-10
+measurement.
