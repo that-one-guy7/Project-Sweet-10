@@ -29,3 +29,10 @@ The GitHub Actions workflow reads the expected XNU and PongoOS commits from
 xnu/BASELINE.lock.json, xnu/history/*.lock.json, and pongo/BASELINE.lock.json,
 checks out those exact revisions, and verifies their local Git HEAD values.
 Repository permissions are read-only.
+
+The launchd inventory tool reads only the central
+`System/Library/xpc/launchd.plist` below an extracted root. It emits job
+labels, executable paths, MachServices provider names, selected KeepAlive and
+scheduling metadata, and environment-variable names (not values). It does not
+execute jobs or modify the root. Synthetic tests use generated plist fixtures;
+they do not validate the actual 20H392 donor image.

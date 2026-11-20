@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd dependencies documented | 20H392 reference selected; dependency analysis not started |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: pinned Sunstone 20H392 root-tweak and launchd logging helpers reviewed; a sanitized, read-only LaunchDaemons inventory tool and synthetic tests added; actual donor-root inventory and iPhone9,1 service matching remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -134,3 +134,12 @@
   Synthetic host tests cover missing and unexpectedly reintroduced profile
   elements. This validates public source identity and structure only; no XNU
   build, device operation, or iPhone9,1 compatibility claim was added.
+
+- 2026-11-20: Started M6 with a source-pinned review of the Sunstone 20H392
+  userland root tweaks, launchd logging helper, early-init diagnostic, and
+  SpringBoard/HID reference patches. Added a privacy-conscious read-only
+  inventory for the central launchd LaunchDaemons plist, including MachServices
+  provider names and selected scheduling metadata; full arguments and
+  environment values are omitted. Synthetic tests do not use an Apple root
+  filesystem. Actual 20H392 rootfs inventory and iPhone9,1 dependency mapping
+  remain open.
