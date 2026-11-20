@@ -90,7 +90,7 @@ Fifteen regular dependents, in printed order:
 
 ### GraphicsServices
 
-One entry whose kind is reported as `unknown 3`:
+One raw kind-3 entry (printed by ipsw as `unknown 3`; source mapping is weak-link + re-export):
 
 - `/System/Library/PrivateFrameworks/FontServices.framework/libGSFont.dylib`
 
@@ -151,7 +151,7 @@ The newly supplied records add the following direct edges:
 - `BaseBoard` → `IOSurface` (regular)
 - `BaseBoard` → `IOKit` (regular)
 - `BaseBoard` → `CoreGraphics` (regular)
-- `GraphicsServices` → `FontServices/libGSFont.dylib` (raw kind 3; likely weak-link + re-export; retain the raw label until the stored attribute is independently checked)
+- `GraphicsServices` → `FontServices/libGSFont.dylib` (raw kind 3; source-mapped as weak-link + re-export; original ipsw label retained)
 - `RunningBoardServices` → `BaseBoard` (weak link)
 - `AssertionServices` → `RunningBoardServices` (regular)
 - `AssertionServices` → `BaseBoard` (weak link)
@@ -167,10 +167,11 @@ metadata, not evidence that every subsystem is used by the Sweet-10 target.
 - The two weak-link entries explicitly name BaseBoard. Their weak-link status
   must be preserved; it does not mean the image is absent or that the weak
   dependency is necessarily required at runtime.
-- The `unknown 3` row is likely the combined weak-link + re-export bitset:
-  ipsw's exact-value formatter does not name the combined value, while Apple
-  dyld's attribute formatter evaluates those flags independently. Preserve
-  this as a qualified interpretation until the raw byte is independently checked.
+- The raw kind-3 row maps to the combined weak-link + re-export attributes:
+  the pinned ipsw source defines weak-link=1 and re-export=2 but formats only
+  exact individual values; Apple's dyld source defines these as bit 0 and
+  bit 1 and formats them independently. The raw terminal label is retained.
+  The underlying cache byte has not been independently extracted.
 - A framework dependency on IOKit does not identify a matching iPhone9,1
   kernel driver, IOKit personality, DeviceTree provider, interrupt, or register.
 - These records are not observations of successful loading, process launch,
@@ -193,7 +194,8 @@ The next read-only cache queries should focus on:
    the unknown type while checking whether ipsw can locate this image's loader.
 
 See [the next service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
-for commands and graph-recording rules.
+for commands and graph-recording rules. The raw kind-3 mapping is now supported
+by the exact ipsw and Apple dyld source definitions cited above.
 
 M6 remains in progress. M7 (SpringBoard on iPhone 7) has not started.
 
