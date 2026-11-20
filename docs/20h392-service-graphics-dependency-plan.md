@@ -23,9 +23,11 @@ The next bounded set is selected from observed edges:
 - **CoreGraphics** is named by BaseBoard and BackBoardServices and is central
   to the donor-side graphics framework chain.
 - **FontServices/libGSFont.dylib** is the exact install name associated with
-  the GraphicsServices row printed as `unknown 3`. The goal is to determine
-  whether ipsw can identify a loader record for that image, not to guess what
-  numeric kind 3 means.
+  the GraphicsServices row printed as `unknown 3`. The pinned ipsw parser
+  defines kind 1 as weak-link and kind 2 as re-export, but its exact-value
+  formatter does not name combined value 3. Apple dyld formats those attributes
+  independently, so 3 is likely weak-link + re-export. Preserve the raw value
+  and inspect the corresponding loader; do not treat it as a regular edge.
 
 ## Commands on the analysis PC
 
@@ -69,8 +71,10 @@ the exact requested and returned paths.
 - Preserve the printed dependency kind exactly: regular, weak-link, re-export,
   or an unknown numeric kind.
 - Keep bind targets separate from dependency edges.
-- Do not interpret unknown numeric dependency kinds until they are mapped
-  against the corresponding dyld source definition and ipsw formatter.
+- For raw kind 3, record the likely weak-link + re-export combination as a
+  qualified interpretation, backed by the pinned ipsw kind constants and
+  Apple's independent attribute formatting. Keep the raw value in the record
+  until an independent read of the attribute byte confirms it.
 - Preserve weak links as weak edges. Do not drop them from the graph or
   promote them to hard requirements.
 - Deduplicate only a derived graph view; keep the original per-image ordered
