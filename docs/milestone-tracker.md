@@ -134,3 +134,12 @@
   Synthetic host tests cover missing and unexpectedly reintroduced profile
   elements. This validates public source identity and structure only; no XNU
   build, device operation, or iPhone9,1 compatibility claim was added.
+
+- 2026-11-20: Started M6 with a source-pinned review of the Sunstone 20H392
+  userland root tweaks, launchd logging helper, early-init diagnostic, and
+  SpringBoard/HID reference patches. Added a privacy-conscious read-only
+  inventory for the central launchd LaunchDaemons plist, including MachServices
+  provider names and selected scheduling metadata; full arguments and
+  environment values are omitted. Synthetic tests do not use an Apple root
+  filesystem. Actual 20H392 rootfs inventory and iPhone9,1 dependency mapping
+  remain open.
