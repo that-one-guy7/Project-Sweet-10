@@ -256,3 +256,40 @@ mounted OS root filesystem. It does not close the recursive dependency graph,
 prove every load command resolves at runtime, establish code-signing or closure
 validity, inventory all embedded XPC/IOKit requirements, or establish
 iPhone9,1 compatibility. The 20H392 image remains an iPhone X donor reference.
+
+
+## Prebuilt dyld loader records for the GUI chain (2026-11-20)
+
+The user ran ipsw dyld image against the separate iPhone X 20H392 SystemOS
+shared cache for backboardd, runningboardd, and SpringBoard. All three
+commands exited 0. Each output reported PrebuiltLoaderSet version 4d2b8647
+and an app loader with flags
+prebuilt|objc|ro-data|never-unload|pre-2022.
+
+The visible backboardd excerpt lists 21 regular dependent install names,
+including StudyLog, ButtonResolver, Haptics, BiometricKit, CarKit,
+IOMobileFramebuffer, BackBoardHIDEventFoundation,
+BackBoardHIDEventProcessors, BoardServices, Metal, and AVFoundation. The same
+excerpt records one weak-link entry as index 32767 (missing weak image).
+Because the output was captured with head -60, the 21 paths are only the
+visible excerpt and are not a complete dependency count.
+
+The supplied runningboardd record lists six regular dependents: Foundation,
+RunningBoard, RunningBoardServices, libobjc, libSystem, and CoreFoundation.
+The SpringBoard executable lists four: SpringBoard.framework, Foundation,
+libobjc, and libSystem. Their outputs also contain precomputed bind-target
+records.
+
+Apple's dyld4 design documentation explains that PrebuiltLoaders contain
+precomputed dependent-dylib and bind-target information. These records
+therefore improve the donor-side static dependency map beyond ordinary
+LC_LOAD_DYLIB strings, but they remain metadata, not observations of a process
+launch. See [the dedicated PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md)
+for the paths and caveats.
+
+The ipsw output also prints implausible section offsets/sizes for several
+Swift and Objective-C sections. Those fields are excluded pending independent
+parser validation. The backboardd list is incomplete because only the first
+60 output lines were retained. None of these observations establishes
+iPhone9,1 compatibility, hardware-provider availability, or a successful
+iPhone 7 launch. M6 remains in progress and M7 has not started.
