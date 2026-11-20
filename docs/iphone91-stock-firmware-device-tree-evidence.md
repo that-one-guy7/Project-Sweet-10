@@ -111,22 +111,29 @@ make the iPhone X 20H392 kernelcache or DeviceTree interchangeable with it.
 
 ## How this changes the evidence status
 
-The previous statement “no verified iPhone9,1 DeviceTree source has yet been
-established” needs a narrower wording:
+The earlier audit stated that 19H422 DeviceTree metadata and parsed values
+were missing. The current evidence allows a more precise status:
 
-- **Now established:** public firmware metadata ties several
-  `DeviceTree.d10ap.im4p` component records to `iPhone9,1`, CPID `0x8010`,
-  BDID `0x08`, including an iOS 15.0 build.
-- **Still unknown:** any actual parsed `/cpus`, `arm-io`,
-  `interrupt-controller`, timer, memory, or panic-region properties for the
-  target.
-- **Still missing:** the matching 19H422 DeviceTree digest and parsed values,
-  exact BuildManifest identity details from that same build, and validation
-  of property encodings against XNU 8796 consumers.
+- **Now established at artifact-metadata level:** Orchard publishes the
+  19H422 IPSW, BuildManifest, and D10AP DeviceTree component hashes; the
+  published archive hash agrees with IPSW.me.
+- **Now reported at structural-summary level:** the Ios-emul survey labels
+  a tree iPhone9,1 / D10AP / 19H422 and lists 226 nodes, two
+  Hurricane-Zephyr CPU nodes, `arm-io,t8010`, an AIC node, and an
+  AIC-timebase node.
+- **Not independently verified by this project:** the archive and
+  component hashes have not been recalculated, and the raw DeviceTree
+  component has not been parsed by Project Sweet-10.
+- **Still unknown at property-value level:** register addresses and raw
+  `reg` cells, `ranges`, interrupt-controller and timer property values,
+  IRQ specifiers, CPU `reg` and `state`, clock frequencies, memory ranges,
+  and panic-region values.
 
-Accordingly, the existing per-property rows in
-`device-tree/PROPERTY_INVENTORY.md` remain marked **Unknown**. A component
-path and digest cannot fill a property-value cell.
+Accordingly, the individual property rows in
+`device-tree/PROPERTY_INVENTORY.md` remain marked **Unknown**. A survey
+showing a node or compatible string does not prove that all the property
+values required by XNU are correct. See the
+[19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md).
 
 ## Evidence-handling rules
 
