@@ -41,7 +41,11 @@ target manifest for iPhone9,1.
 
 The project may continue with read-only source comparisons, build-system
 investigation, data provenance, host-side validators, documentation, and
-reproducible tests that do not depend on invented hardware values.
+reproducible tests that do not depend on invented hardware values. PongoOS
+source review must keep its documented KPF-assisted XNU path separate from a
+custom Sweet-10 XNU image loader; the latter requires an independently verified
+image format, entry contract, boot_args, memory map, and target DeviceTree.
+See [PongoOS/XNU handoff analysis](pongo-xnu-handoff-analysis.md).
 
 The first build milestone, once G1-G3 are resolved, is an unmodified source
 baseline build. That result is only a compiler/build-system milestone. It does

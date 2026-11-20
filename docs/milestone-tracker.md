@@ -5,7 +5,7 @@
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
 | M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; target platform evidence remains incomplete; the 19H422 survey provides provisional node/compatible evidence only and its `reg` size totals remain unvalidated |
 | M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open; xnu-8796.141.3 normal ARM64 machine allowlist omits T8010 |
-| M3 | Boot contract | Reviewed A10 handoff specification | Generic handoff categories documented; XNU entry ABI and all iPhone9,1 values remain unverified |
+| M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 boot_args structure identified; PongoOS KPF-assisted XNU path distinguished from a custom-kernel loader; target memory/DT/entry values and loader contract remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Research inventory started; A10 implementation not started |
 | M6 | Root/userland research | launchd dependencies documented | 20H392 reference selected; dependency analysis not started |
@@ -117,3 +117,4 @@
   docs/iphone91-19h422-device-tree-structure-audit.md.
 
 - 2026-11-20: Reviewed the iPhone9,1 / 19H422 DeviceTree survey generator. Its `reg` summary assumes fixed 16-byte little-endian 64-bit address/size pairs and does not validate parent cell-count properties; these totals are now classified as heuristics, not hardware register extents. Corrected the upstream survey-file link and added a method-review note. Raw target property values remain Unknown.
+- 2026-11-20: Pinned an upstream PongoOS source review at `4c9b7541629234147fcc778f0ce4162482aaccef`. Its README distinguishes a Pongo shell from the consolidated PongoOS/KPF path to XNU; KPF source contains in-place kernel patch callbacks. Compared this with XNU 8796.141.3's ARM64 `boot_args` definition and `start.s` consumers. The custom Sweet-10 image-loader contract remains open; no boot attempt or device operation was performed.

@@ -35,6 +35,10 @@ XNU ABI or iPhone9,1 platform data.
 See [the source review](sandcastle-loader-review.md) and
 [the handoff evidence checklist](../boot/HANDOFF_REQUIREMENTS.md).
 
+## PongoOS and a custom XNU image
+
+PongoOS is the proposed early execution environment, but its documented Pongo-plus-KPF path is not the same thing as a Sweet-10 custom-kernel loader. Upstream documents a Pongo shell output and a consolidated PongoOS/KPF output that proceeds to XNU. The KPF source searches and patches existing XNU kernel code. No public source reviewed here establishes that this path loads an arbitrary Sweet-10 kernel or builds the required iPhone9,1 boot arguments. See [PongoOS/XNU handoff analysis](pongo-xnu-handoff-analysis.md).
+
 ## Evidence status
 
 The project has not yet verified the exact 20H392 kernel source revision, XNU entry
