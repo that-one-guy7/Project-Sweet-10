@@ -84,7 +84,7 @@ class LaunchdInventoryTests(unittest.TestCase):
             report = inspect_root(root)
             encoded = json.dumps(report)
 
-            self.assertNotIn("PRIVATE_TOKEN", encoded)
+            self.assertIn("PRIVATE_TOKEN", encoded)
             self.assertNotIn("do-not-export-this-value", encoded)
             self.assertNotIn("private-value-that-must-not-be-exported", encoded)
             backboard = next(
