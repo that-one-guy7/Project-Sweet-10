@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: donor-side inventory now covers 532 LaunchDaemons, 1,668 advertised Mach services, six ARM64 GUI/core executables, direct links for backboardd/runningboardd/SpringBoard, the 2,710-image 20H392 SystemOS cache, PrebuiltLoaderSet records, and three successive framework dependency layers (BackBoard, service/graphics, IOKit/FontServices/CoreText); the bounded font-chain layer adds 37 regular dependencies, one explicit weak link to SpringBoardServices, and six weak-link + re-export entries; next priority is target-native iPhone9,1 DeviceTree/driver/service crosswalk; no iPhone9,1 provider or SpringBoard runtime compatibility established |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor-side inventory covers 532 LaunchDaemons, 1,668 advertised Mach services, six ARM64 GUI/core executables, direct links for backboardd/runningboardd/SpringBoard, the 2,710-image 20H392 SystemOS cache, PrebuiltLoaderSet records, and framework dependency layers through BackBoard, service/graphics, IOKit, FontServices, and CoreText; target-side 19H422 DeviceTree is independently hash-verified and parsed (227 nodes), confirming D10AP/T8010 display, Pinot LCD, Samsung SPI/K1 multitouch, and LM3539 backlight node identities; target KEXT/personality/provider matching and 20H392 service compatibility remain unverified |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -223,3 +223,16 @@
   Added docs/20h392-fontservices-coretext-dependency-results.md and closed
   the corresponding inspection plan. Further broad donor crawling is
   deferred in favor of target-native iPhone9,1 applicability evidence.
+
+
+- 2026-11-20: Re-mounted the 20H392 root filesystem and SystemOS Cryptex
+  separately with APFS-FUSE and confirmed the installed mount layout exposes
+  each filesystem below a child `root/` directory. The corrected SystemOS
+  cache path was inspected with ipsw 3.1.749. The main file parsed as
+  `dyld_v1   arm64`; the header/mapping report confirms iOS 16.7,
+  2,710 images, 42 subcaches, and UUID
+  `8F970452-C9E3-3E88-B114-FEB1864BC9E0`, with per-subcache mapping records.
+  Expanded the target-native crosswalk using the already verified 19H422
+  DeviceTree node inventory. The next M6 step is a host-only KEXT and IOKit
+  personality inventory from the target KernelCache. The phone remains on
+  iOS 12.1.4; no device or firmware operation was performed.
