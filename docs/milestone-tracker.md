@@ -97,4 +97,12 @@
   counter selection and a sleep/wake race retry. Target IRQs, register ranges,
   and timebase frequency remain unknown. Added
   docs/interrupt-timer-interface-audit.md.
+- 2026-11-20: Found public firmware metadata for iPhone9,1 / CPID 0x8010 /
+  BDID 0x08 DeviceTree.d10ap.im4p components in builds 15A372, 15A402, and
+  19A346, with separate per-build digest pairs and DeviceTree/RestoreDeviceTree
+  names. Public indexes list 19H422 as an iPhone9,1 stock reference, but the
+  checked fwkeydb snapshot does not include that build. No DT payload or
+  property values were parsed; existing property rows remain Unknown. Added
+  docs/iphone91-stock-firmware-device-tree-evidence.md and updated the
+  DeviceTree property inventory.
 
