@@ -51,7 +51,7 @@ def verify_checkout(checkout, expected):
             stderr=subprocess.STDOUT,
         ).strip()
     except (OSError, subprocess.CalledProcessError) as exc:
-        detail = exc.output.strip() if isinstance(exc, subprocess.CalledProcessError) else str(exc)
+        detail = (exc.output or "").strip() if isinstance(exc, subprocess.CalledProcessError) else str(exc)
         print(f"Cannot read PongoOS checkout revision: {detail}")
         return False
 
