@@ -31,6 +31,7 @@
   iPhone X 20H392 userland reference, reporting SpringBoard on Qualcomm SM4375.
   Its build discipline and subsystem decomposition are useful; its hardware code is
   not portable to A10. See [the comparison](docs/ios-sunstone-comparison.md).
+- [UniXNU](https://github.com/UniXNU/UniXNU): useful reference for separating shared ARM64, SoC, board, loader, kernel, and userland responsibilities, plus source/profile pinning. Its UEFI and non-Apple hardware implementations are not iPhone 7 A10 code. See [the comparison](docs/unixnu-reference.md).
 - [Project Sandcastle](https://github.com/corellium/projectsandcastle): useful
   boot-environment research, but its Linux-oriented loader is not automatically an XNU loader.
 
