@@ -308,3 +308,24 @@ inventory. Their individual loader outputs have not yet been collected.
 The plan keeps dependent edges, weak-link records, and bind targets separate,
 and explicitly requires iPhone9,1 compatibility to be established from
 target-specific evidence rather than donor-cache presence.
+
+
+## BackBoard framework dependent-loader results (2026-11-20)
+
+The user ran `ipsw dyld image` for BackBoardHIDEventFoundation,
+BackBoardHIDEventProcessors, BackBoardServices, and IOMobileFramebuffer in
+the donor SystemOS cache. All four commands exited 0 and the supplied
+terminal output showed no stderr messages. The resulting blocks contain
+35 regular dependent rows and one separately typed re-export row; no
+weak-link entries appeared in these four blocks.
+
+Notable observed edges include BackBoardHIDEventProcessors depending on
+BackBoardHIDEventFoundation, both HID frameworks depending on
+BackBoardServices, and IOMobileFramebuffer depending on IOSurface and IOKit.
+BackBoardServices reports AssertionServices as a re-export. The complete
+ordered rows and interpretation limits are recorded in
+[the BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md).
+
+This remains donor-side static metadata. It does not identify API use,
+runtime clients, target IOKit providers, or iPhone9,1 compatibility.
+M6 remains in progress; M7 has not started.
