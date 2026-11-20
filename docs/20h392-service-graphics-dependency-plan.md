@@ -71,10 +71,9 @@ the exact requested and returned paths.
 - Preserve the printed dependency kind exactly: regular, weak-link, re-export,
   or an unknown numeric kind.
 - Keep bind targets separate from dependency edges.
-- For raw kind 3, record the likely weak-link + re-export combination as a
-  qualified interpretation, backed by the pinned ipsw kind constants and
-  Apple's independent attribute formatting. Keep the raw value in the record
-  until an independent read of the attribute byte confirms it.
+- For raw kind 3, record weak-link + re-export based on the pinned ipsw
+  constants and Apple's independent bitfield formatting. Preserve the raw
+  `unknown 3` display; the original cache byte has not been separately extracted.
 - Preserve weak links as weak edges. Do not drop them from the graph or
   promote them to hard requirements.
 - Deduplicate only a derived graph view; keep the original per-image ordered
