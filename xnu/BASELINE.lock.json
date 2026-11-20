@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-8796.141.3",
+  "tag_object_sha": "f625db25f47631424dc62ac1c3414b6e530f7e8a",
+  "commit_sha": "1b191cb58250d0705d8a51287127505aa4bc0789",
+  "tag_signature": "unsigned",
+  "status": "candidate-pinned-for-source-review",
+  "reason": "iOS 16-generation XNU line; ios-sweet documents macOS 13.5 -> xnu-8796 and uses the same family. Exact matching to any iPhone9,1 userland build remains to be established.",
+  "not_a_device_support_claim": true
+}

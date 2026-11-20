@@ -7,4 +7,5 @@ checked, and whether the statement is upstream fact, local observation, or hypot
 Do not store firmware images, proprietary iOS binaries, full device dumps, credentials,
 serial numbers, ECIDs, IMEIs, or calibration data here.
 
-Start with [the source matrix](source-matrix.md).
+Start with [the source matrix](source-matrix.md) and
+[reference revisions](REFERENCE_REVISIONS.md).
