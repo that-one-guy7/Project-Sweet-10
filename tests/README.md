@@ -12,8 +12,11 @@ Run the checks locally:
 
 The 19H422 artifact verifier uses only Python's standard library. It validates
 published SHA-256 values, the D10AP BuildIdentity entries, the IM4P envelope,
-and the SHA-384 value recorded by the manifest. It does not decompress the
-LZFSE payload or parse DeviceTree properties.
+and the SHA-384 value recorded by the manifest. The Apple DeviceTree inspector
+uses only Python's standard library, bounds-checks the flattened property stream,
+requires complete input consumption, and emits only allowlisted non-identifying
+fields. Synthetic tests cover valid trees, malformed bounds, duplicate properties,
+trailing bytes, and privacy filtering.
 
 The GitHub Actions workflow reads the expected XNU commit from
 xnu/BASELINE.lock.json, checks out that exact revision, and runs the tests.
