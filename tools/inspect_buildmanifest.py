@@ -33,6 +33,15 @@ def json_safe(value: Any) -> Any:
     return str(value)
 
 
+def archive_sha256(path: Path) -> str:
+    """Hash an archive in bounded-size chunks instead of loading it into memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def component_record(identity: dict[str, Any], name: str) -> dict[str, Any] | None:
     components = identity.get("Manifest", {})
     if not isinstance(components, dict):
@@ -98,7 +107,7 @@ def inspect_archive(path: Path, include_sha256: bool = False) -> dict[str, Any]:
         "archive": {
             "filename": path.name,
             "size_bytes": path.stat().st_size,
-            "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if include_sha256 else None,
+            "sha256": archive_sha256(path) if include_sha256 else None,
         },
         "product_version": manifest.get("ProductVersion"),
         "product_build_version": manifest.get("ProductBuildVersion"),
