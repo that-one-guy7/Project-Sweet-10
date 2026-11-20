@@ -285,3 +285,14 @@
   inventory to distinguish KernelCache metadata from filesystem-plugin
   metadata. No KEXT or plugin binary is committed, and no device or firmware
   operation was performed.
+
+
+- 2026-11-20: Audited the pinned ipsw 3.1.749 Linux filesystem-DMG mount path
+  after the user's 19H422 extraction attempt. Source review confirms that when
+  both APFS and HFS+ magic probes are inconclusive, ipsw tries APFS-FUSE first
+  and then falls back to HFS+. The final "no HFS+ partition found" / MBR-GPT EOF
+  message can therefore be a secondary fallback error and does not establish
+  that the target filesystem is HFS+ or that the IPSW is corrupt. The exact
+  APFS-FUSE failure remains unknown pending verbose output. Added
+  docs/ipsw-linux-dmg-mount-fallback-audit.md. Host-side analysis only; the
+  iPhone remains on iOS 12.1.4.
