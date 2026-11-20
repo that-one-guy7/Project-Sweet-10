@@ -382,3 +382,28 @@ Complete ordered records are in
 The next bounded inspection follows libFontParser, FontServices,
 libGSFontCache, and CoreText. These remain donor static records and do not
 establish iPhone9,1 graphics or font runtime compatibility.
+
+
+## FontServices/CoreText dependent-loader results (2026-11-20)
+
+The user inspected the 20H392 donor loaders for libFontParser,
+FontServices, libGSFontCache, and CoreText. All four commands reported exit
+status 0 and the supplied output showed no stderr text. The blocks contain
+37 regular dependency rows, one explicit weak-link row from FontServices to
+SpringBoardServices, and six raw kind-3 rows (weak-link + re-export) across
+libFontParser, FontServices, and CoreText.
+
+The six kind-3 rows retain the ipsw raw display `unknown 3`; the source
+mapping follows the exact ipsw v3.1.749 formatter and Apple's one-byte
+LinkedDylibAttributes bitfield/formatter, as documented in the earlier
+[service and graphics framework audit](20h392-platform-framework-dependency-results.md).
+The reciprocal CoreGraphics/libFontParser relationship preserves different
+edge types: CoreGraphics lists libFontParser as regular, while libFontParser
+lists CoreGraphics as weak-link + re-export. Do not collapse these into
+identical strong edges.
+
+The complete ordered lists, derived donor-side edges, and caveats are in
+[the FontServices and CoreText dependency results](20h392-fontservices-coretext-dependency-results.md).
+The broad donor font chain is now bounded and documented. M6's next priority
+is an iPhone9,1 target-native crosswalk, not indiscriminate expansion of
+generic donor frameworks. This remains static research only; M7 has not started.
