@@ -261,3 +261,12 @@
   backlight-control property remain absent from the allowlist summary.
   Runtime IOKit attachment and hardware operation remain untested. Added
   docs/iphone91-19h422-iokit-personality-crosswalk.md.
+
+
+- 2026-11-20: Extended the privacy-filtered DeviceTree inspector with a
+  presence-only `backlight-control` allowlist field and retained the already
+  selected `/arm-io/mipi-dsim` compatible value in the report. Added synthetic
+  tests for the Synopsys MIPI-DSI parent compatible, an empty boolean-style
+  backlight-control marker, and continued exclusion of an unrelated display
+  serial-number property. Awaiting the user's host-side output from the exact
+  19H422 raw DeviceTree; no target values are inferred before inspection.
