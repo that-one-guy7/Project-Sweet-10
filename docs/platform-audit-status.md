@@ -77,3 +77,7 @@ See the [19H422 survey methodology review](iphone91-19h422-survey-methodology-re
 See the [19H422 structure audit](iphone91-19h422-device-tree-structure-audit.md),
 [artifact evidence audit](iphone91-stock-firmware-device-tree-evidence.md),
 and [property inventory](../device-tree/PROPERTY_INVENTORY.md).
+
+## PongoOS T8010 backend evidence (separate from XNU platform support)
+
+The pinned PongoOS source has a registered `Apple A10 (T8010)` HAL platform driver. Pongo derives `socnum=0x8010` from the supplied `arm-io/device_type`; HAL copies that value into its platform CPID field and selects the T8010 driver. That driver provides a USB resource record consumed by the Synopsys OTG driver, and the same source includes T8010-specific AES and Reconfig Engine setup paths. The target's parsed static 19H422 DeviceTree is consistent with the `t8010` selection. This is meaningful source-level PongoOS support, but no PongoOS session, USB initialization, or hardware validation has been performed on the user's iPhone9,1. It does not supply T8010 support to XNU 8796. See the [PongoOS T8010 platform-backend audit](pongo-t8010-platform-backend-audit.md).
