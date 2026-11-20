@@ -171,18 +171,22 @@ to populate the project's property inventory.
 - The survey-generation script is available for inspection and explains
   how the summary was obtained from a BuildManifest-selected DeviceTree.
 
-### Still unverified by Project Sweet-10
+### Verified by Project Sweet-10
 
 - The full IPSW archive hash was not recalculated because the full archive was
   not supplied. The extracted BuildManifest and DeviceTree component hashes
   were independently verified.
-- The raw 19H422 DeviceTree component has now been decompressed and parsed by
-  Project Sweet-10: 227 nodes including root, with no trailing bytes.
+- The raw 19H422 DeviceTree component has been decompressed and parsed:
+  227 nodes including root, with no trailing bytes.
 - `/arm-io/ranges`, the AIC master node, the AIC register pairs, and the
   AIC-timebase register pair have been extracted and compared with the pinned
   XNU 8796 generic mapper. See the parsed DeviceTree audit.
-- CPU0/CPU1 `reg` and `state` values are known in the static tree. CPU0
-  frequency fields are present but zero; runtime clock values remain unknown.
+- CPU0/CPU1 `reg` and `state` values are known in the static tree.
+- The tree identifies display, LCD, SPI touchscreen, and backlight nodes.
+
+### Still open
+
+- CPU0 frequency fields are present but zero; runtime clock values remain unknown.
 - `/memory`, `/pram`, and `/vram` `reg` values are zero in this static tree,
   and `/chosen/embedded-panic-log-size` is absent. Final runtime memory and
   panic-region values remain unverified.
