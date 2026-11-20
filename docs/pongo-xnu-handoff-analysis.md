@@ -66,7 +66,7 @@ The pinned XNU header defines an ARM64 `boot_args` structure with these fields, 
 | `bootFlags` | Bootloader-provided flags |
 | `memSizeActual` | Actual memory size |
 
-The same header declares boot-argument revisions and versions. In `start.s`, the first-CPU startup path receives a boot-argument pointer and reads the virtual base, physical base, memory size, and boot flags before establishing early kernel mappings and entering the C initialization path.
+The same header declares boot-argument revisions and versions. The pinned PongoOS `iOS13` view uses a 608-byte command-line buffer, matching XNU 8796's `BOOT_LINE_LENGTH=608`; on ARM64, its explicit padding produces the same key field offsets and total `boot_args` size (0x2e0) as XNU's naturally aligned declaration. This is a source-level structure match only; no live iPhone9,1 boot-argument block or values have been captured. The full offset table and caveats are in the [PongoOS raw-payload and KernelCache-copy audit](pongo-raw-payload-and-copyx-audit.md). In `start.s`, the first-CPU startup path receives a boot-argument pointer and reads the virtual base, physical base, memory size, and boot flags before establishing early kernel mappings and entering the C initialization path.
 
 This is a concrete, revision-specific XNU contract. It is not a complete loader specification: a compatible handoff also has execution-state, memory ownership, kernel image layout, CPU, and DeviceTree requirements. The public source structure does not supply the missing iPhone9,1 values.
 
