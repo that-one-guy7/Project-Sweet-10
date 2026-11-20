@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "https://github.com/apple-oss-distributions/xnu",
+    "tag": "xnu-8796.141.3",
+    "commit": "1b191cb58250d0705d8a51287127505aa4bc0789"
+  },
+  "configuration_files": [
+    {
+      "path": "config/MASTER",
+      "role": "machine-independent master configuration",
+      "status": "present"
+    },
+    {
+      "path": "config/MASTER.arm64",
+      "role": "generic ARM64 master configuration",
+      "status": "present"
+    },
+    {
+      "path": "config/MASTER.arm64.iPhoneOS",
+      "role": "iPhoneOS ARM64 master configuration",
+      "status": "present"
+    },
+    {
+      "path": "config/MASTER.arm64.t8110.iPhoneOS",
+      "role": "SoC-named iPhoneOS ARM64 master configuration",
+      "status": "present; not assumed applicable to T8010"
+    },
+    {
+      "path": "pexpert/conf/Makefile.arm64",
+      "role": "ARM64 platform-expert make fragment",
+      "status": "present; empty begin/end fragment"
+    },
+    {
+      "path": "pexpert/conf/files.arm64",
+      "role": "ARM64 platform-expert source list",
+      "status": "present"
+    },
+    {
+      "path": "pexpert/conf/Makefile.template",
+      "role": "generated configuration makefile template",
+      "status": "present"
+    },
+    {
+      "path": "makedefs/MakeInc.kernel",
+      "role": "validates architecture, kernel config, machine config, and platform",
+      "status": "present"
+    }
+  ],
+  "target": {
+    "marketing_name": "iPhone 7",
+    "model_identifier": "iPhone9,1",
+    "soc_family": "A10/T8010",
+    "verified_machine_configuration": null
+  },
+  "userland_reference": {
+    "version": "iOS 16.7.16",
+    "build": "20H392",
+    "reference_family": "iPhone X",
+    "exact_kernel_source_match": "unverified"
+  },
+  "conclusions": {
+    "arm64_architecture_alone_selects_a_supported_board": false,
+    "t8110_configuration_is_proven_compatible_with_t8010": false,
+    "a_t8010_machine_configuration_has_been_verified": false,
+    "unmodified_xnu_build_completed": false,
+    "physical_device_tested": false
+  }
+}
