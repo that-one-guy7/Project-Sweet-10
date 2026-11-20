@@ -43,3 +43,7 @@
 - 2026-11-20: Audited pinned XNU 8796 ARM64 board configuration. The reviewed
   board_config.h has no T8010 profile; a T8010 reference in a later-branch code-signing
   test is test logic, not platform bring-up. Target support remains unverified.
+- 2026-11-20: Added an index-level 20H392 restore identity audit. The six indexed
+  iPhone10,1 through iPhone10,6 restore targets are A11/T8015; iPhone9,1 is
+  A10/T8010 and is not in that restore set. Exact manifest/component validation
+  remains open; no device operation or compatibility claim was made.

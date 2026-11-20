@@ -9,6 +9,7 @@
 - [XNU baseline selection](xnu-baseline-selection.md)
 - [Kernel/userland matching](kernel-userland-match.md)
 - [iOS 16.7.16 (20H392) userland reference](userland-reference-20H392.md)
+- [20H392 restore identity audit](20h392-restore-identity-audit.md)
 - [XNU ARM64 source map](xnu-arm64-source-map.md)
 - [ARM64 platform audit status](platform-audit-status.md)
 - [A10 / T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
