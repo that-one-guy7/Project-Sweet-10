@@ -181,3 +181,14 @@ with each node classified as cache-resident, on-disk, app-bundle, weak-linked,
 or unresolved. The graph must keep donor-only dependencies separate from
 iPhone9,1 target evidence. Embedded XPC services and IOKit personality/provider
 requirements remain separate follow-up work.
+
+
+## Repeatable next collection pass
+
+The priority framework list and a read-only host-side capture helper are now
+specified in [the recursive loader collection note](20h392-recursive-loader-collection.md).
+The helper saves ipsw output verbatim for the HID/display, graphics,
+process-coordination, and core-runtime framework records. Its output must
+still be reviewed and converted into a graph; no recursive edges are claimed
+until those actual records have been collected. Failed image lookups remain
+unresolved rather than being classified as missing dependencies.
