@@ -88,7 +88,7 @@ class DeviceTreeFormatError(ValueError):
 def _decode_strings(value: bytes) -> list[str]:
     return [
         item.decode("utf-8", errors="replace")
-        for item in value.split(b"\\x00")
+        for item in value.split(b"\x00")
         if item
     ]
 
@@ -159,7 +159,7 @@ def parse_tree(data: bytes) -> dict[str, Any]:
 
             raw_name = data[cursor:cursor + 32]
             cursor += 32
-            name_bytes = raw_name.split(b"\\x00", 1)[0]
+            name_bytes = raw_name.split(b"\x00", 1)[0]
             if not name_bytes:
                 raise DeviceTreeFormatError(
                     f"Empty property name in node at {node_start}."
@@ -310,7 +310,7 @@ def main() -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    rendered = json.dumps(report, indent=2, sort_keys=True) + "\\n"
+    rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output:
         args.output.write_text(rendered, encoding="utf-8")
     print(rendered, end="")
