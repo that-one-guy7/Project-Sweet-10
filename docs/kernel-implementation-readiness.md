@@ -15,8 +15,8 @@ The selected iOS 16 userland reference is iOS 16.7.16 build 20H392.
 
 **Not ready to create a bootable iPhone9,1 kernel.** The repository has useful
 source and restore-identity research, but no verified iPhone9,1 XNU 8796
-machine configuration, no target device-tree/boot-argument evidence, and no
-reproducible iPhoneOS ARM64 baseline build.
+machine configuration (its normal ARM64 allowlist omits T8010), no target
+device-tree/boot-argument evidence, and no reproducible iPhoneOS ARM64 baseline build.
 
 The supplied 20H392 BuildManifest supports iPhone10,3 and iPhone10,6 only.
 Its four BuildIdentity entries use A11/T8015 chip ID 0x8015 and D22AP/D221AP
@@ -28,8 +28,8 @@ target manifest for iPhone9,1.
 | Gate | Required evidence | Current status |
 |---|---|---|
 | G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; Apple source-to-kernelcache mapping is not established |
-| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Historical T8010/H9 profile found in xnu-7195.121.3; absent at corresponding paths in xnu-8019.80.24 and xnu-8796.141.3; dependency migration not reviewed completely |
-| G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; toolchain and valid target machine/platform selection are not pinned |
+| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Historical T8010/H9 profile and normal ARM64 machine selection exist in xnu-7195.121.3; both are absent from the corresponding xnu-8796.141.3 source paths/lists; dependency migration not reviewed completely |
+| G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; no target-specific values are approved |
 | G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Not established; current inventory documents consumers only |
 | G6 — Entry/handoff contract | Exact XNU entry ABI, boot-argument format/version, execution state, memory ownership, and device-tree handoff requirements for the selected source | Not established |
@@ -81,3 +81,20 @@ partition writes, or recovery operations.
 - [iPhone9,1 device-tree property inventory](../device-tree/PROPERTY_INVENTORY.md)
 - [XNU handoff requirements](../boot/HANDOFF_REQUIREMENTS.md)
 - [Uploaded 20H392 BuildManifest audit](uploaded-20h392-buildmanifest-audit.md)
+
+
+## Additional build-system finding
+
+A versioned audit of Apple's makedefs/MakeInc.def found T8010 in the normal
+ARM64 machine allowlist for xnu-7195.121.3, but not in xnu-8019.80.24 or
+xnu-8796.141.3. The pinned xnu-8796.141.3 kernel make rules validate the
+selected machine config against that allowlist. Its MakeInc.top can optionally
+derive product-to-KernelPlatform mappings from an embedded-device-map database
+inside the selected SDK platform bundle, but the contents of the relevant SDK
+database have not been inspected.
+
+This narrows the blocker: it is not enough to find a historical T8010 header.
+The selected baseline's normal ARM64 machine-selection rules also omit T8010,
+and the associated historical dependency and target metadata migration remains
+unresolved. Do not bypass that selection check or claim that a VMAPPLE build
+is an iPhone7 build.
