@@ -128,18 +128,21 @@ were missing. The supplied extracted members now allow a more precise status:
   pinned Orchard metadata; the component SHA-384 also matches the
   BuildManifest Digest field. The full IPSW archive hash was not recalculated
   because the archive was not supplied.
-- **Not yet parsed by this project:** the compressed DeviceTree payload has
-  been identified as LZFSE but has not been decompressed into raw properties.
-- **Still unknown at property-value level:** register addresses and raw
-  `reg` cells, `ranges`, interrupt-controller and timer property values,
-  IRQ specifiers, CPU `reg` and `state`, clock frequencies, memory ranges,
-  and panic-region values.
+- **Parsed by this project:** the decompressed tree contains 227 nodes
+  including root; selected CPU, ARM-IO, AIC, timer, display, and touch
+  properties were recorded in a privacy-filtered report.
+- **Verified at selected property-value level:** CPU0/CPU1 state and IDs,
+  ARM-IO ranges used by XNU's SoC-base helper, AIC and AIC-timebase register
+  pairs used by the generic XNU mapper, and their source-derived mapping inputs.
+- **Still unresolved at runtime level:** CPU0 clock properties are zero in
+  the static tree; `/memory`, `/pram`, and `/vram` regions are zero; and
+  `/chosen/embedded-panic-log-size` is absent. Live memory, clocks, and
+  panic-region values need the final runtime DeviceTree.
 
-Accordingly, the individual property rows in
-`device-tree/PROPERTY_INVENTORY.md` remain marked **Unknown**. A survey
-showing a node or compatible string does not prove that all the property
-values required by XNU are correct. See the
-[19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md).
+Accordingly, `device-tree/PROPERTY_INVENTORY.md` now distinguishes verified
+static-component values from runtime-dependent fields that remain unknown.
+A parsed static property does not prove that the final boot-time tree or
+hardware service is operational. See the [parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md).
 
 ## Evidence-handling rules
 
