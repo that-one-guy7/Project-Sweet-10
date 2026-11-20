@@ -24,7 +24,8 @@ source for the Project Sweet-10 iPhone9,1 research target.
   values. A third-party 19H422 structure summary and Orchard-published
   component digest now exist, but Project Sweet-10 has not recomputed the
   hash or parsed the raw component and the summary omits required property
-  values.
+  values. Its reported `reg` totals are fixed-width parser heuristics, not
+  verified register extents.
 - Board configuration header generation/selection.
 - A reproducible unmodified XNU build.
 - A verified source-to-target compatibility assessment.
@@ -68,7 +69,11 @@ T8010 `arm-io`, AIC child, and AIC-timebase child. Orchard publishes the
 BuildManifest and DeviceTree component hashes, but Project Sweet-10 has not
 recomputed those hashes or parsed the raw component. The survey does not
 expose the raw values required by XNU's CPU/clock and interrupt/timer
-consumers. All individual target property values remain Unknown.
+consumers. Its `reg` size summaries assume fixed 64-bit address/size pairs
+without validating the parent cell-count contract. All individual target
+property values remain Unknown.
+
+See the [19H422 survey methodology review](iphone91-19h422-survey-methodology-review.md).
 
 See the [19H422 structure audit](iphone91-19h422-device-tree-structure-audit.md),
 [artifact evidence audit](iphone91-stock-firmware-device-tree-evidence.md),
