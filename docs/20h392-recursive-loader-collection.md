@@ -103,7 +103,7 @@ not attempt to parse or repair those fields.
 
 Run:
 
-    python3 -m unittest tests.test_capture_dyld_loader_records -v
+    python3 -m unittest discover -s tests -p 'test_capture_dyld_loader_records.py' -v
 
 or the complete project suite:
 
