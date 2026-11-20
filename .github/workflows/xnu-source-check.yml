@@ -1,4 +1,4 @@
-name: Verify pinned XNU source
+name: Verify pinned XNU and PongoOS sources
 
 on:
   workflow_dispatch:
@@ -6,6 +6,8 @@ on:
     paths:
       - "xnu/BASELINE.lock.json"
       - "tools/verify_xnu_source.py"
+      - "pongo/BASELINE.lock.json"
+      - "tools/verify_pongo_source.py"
       - "tests/**"
       - ".github/workflows/xnu-source-check.yml"
   push:
@@ -13,6 +15,8 @@ on:
     paths:
       - "xnu/BASELINE.lock.json"
       - "tools/verify_xnu_source.py"
+      - "pongo/BASELINE.lock.json"
+      - "tools/verify_pongo_source.py"
       - "tests/**"
       - ".github/workflows/xnu-source-check.yml"
 
@@ -31,6 +35,10 @@ jobs:
         id: source-lock
         run: |
           python3 -c 'import json; print("commit_sha=" + json.load(open("xnu/BASELINE.lock.json", encoding="utf-8"))["commit_sha"])' >> "$GITHUB_OUTPUT"
+      - name: Read pinned PongoOS commit from source lock
+        id: pongo-source-lock
+        run: |
+          python3 -c 'import json; print("commit_sha=" + json.load(open("pongo/BASELINE.lock.json", encoding="utf-8"))["commit_sha"])' >> "$GITHUB_OUTPUT"
       - name: Run host-side project tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Check out pinned Apple XNU source
@@ -42,3 +50,12 @@ jobs:
           persist-credentials: false
       - name: Verify exact source revision
         run: python3 tools/verify_xnu_source.py xnu/upstream
+      - name: Check out pinned PongoOS source
+        uses: actions/checkout@v4
+        with:
+          repository: checkra1n/PongoOS
+          ref: ${{ steps.pongo-source-lock.outputs.commit_sha }}
+          path: pongo/upstream
+          persist-credentials: false
+      - name: Verify exact PongoOS source revision
+        run: python3 tools/verify_pongo_source.py pongo/upstream
