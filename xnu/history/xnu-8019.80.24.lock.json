@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-8019.80.24",
+  "tag_object_sha": "7f6c2829cea348b0ed561ef71afdda2c73ff7604",
+  "commit_sha": "a325d9c4a84054e40bbe985afedcb50ab80993ea",
+  "tag_signature": "unsigned",
+  "status": "intermediate-reference-only",
+  "reason": "Public XNU snapshot after the historical T8010/H9 profile disappeared from the audited ARM64 paths.",
+  "not_a_device_support_claim": true
+}

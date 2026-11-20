@@ -126,3 +126,11 @@
 - 2026-11-20: Compared PongoOS's iOS13 `boot_args` view with XNU 8796.141.3's ARM64 declaration. Both use a 608-byte command-line buffer and yield matching key field offsets and a 0x2e0-byte structure on ARM64 when PongoOS's explicit padding is compared with XNU's natural alignment. This establishes source-level layout agreement only; live target values remain unknown.
 
 - 2026-11-20: Audited PongoOS revision `4c9b7541629234147fcc778f0ce4162482aaccef` beyond SoC-name recognition. It registers an Apple A10 (T8010) HAL platform driver, selects it from DeviceTree-derived `socnum`, provides T8010 USB resource values consumed by the Synopsys OTG driver, and includes T8010 AES and Reconfig Engine paths. This establishes meaningful source-level PongoOS A10 support, not runtime validation on iPhone9,1; the XNU 8796 machine-profile and complete custom-loader gates remain open. Added `docs/pongo-t8010-platform-backend-audit.md`.
+
+- 2026-11-20: Added pinned commit locks for public XNU tags
+  xnu-7195.121.3 and xnu-8019.80.24, plus a read-only CI audit comparing
+  the historical T8010/H9 machine allowlist, compiler flags, board block,
+  H9 header, and kernel machine-selection guard against xnu-8796.141.3.
+  Synthetic host tests cover missing and unexpectedly reintroduced profile
+  elements. This validates public source identity and structure only; no XNU
+  build, device operation, or iPhone9,1 compatibility claim was added.
