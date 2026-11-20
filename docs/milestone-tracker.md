@@ -53,3 +53,7 @@
 - 2026-11-20: Added a standard-library read-only IPSW BuildManifest inspector and
   synthetic unit tests. It reports every BuildIdentity without selecting a donor;
   no IPSW or device was accessed during the test design.
+- 2026-11-20: Audited the user-supplied standalone 20H392 BuildManifest. It lists
+  only iPhone10,3 and iPhone10,6, with four erase/update identities across
+  D22AP/D221AP and A11/T8015 chip ID 0x8015. KernelCache and per-board DeviceTree
+  paths/digests were recorded; no iPhone9,1 identity or compatibility was inferred.
