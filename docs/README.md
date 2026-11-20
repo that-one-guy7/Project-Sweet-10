@@ -55,3 +55,4 @@
 - [iOS 16 device compatibility and 20H392 identity matrix](ios16-device-identity-matrix.md)
 
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.
+- [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
