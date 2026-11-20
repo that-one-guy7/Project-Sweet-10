@@ -3,7 +3,7 @@
 | ID | Milestone | Exit criterion | Status |
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
-| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: XNU source consumers mapped; target hardware evidence incomplete |
+| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: generic XNU consumers mapped; pinned ARM64 board_config.h has no T8010 profile; iPhone9,1 hardware evidence remains incomplete |
 | M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is corroborated by a downstream iPhone X 20H392 profile report; Apple-side mapping and reproducible baseline build remain open |
 | M3 | Boot contract | Reviewed A10 handoff specification | Generic handoff categories documented; XNU entry ABI and all iPhone9,1 values remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
@@ -40,3 +40,6 @@
   result is on a QEMU virtual board and does not establish iPhone9,1 support.
 - 2026-11-20: Added a Sandcastle loader source review and an XNU handoff evidence
   checklist. No boot implementation or target-specific values were added.
+- 2026-11-20: Audited pinned XNU 8796 ARM64 board configuration. The reviewed
+  board_config.h has no T8010 profile; a T8010 reference in a later-branch code-signing
+  test is test logic, not platform bring-up. Target support remains unverified.
