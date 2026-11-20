@@ -71,10 +71,13 @@ entry in the donor loader metadata. Its absence must not be generalized into
 a claim that an ordinary required dependency is missing; the exact weak
 install name and any runtime symbol use have not been established here.
 
-**Completeness note:** the captured backboardd text was limited to the first
-60 lines by the inspection command. The 21 regular paths above are the entries
-visible in that excerpt, not a verified complete dependent list. Do not treat
-this list as a final count.
+**Completeness note:** the text shared for this review showed only the first
+60 lines because the terminal display used head -60. The shell command
+redirected the complete ipsw output to backboardd-closure.txt before displaying
+that excerpt, so the saved file may contain additional dependent entries.
+The 21 regular paths above are only the entries visible in the shared excerpt,
+not a verified complete dependent list. Do not treat this list as a final
+count; inspect the saved file before closing the inventory.
 
 ### runningboardd
 
