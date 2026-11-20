@@ -271,8 +271,10 @@ including StudyLog, ButtonResolver, Haptics, BiometricKit, CarKit,
 IOMobileFramebuffer, BackBoardHIDEventFoundation,
 BackBoardHIDEventProcessors, BoardServices, Metal, and AVFoundation. The same
 excerpt records one weak-link entry as index 32767 (missing weak image).
-Because the output was captured with head -60, the 21 paths are only the
-visible excerpt and are not a complete dependency count.
+The text shared for review displayed only the first 60 lines via head -60;
+the shell command had redirected the full ipsw output to a local file first.
+The 21 paths are therefore only the visible excerpt, not a complete dependency
+count; the saved file may contain additional entries.
 
 The supplied runningboardd record lists six regular dependents: Foundation,
 RunningBoard, RunningBoardServices, libobjc, libSystem, and CoreFoundation.
