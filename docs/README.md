@@ -17,6 +17,7 @@
 - [ARM64 platform audit status](platform-audit-status.md)
 - [A10 / T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
 - [Historical H9 feature-macro consumer audit](h9-feature-macro-consumer-audit.md)
+- [ARM64 platform-interface comparison](arm64-platform-interface-comparison.md)
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)

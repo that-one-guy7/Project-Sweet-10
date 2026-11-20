@@ -35,3 +35,13 @@ as proof of device support.
 
 See [XNU ARM64 source map](xnu-arm64-source-map.md) and
 [device-tree property inventory](../device-tree/PROPERTY_INVENTORY.md).
+
+## Interface comparison update
+
+A comparison of XNU 7195 and XNU 8796 platform interfaces is documented in
+[ARM64 platform-interface comparison](arm64-platform-interface-comparison.md).
+It finds the reviewed ARM64 boot_args field order and PE_init_platform signature
+remain recognizable, while the modern CPU topology parser and CPU lifecycle
+accounting have evolved. Both versions depend on DeviceTree CPU properties and
+register ranges. No iPhone9,1 property values or peripheral mappings are supplied
+by the generic interface comparison.
