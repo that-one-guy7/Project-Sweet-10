@@ -89,4 +89,12 @@
   accounting and split CPU count updates. Both versions parse DeviceTree CPU
   nodes and map CPU/cluster register ranges; iPhone9,1 values remain unknown.
   Added docs/arm64-platform-interface-comparison.md.
+- 2026-11-20: Compared ARM64 interrupt and timer interfaces in xnu-7195.121.3
+  and xnu-8796.141.3. The DeviceTree register-mapping helper and ARM64
+  ml_init_interrupt/ml_init_timebase interfaces are unchanged; AIC headers are
+  byte-identical. Generic decrementer access uses CNTV_TVAL_EL0 when no
+  per-CPU callback is present, while the newer timebase read adds nonspeculative
+  counter selection and a sleep/wake race retry. Target IRQs, register ranges,
+  and timebase frequency remain unknown. Added
+  docs/interrupt-timer-interface-audit.md.
 
