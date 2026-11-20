@@ -69,3 +69,10 @@
   MakeInc.top optionally uses the SDK embedded-device-map database to map target
   products to KernelPlatform; this database has not been inspected. No machine
   override or target-specific kernel configuration was added.
+- 2026-11-20: Followed the public XNU path history from the XNU 7195.50.7.100.1
+  import (2020-11-19) to the XNU 8019.41.5 import (2022-02-04). The parent
+  snapshot has H9.h, the T8010 board block, and the T8010 ARM64 Hurricane
+  machine/compiler mapping; the 8019.41.5 snapshot has none of those at the
+  reviewed paths. This narrows the public snapshot transition but does not
+  reveal Apple's internal rationale or prove a downstream/private implementation.
+  Added docs/t8010-public-source-transition.md.
