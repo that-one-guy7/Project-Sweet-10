@@ -64,10 +64,13 @@ The parser also relies on compile-time limits such as `MAX_CPUS`,
 `MAX_CPU_CLUSTERS`, and `MAX_CPU_CLUSTER_PHY_ID`. These limits must agree
 with the selected machine configuration and the data represented by the tree.
 
+The old parser reads an optional `die-id` property into each CPU record;
+the newer parser initializes `die_id` to zero in the reviewed implementation.
 The 8796 parser additionally accepts a `cpumask` selection input, detects
-conflicting CPU-count and CPU-mask inputs, and tracks CPU/cluster type counts.
-This is a difference in the generic parser's validation and accounting. This
-document does not prescribe device boot arguments or device operations.
+conflicting CPU-count and CPU-mask inputs, checks that the boot CPU is not
+masked out, and tracks CPU/cluster type counts. This is a difference in the
+generic parser's validation and accounting. This document does not prescribe
+device boot arguments or device operations.
 
 ## DeviceTree contract observed in platform-expert initialization
 
