@@ -2,10 +2,11 @@
 
 ## Scope
 
-This is a read-only host-side inspection plan for the iPhone X iOS 16.7.16
-(20H392) donor SystemOS shared cache. It follows the dependent records
-collected for BoardServices, BaseBoard, GraphicsServices, RunningBoardServices,
-AssertionServices, and IOSurface.
+This read-only host-side inspection for the iPhone X iOS 16.7.16 (20H392)
+donor SystemOS cache is complete. The collected dependent records for
+BoardServices, BaseBoard, GraphicsServices, RunningBoardServices,
+AssertionServices, and IOSurface are documented in
+[the result inventory](20h392-platform-framework-dependency-results.md).
 
 The physical Project Sweet-10 target remains iPhone 7 `iPhone9,1` / D10AP /
 A10-T8010. The donor cache must not be treated as target firmware or target
@@ -108,3 +109,17 @@ M6 remains in progress; M7 has not started.
 - [ipsw dyld guide](https://blacktop.github.io/ipsw/docs/guides/dyld/)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [20H392 BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md)
+
+
+## Results collected
+
+All three queries (IOKit, CoreGraphics, and libGSFont.dylib) reported exit
+status 0. Their dependent blocks contain 25 regular rows, one explicit weak
+link, and three kind-3 rows from libGSFont. The three kind-3 rows are now
+source-mapped to weak-link + re-export using the pinned ipsw and Apple dyld
+definitions; the original `unknown 3` labels remain in the result inventory.
+See [the IOKit and font-framework results](20h392-iokit-font-framework-dependency-results.md).
+
+The next bounded inspection follows libFontParser, FontServices,
+libGSFontCache, and CoreText. See
+[the FontServices/CoreText plan](20h392-fontservices-coretext-plan.md).
