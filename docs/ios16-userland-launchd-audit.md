@@ -338,8 +338,12 @@ BoardServices, BaseBoard, GraphicsServices, RunningBoardServices,
 AssertionServices, and IOSurface. All six reported exit status 0 in the
 supplied terminal excerpt. The dependent rows comprise 44 regular entries,
 two weak-link entries naming BaseBoard, and one GraphicsServices entry
-printed as `unknown 3`. The latter is intentionally left unclassified:
-the numeric kind has not been mapped to dyld's dependency-kind definition.
+printed as `unknown 3`. The pinned ipsw v3.1.749 source assigns 1 to
+weak-link and 2 to re-export, then formats kinds using exact matches, so the
+combined value 3 displays as unknown. Apple dyld formats weak-link and
+re-export attributes independently, making kind 3 a strong candidate for
+weak-link + re-export. The raw dependent-kind byte has not yet been inspected,
+so the combined interpretation remains qualified.
 
 The records show donor-side relationships including BoardServices to
 BaseBoard, BaseBoard to IOSurface/IOKit/CoreGraphics,
