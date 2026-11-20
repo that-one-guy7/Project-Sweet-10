@@ -18,6 +18,7 @@
 - [A10 / T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)
+- [Kernel implementation readiness gate](kernel-implementation-readiness.md)
 - [ios-sweet patch triage](ios-sweet-patch-triage.md)
 - [ios-sunstone cross-project comparison](ios-sunstone-comparison.md)
 - [ios-qemu 20H392 compatibility reference](ios-qemu-reference.md)
