@@ -26,7 +26,7 @@ device boot, firmware modification, or installation procedure.
 ## Build-system observations
 
 The pinned XNU top-level Makefile establishes source, object, destination, and symbol
-roots and includes the `makedefs` make fragments. The kernel make fragment validates
+roots and includes the makedefs make fragments. The kernel make fragment validates
 architecture, kernel configuration, machine configuration, and platform as separate
 inputs. Therefore a successful ARM64 compiler invocation alone would not demonstrate
 that a valid iPhoneOS machine configuration was selected.
@@ -34,6 +34,18 @@ that a valid iPhoneOS machine configuration was selected.
 The ios-sweet build workflow is useful historical evidence about one downstream build
 environment, but its SWEET machine selection and Qualcomm platform patches are not a
 Project Sweet-10 build configuration.
+
+## Source identity CI
+
+The repository's xnu-source-check.yml workflow is a read-only identity check, not a
+kernel build. It reads commit_sha from xnu/BASELINE.lock.json, checks out that exact
+public XNU revision, runs host-side metadata tests, and compares the checkout's HEAD
+SHA with the lock. This avoids maintaining a second hard-coded source revision in
+the workflow.
+
+A passing result establishes only that the checked-out source matches the project lock.
+It does not establish that the source matches 20H392 exactly, compiles with a selected
+toolchain, supports iPhone9,1, or can boot on hardware.
 
 ## Reproducibility record template
 

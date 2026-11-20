@@ -6,12 +6,14 @@ on:
     paths:
       - "xnu/BASELINE.lock.json"
       - "tools/verify_xnu_source.py"
+      - "tests/**"
       - ".github/workflows/xnu-source-check.yml"
   push:
     branches: [main]
     paths:
       - "xnu/BASELINE.lock.json"
       - "tools/verify_xnu_source.py"
+      - "tests/**"
       - ".github/workflows/xnu-source-check.yml"
 
 permissions:
@@ -25,11 +27,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Read pinned XNU commit from source lock
+        id: source-lock
+        run: |
+          python3 -c 'import json; print("commit_sha=" + json.load(open("xnu/BASELINE.lock.json", encoding="utf-8"))["commit_sha"])' >> "$GITHUB_OUTPUT"
+      - name: Run host-side project tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Check out pinned Apple XNU source
         uses: actions/checkout@v4
         with:
           repository: apple-oss-distributions/xnu
-          ref: 1b191cb58250d0705d8a51287127505aa4bc0789
+          ref: ${{ steps.source-lock.outputs.commit_sha }}
           path: xnu/upstream
           persist-credentials: false
       - name: Verify exact source revision
