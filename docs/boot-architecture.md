@@ -37,7 +37,7 @@ See [the source review](sandcastle-loader-review.md) and
 
 ## PongoOS and a custom XNU image
 
-PongoOS is the proposed early execution environment, but its documented Pongo-plus-KPF path is not the same thing as a Sweet-10 custom-kernel loader. Upstream documents a Pongo shell output and a consolidated PongoOS/KPF output that proceeds to XNU. The KPF source searches and patches existing XNU kernel code. No public source reviewed here establishes that this path loads an arbitrary Sweet-10 kernel or builds the required iPhone9,1 boot arguments. See [PongoOS/XNU handoff analysis](pongo-xnu-handoff-analysis.md).
+PongoOS is the proposed early execution environment, but its normal Pongo/KPF path is not a completed Sweet-10 custom-kernel loader. The pinned source additionally has a `bootr` raw-payload entry point and a `loadx` helper that copies uploaded bytes over the existing KernelCache; the latter explicitly leaves `gEntryPoint` adjustment to another component. The raw path passes through the existing boot arguments and original entry point but does not parse/relocate XNU or build a new iPhone9,1 handoff. Pongo's code recognizes the `t8010` SoC identifier, but that alone does not prove complete iPhone 7 support. See [PongoOS/XNU handoff analysis](pongo-xnu-handoff-analysis.md) and [the raw-payload/copy helper audit](pongo-raw-payload-and-copyx-audit.md).
 
 ## Evidence status
 
