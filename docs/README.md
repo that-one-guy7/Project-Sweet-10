@@ -7,6 +7,7 @@
 - [checkm8 and PongoOS architecture boundary](checkm8-pongo-boundary.md)
 - [PongoOS and XNU handoff analysis](pongo-xnu-handoff-analysis.md)
 - [PongoOS raw-payload and KernelCache-copy path audit](pongo-raw-payload-and-copyx-audit.md)
+- [PongoOS T8010 platform-backend audit](pongo-t8010-platform-backend-audit.md)
 - [Milestone tracker](milestone-tracker.md)
 - [XNU baseline selection](xnu-baseline-selection.md)
 - [Kernel/userland matching](kernel-userland-match.md)

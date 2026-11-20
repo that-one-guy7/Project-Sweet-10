@@ -32,7 +32,7 @@ At the inspected upstream revision `4c9b7541629234147fcc778f0ce4162482aaccef`, t
 
 ## Relevance to iPhone 7 / T8010
 
-The iPhone 7 is an A10-generation device, so checkm8/PongoOS material may be relevant to understanding the early execution environment at a high level. That is not evidence that the Sweet-10 target has a compatible iOS 16 kernel handoff. Exploit-family compatibility, PongoOS support, XNU source compatibility, and iOS userland compatibility are separate gates.
+The iPhone 7 is an A10-generation device. The pinned PongoOS source goes beyond generic SoC recognition: it registers an Apple A10 (T8010) HAL platform driver, provides USB resource values consumed by the Synopsys OTG driver, and includes T8010 AES and Reconfig Engine setup paths. The backend is selected using the SoC number derived from the incoming DeviceTree, not an independent CPID fuse read. This is meaningful source-level PongoOS support, making it a plausible pre-boot environment to investigate on iPhone9,1. It is not proof that this exact build runs on the user's phone or that the USB controller works at runtime. See the [T8010 backend audit](pongo-t8010-platform-backend-audit.md). Exploit-family compatibility, PongoOS runtime compatibility, XNU source compatibility, and iOS userland compatibility remain separate gates.
 
 A search result showing the string `T8010` in an XNU test source file must not be treated as proof of platform bring-up. In particular, test-only references or code-signing test tables do not establish a complete CPU/platform implementation.
 
@@ -51,6 +51,7 @@ A search result showing the string `T8010` in an XNU test source file must not b
 - [ ] Exact 20H392 kernel metadata independently established.
 - [ ] iPhone9,1 XNU platform support established from authoritative source.
 - [ ] A10-specific handoff contract established from reliable evidence.
+- [x] PongoOS T8010 source backend identified (HAL/USB/AES/Recfg); runtime validation on iPhone9,1 remains not started.
 - [ ] Custom Sweet-10 XNU image-loading contract separated from PongoOS's documented KPF-assisted XNU path.
 - [ ] Any controlled hardware validation: not started and outside this documentation milestone.
 
