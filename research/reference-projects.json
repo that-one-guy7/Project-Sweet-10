@@ -72,6 +72,22 @@
       "role": "Boot-environment research reference",
       "reuse": "Conceptual boot environment study only",
       "hardware_code_portable": false
+    },
+    {
+      "name": "UniXNU",
+      "repository": "https://github.com/UniXNU/UniXNU",
+      "reviewed_revision": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "reviewed_date": "2026-11-19",
+      "role": "Architecture, reproducible profile/build-input management, and downstream iPhone X 20H392 XNU-source corroboration",
+      "hardware": "Primarily non-Apple ARM64 devices; reviewed examples include Xiaomi 13 Pro / SM8550 and OnePlus 6 / SDM845",
+      "reported_milestone": "Six-layer UEFI-to-userland architecture; nuwa device record reports a local iPhone X D22AP 20H392 profile using xnu-8796.141.3 commit 1b191cb58250d0705d8a51287127505aa4bc0789",
+      "reuse": "Separation of shared ARM64, SoC, board, loader, kernel, and userland concerns; source and image identity pinning",
+      "hardware_code_portable": false,
+      "limitations": [
+        "iOS 16.7.16 profile is locally authored rather than included in reviewed upstream OS-profile tree",
+        "Device-specific UEFI, DT, memory, driver, and platform values are not iPhone 7 A10 evidence",
+        "Downstream profile documentation is corroboration, not Apple-published source mapping"
+      ]
     }
   ],
   "project_target": {
