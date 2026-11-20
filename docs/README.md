@@ -54,5 +54,7 @@
 - [UniXNU architecture and profile reference](unixnu-reference.md)
 - [iOS 16 device compatibility and 20H392 identity matrix](ios16-device-identity-matrix.md)
 
+- [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
+
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.
 - [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
