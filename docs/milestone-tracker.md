@@ -8,7 +8,7 @@
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; no driver implementation or input/output operation validated |
-| M6 | Root/userland research | launchd job dependencies documented | In progress: donor launchd inventory reviewed (532 jobs; 1,668 advertised Mach services); six GUI/core executables confirmed as ARM64 Mach-O; direct links inspected for backboardd (46), runningboardd (6), and SpringBoard (4); iPhone X 20H392 SystemOS cache parsed (2,710 images; 42 subcaches); PrebuiltLoaderSet records inspected for backboardd, runningboardd, and SpringBoard; recursive donor graph now includes the four BackBoard frameworks, six service/graphics frameworks, IOKit, CoreGraphics, and libGSFont; latest three-image layer contains 25 regular dependencies, one explicit weak link, and three raw kind-3 rows source-mapped to weak-link + re-export; embedded XPC/IOKit matching and iPhone9,1 service compatibility remain unverified |
+| M6 | Root/userland research | launchd job dependencies documented | In progress: donor-side inventory now covers 532 LaunchDaemons, 1,668 advertised Mach services, six ARM64 GUI/core executables, direct links for backboardd/runningboardd/SpringBoard, the 2,710-image 20H392 SystemOS cache, PrebuiltLoaderSet records, and three successive framework dependency layers (BackBoard, service/graphics, IOKit/FontServices/CoreText); the bounded font-chain layer adds 37 regular dependencies, one explicit weak link to SpringBoardServices, and six weak-link + re-export entries; next priority is target-native iPhone9,1 DeviceTree/driver/service crosswalk; no iPhone9,1 provider or SpringBoard runtime compatibility established |
 | M7 | SpringBoard | GUI starts and remains stable in controlled test | Long-term goal; not started |
 
 ## Reference-project progress
@@ -213,3 +213,13 @@
   one explicit weak link, and three kind-3 entries mapped to weak-link plus
   re-export. Added the full result inventory and a bounded FontServices/CoreText
   follow-up plan. No iPhone9,1 runtime compatibility is established.
+
+
+- 2026-11-20: Completed the bounded 20H392 donor FontServices/CoreText
+  loader inspection. Four queries (libFontParser, FontServices,
+  libGSFontCache, CoreText) exited 0. Recorded 37 regular dependents, one
+  explicit weak link to SpringBoardServices, and six raw kind-3 entries
+  mapped to weak-link + re-export using pinned ipsw and Apple dyld source.
+  Added docs/20h392-fontservices-coretext-dependency-results.md and closed
+  the corresponding inspection plan. Further broad donor crawling is
+  deferred in favor of target-native iPhone9,1 applicability evidence.
