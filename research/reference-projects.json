@@ -38,6 +38,35 @@
       ]
     },
     {
+      "name": "ios-sailfish",
+      "repository": "https://github.com/SavoryBanana/ios-sailfish",
+      "reviewed_ref": "main README (reviewed 2026-11-19)",
+      "role": "Later-stage iOS 16.7.16 (20H392) userland and XNU 8796 reference on Pixel 1",
+      "hardware": "Google Pixel 1 / Snapdragon 821 / Adreno 530",
+      "reported_milestone": "Upstream README reports lock screen, touch, buttons, Wi-Fi and GPU acceleration",
+      "reuse": "Component boundaries, persistent diagnostics, per-subsystem status and porting process only",
+      "hardware_code_portable": false,
+      "reported_limitations": [
+        "Experimental; security model mostly disabled",
+        "No Bluetooth, cellular, audio, camera, sensors, GPS, Touch ID or SEP",
+        "Pixel-specific drivers and board values are not portable to A10"
+      ]
+    },
+    {
+      "name": "ios-alioth",
+      "repository": "https://github.com/furretmaster290/ios-alioth",
+      "reviewed_ref": "main README (reviewed 2026-11-19)",
+      "role": "Work-in-progress per-board XNU 8796 port status reference",
+      "hardware": "POCO F3 / Qualcomm SM8250; source lineage also includes SM7150 and Xiaomi Mi 10",
+      "reported_milestone": "README says alioth reaches iOS lock screen; touch is listed as next step",
+      "reuse": "Per-board status discipline and separation of shared kernel work from board-specific data",
+      "hardware_code_portable": false,
+      "reported_limitations": [
+        "README says much of detailed tested table applies to sweet, not alioth",
+        "Qualcomm-specific hardware data is not portable to A10"
+      ]
+    },
+    {
       "name": "Project Sandcastle",
       "repository": "https://github.com/corellium/projectsandcastle",
       "role": "Boot-environment research reference",
@@ -49,6 +78,6 @@
     "model": "iPhone9,1",
     "soc": "A10/T8010",
     "userland_reference": "20H392",
-    "note": "The iPhone X userland reference and QEMU virtual-device support do not establish iPhone7 platform or UI compatibility."
+    "note": "The iPhone X userland reference and other-device results do not establish iPhone7 platform or UI compatibility."
   }
 }
