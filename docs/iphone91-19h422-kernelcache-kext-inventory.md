@@ -16,27 +16,27 @@ The user supplied the output of a read-only inspection using ipsw 3.1.749.
 |---|---|
 | IPSW | iPhone 7 iOS 15.8.8 (19H422) |
 | Product | iPhone9,1 |
-| Extracted KernelCache | \`kernelcache.release.iPhone9,1_3\` |
+| Extracted KernelCache | `kernelcache.release.iPhone9,1_3` |
 | Reported size | 44,924,928 bytes |
-| SHA-256 | \`7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee\` |
-| File identification | Mach-O 64-bit ARM64 executable; flags \`NOUNDEFS|PIE\` |
-| ipsw version | 3.1.749, commit \`a7dfadbcaca8375b424c12a68dae40767e5e07c1\` |
+| SHA-256 | `7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee` |
+| File identification | Mach-O 64-bit ARM64 executable; flags `NOUNDEFS|PIE` |
+| ipsw version | 3.1.749, commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1` |
 | Darwin version | 21.6.0 |
-| XNU version | \`xnu-8020.241.44~1\` |
-| Kernel build target | \`RELEASE_ARM64_T8010\` |
+| XNU version | `xnu-8020.241.44~1` |
+| Kernel build target | `RELEASE_ARM64_T8010` |
 | KEXT inventory count | 230 |
 
 The exact kernel version line reported by the tool was:
 
-\`\`\`text
+```text
 Darwin Kernel Version 21.6.0: Fri Mar 6 20:59:07 PST 2026; root:xnu-8020.241.44~1/RELEASE_ARM64_T8010
-\`\`\`
+```
 
 The output directly identifies an iOS 15-generation T8010 release kernel. This is valuable target-native reference evidence. It is a different XNU branch/build from the iOS 16-generation 20H392 donor selected for Sweet-10.
 
 ### Relationship to the XNU 8796 source audit
 
-The repository's public-source review found that the reviewed XNU 8796.141.3 normal ARM64 machine allowlist omits T8010, while an older public XNU 7195 snapshot contains T8010/H9 definitions. The 19H422 kernel version string now supplies independent evidence that Apple's iOS 15 target kernel was built as \`RELEASE_ARM64_T8010\`.
+The repository's public-source review found that the reviewed XNU 8796.141.3 normal ARM64 machine allowlist omits T8010, while an older public XNU 7195 snapshot contains T8010/H9 definitions. The 19H422 kernel version string now supplies independent evidence that Apple's iOS 15 target kernel was built as `RELEASE_ARM64_T8010`.
 
 These results are not contradictory: the production 19H422 kernel is reported as XNU 8020.241.44, not the candidate XNU 8796.141.3. The target KernelCache does not reveal the full source tree or prove that its T8010 configuration can be carried forward into XNU 8796. The XNU 8796 T8010 platform gap therefore remains open.
 
@@ -46,26 +46,26 @@ The user-supplied complete ipsw listing reported 230 KEXT entries. The following
 
 | Subsystem | Bundle identifier | Reported version | Related 19H422 DeviceTree evidence | Evidence level |
 |---|---|---:|---|---|
-| Display pipeline | \`com.apple.driver.AppleMobileDispH9P\` | 140.0.0 | \`/arm-io/disp0\` is \`disp0,t8010\` | KEXT presence; provider role still needs personality validation |
-| LCD panel | \`com.apple.driver.ApplePinotLCD\` | 1.0.0 | MIPI-DSI child panel is \`lcd,pinot\` | Strong name-level correspondence; IOKit match unverified |
-| MIPI-DSI | \`com.apple.driver.AppleSynopsysMIPIDSI\` | 1.0.0 | DeviceTree contains the MIPI-DSI panel path | KEXT presence; exact provider match unverified |
-| SPI controller | \`com.apple.driver.AppleSamsungSPI\` | 1 | \`/arm-io/spi2\` reports Samsung SPI | Strong name-level correspondence; personality match unverified |
-| Touch transport | \`com.apple.driver.AppleHIDTransport\` | 5100.32 | Touch node uses \`hid-transport,k1\` | KEXT presence; provider chain unverified |
-| SPI HID transport | \`com.apple.driver.AppleHIDTransportSPI\` | 5100.32 | Touch node is below the SPI controller | KEXT presence; provider chain unverified |
-| SPI multitouch | \`com.apple.driver.AppleMultitouchSPI\` | 5100.27 | \`/arm-io/spi2/multi-touch\` is \`hid-transport,k1\` | Strong subsystem correspondence; IOKit match unverified |
-| Multitouch framework driver | \`com.apple.driver.AppleMultitouchDriver\` | 5100.27 | Target DeviceTree identifies the K1 multitouch transport | KEXT presence; binding and event path unverified |
-| Backlight | \`com.apple.driver.AppleLMBacklight\` | 1 | \`/arm-io/i2c0/lm3539\` reports \`backlight,lm3539\` | Candidate only; do not infer an LM3539 match from the bundle name |
+| Display pipeline | `com.apple.driver.AppleMobileDispH9P` | 140.0.0 | `/arm-io/disp0` is `disp0,t8010` | KEXT presence; provider role still needs personality validation |
+| LCD panel | `com.apple.driver.ApplePinotLCD` | 1.0.0 | MIPI-DSI child panel is `lcd,pinot` | Strong name-level correspondence; IOKit match unverified |
+| MIPI-DSI | `com.apple.driver.AppleSynopsysMIPIDSI` | 1.0.0 | DeviceTree contains the MIPI-DSI panel path | KEXT presence; exact provider match unverified |
+| SPI controller | `com.apple.driver.AppleSamsungSPI` | 1 | `/arm-io/spi2` reports Samsung SPI | Strong name-level correspondence; personality match unverified |
+| Touch transport | `com.apple.driver.AppleHIDTransport` | 5100.32 | Touch node uses `hid-transport,k1` | KEXT presence; provider chain unverified |
+| SPI HID transport | `com.apple.driver.AppleHIDTransportSPI` | 5100.32 | Touch node is below the SPI controller | KEXT presence; provider chain unverified |
+| SPI multitouch | `com.apple.driver.AppleMultitouchSPI` | 5100.27 | `/arm-io/spi2/multi-touch` is `hid-transport,k1` | Strong subsystem correspondence; IOKit match unverified |
+| Multitouch framework driver | `com.apple.driver.AppleMultitouchDriver` | 5100.27 | Target DeviceTree identifies the K1 multitouch transport | KEXT presence; binding and event path unverified |
+| Backlight | `com.apple.driver.AppleLMBacklight` | 1 | `/arm-io/i2c0/lm3539` reports `backlight,lm3539` | Candidate only; do not infer an LM3539 match from the bundle name |
 
 Additional target-platform KEXTs in the same inventory include:
 
 | Bundle identifier | Reported version | Note |
 |---|---:|---|
-| \`com.apple.driver.AppleT8010\` | 1 | T8010 platform-family bundle present |
-| \`com.apple.driver.AppleT8010PMGR\` | 1 | T8010 power-management family bundle present |
-| \`com.apple.driver.AppleT8010CLPC\` | 1 | T8010 platform-control family bundle present |
-| \`com.apple.driver.AppleT8010SOCTuner\` | 1 | T8010 SoC tuning family bundle present |
-| \`com.apple.AGXG9P\` | 190.23 | GPU family bundle present; detailed device/provider matching not inspected |
-| \`com.apple.iokit.IOGPUFamily\` | 35.29 | GPU framework-family bundle present |
+| `com.apple.driver.AppleT8010` | 1 | T8010 platform-family bundle present |
+| `com.apple.driver.AppleT8010PMGR` | 1 | T8010 power-management family bundle present |
+| `com.apple.driver.AppleT8010CLPC` | 1 | T8010 platform-control family bundle present |
+| `com.apple.driver.AppleT8010SOCTuner` | 1 | T8010 SoC tuning family bundle present |
+| `com.apple.AGXG9P` | 190.23 | GPU family bundle present; detailed device/provider matching not inspected |
+| `com.apple.iokit.IOGPUFamily` | 35.29 | GPU framework-family bundle present |
 
 The full ordered KEXT listing is retained in the user's local analysis output, not copied into the repository wholesale. No KernelCache or extracted KEXT binary is committed.
 
@@ -73,13 +73,13 @@ The full ordered KEXT listing is retained in the user's local analysis output, n
 
 The separate 19H422 DeviceTree audit records:
 
-- Board/product identity: \`D10AP\` / \`iPhone9,1\`.
-- SoC node: \`/arm-io\`, compatible with \`arm-io,t8010\`.
-- Display subsystem: \`/arm-io/disp0\`, compatible with \`disp0,t8010\`.
-- LCD panel: \`lcd,pinot\`.
-- SPI controller: \`/arm-io/spi2\`, compatible with \`spi-1,samsung\`.
-- Touch child: \`/arm-io/spi2/multi-touch\`, compatible with \`hid-transport,k1\`.
-- Backlight node: \`/arm-io/i2c0/lm3539\`, compatible with \`backlight,lm3539\`.
+- Board/product identity: `D10AP` / `iPhone9,1`.
+- SoC node: `/arm-io`, compatible with `arm-io,t8010`.
+- Display subsystem: `/arm-io/disp0`, compatible with `disp0,t8010`.
+- LCD panel: `lcd,pinot`.
+- SPI controller: `/arm-io/spi2`, compatible with `spi-1,samsung`.
+- Touch child: `/arm-io/spi2/multi-touch`, compatible with `hid-transport,k1`.
+- Backlight node: `/arm-io/i2c0/lm3539`, compatible with `backlight,lm3539`.
 
 The KEXT inventory now establishes that the target's 19H422 KernelCache contains plausible platform, display, SPI, HID, multitouch, and backlight driver bundles alongside those DeviceTree nodes. The next test is to inspect each bundle's IOKit personality metadata and compare actual match keys/values—not merely similar names.
 
@@ -98,15 +98,15 @@ Do not state that display, touch, or backlight is working. Do not infer that the
 
 The user used:
 
-\`\`\`sh
+```sh
 KC="$HOME/19H422-kernel-inspect/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3"
 ipsw kernel version "$KC"
 ipsw kernel kexts "$KC"
-\`\`\`
+```
 
-The ipsw documentation describes JSON output for the KEXT inventory and exposes each KEXT's Info.plist IOKit personalities through \`io_kit_personalities\`. The next bounded query is:
+The ipsw documentation describes JSON output for the KEXT inventory and exposes each KEXT's Info.plist IOKit personalities through `io_kit_personalities`. The next bounded query is:
 
-\`\`\`sh
+```sh
 KC="$HOME/19H422-kernel-inspect/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3"
 OUT="$HOME/19H422-kernel-inspect/analysis"
 mkdir -p "$OUT"
@@ -132,9 +132,9 @@ jq '
       personalities: ($k.io_kit_personalities // {})
     }
 ' "$OUT/kexts.json" > "$OUT/target-hardware-personalities.json"
-\`\`\`
+```
 
-Review the resulting JSON as static metadata. If the installed ipsw build rejects \`--json\`, first check \`ipsw kernel kexts --help\`; do not guess at a different schema. The current upstream ipsw kernel guide documents the JSON KEXT output and the \`io_kit_personalities\` field.
+Review the resulting JSON as static metadata. If the installed ipsw build rejects `--json`, first check `ipsw kernel kexts --help`; do not guess at a different schema. The current upstream ipsw kernel guide documents the JSON KEXT output and the `io_kit_personalities` field.
 
 References:
 - [ipsw kernelcache analysis guide](https://github.com/blacktop/ipsw-skill/blob/main/ipsw/references/kernel.md)
