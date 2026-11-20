@@ -137,8 +137,16 @@ iOS 16 baseline.
 | xnu-8796.141.3 | Absent | Not present at that path |
 | main (repository default branch at inspection) | Absent | Not present at that path |
 
-The exact tag or change where the profile was removed or refactored is not
-established by this snapshot comparison.
+A follow-up examination of the public Git history narrows this boundary.
+The XNU 8019.41.5 import commit `e6231be02a03711ca404e5121a151b24afbff733`
+(2022-02-04) has parent `bb611c8fecc755a0d8e56e2fa51513527c5b7a0e`
+(the XNU 7195.50.7.100.1 import, 2020-11-19). At the earlier parent,
+`H9.h`, the T8010 board block, and the T8010 ARM64 machine/compiler mapping
+are present. At the 8019.41.5 import snapshot, the H9.h path is absent and the
+board/make files no longer declare T8010. This identifies the first transition
+in the inspected public snapshot history, not Apple's original internal
+engineering rationale: the repository represents the later release as a bulk
+source import. See the [detailed public-source transition audit](t8010-public-source-transition.md).
 
 ### What the historical profile actually supplied
 
@@ -187,6 +195,12 @@ used with XNU 8796.
 - [XNU 8019 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8019.80.24/pexpert/pexpert/arm64/board_config.h)
 - [XNU 8796 ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/board_config.h)
 - [XNU 8796 ARM64 pexpert Makefile](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/Makefile)
+
+### Public-history follow-up
+
+- [XNU 8019.41.5 import and T8010 transition audit](t8010-public-source-transition.md)
+- [XNU 8019.41.5 import commit](https://github.com/apple-oss-distributions/xnu/commit/e6231be02a03711ca404e5121a151b24afbff733)
+- [XNU 7195.50.7.100.1 parent snapshot](https://github.com/apple-oss-distributions/xnu/commit/bb611c8fecc755a0d8e56e2fa51513527c5b7a0e)
 
 ### Updated interpretation
 
