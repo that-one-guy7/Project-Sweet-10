@@ -21,4 +21,3 @@ trailing bytes, and privacy filtering.
 The GitHub Actions workflow reads the expected XNU and PongoOS commits from
 xnu/BASELINE.lock.json and pongo/BASELINE.lock.json, checks out those exact revisions,
 and verifies both local Git HEAD values. Repository permissions are read-only.
-Repository permissions are read-only.
