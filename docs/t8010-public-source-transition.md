@@ -41,7 +41,7 @@ At the earlier parent snapshot, the following three source inputs agree:
    `pexpert/arm64/apple_arm64_common.h`.
 2. `pexpert/pexpert/arm64/board_config.h` has an
    `ARM64_BOARD_CONFIG_T8010` block that includes H9.h and sets
-   `MAX_CPUS=3`, `MAX_CPU_CLUSTERS=1`, and `MAX_L2_CLINE=7). It also
+   `MAX_CPUS=3`, `MAX_CPU_CLUSTERS=1`, and `MAX_L2_CLINE=7. It also
    sets the documented DEVELOPMENT/DEBUG PMAP_CS options.
 3. `makedefs/MakeInc.def` includes T8010 in the normal ARM64 machine list and
    defines `MACHINE_FLAGS_ARM64_T8010 = -DARM64_BOARD_CONFIG_T8010 -mcpu=hurricane`.
