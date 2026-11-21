@@ -31,6 +31,8 @@
 - [iPhone9,1 GUI framework path-presence inspection plan](iphone91-19h422-gui-framework-path-presence-plan.md)
 - [iPhone9,1 GUI framework path-presence results](iphone91-19h422-gui-framework-path-presence-results.md)
 - [iPhone9,1 recursive GUI framework location inventory](iphone91-19h422-recursive-framework-location-inventory.md)
+- [iPhone9,1 recursive GUI framework location results](iphone91-19h422-recursive-framework-location-results.md)
+- [T8010 XNU source-version compatibility options](t8010-xnu-version-compatibility-options.md)
 - [dyld cache and filesystem evidence semantics](dyld-cache-filesystem-evidence-semantics.md)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [iPhone9,1 AGXG9P and Metal userland audit plan](19h422-20h392-agx-metal-userland-audit-plan.md)

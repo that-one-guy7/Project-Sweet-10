@@ -47,7 +47,7 @@ class FrameworkLocationInventoryTests(unittest.TestCase):
             row = report["candidates"][0]
             self.assertEqual(report["schema"], OUTPUT_SCHEMA)
             self.assertEqual(report["scan_status"], "complete")
-            self.assertEqual(row["status"], "match-found")
+            self.assertEqual(row["status"], "binary-file-found")
             self.assertEqual(
                 {item["match_kind"] for item in row["matches"]},
                 {"binary-name", "framework-bundle-name"},
@@ -56,6 +56,42 @@ class FrameworkLocationInventoryTests(unittest.TestCase):
                 {item["path"] for item in row["matches"]},
                 {"private/alternate/Example.framework", "private/alternate/Example.framework/Example"},
             )
+
+    def test_bundle_directory_only_is_not_reported_as_binary_file_found(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "target-root"
+            bundle = root / "System/Library/PrivateFrameworks/Example.framework"
+            bundle.mkdir(parents=True)
+            candidates = base / "candidates.json"
+            write_candidates(candidates, [
+                ("example", "/System/Library/Frameworks/Example.framework/Example")
+            ])
+
+            report = build_inventory(candidates, root)
+            row = report["candidates"][0]
+            self.assertEqual(row["status"], "bundle-directory-only")
+            self.assertEqual(row["binary_matches"], [])
+            self.assertEqual(len(row["bundle_directory_matches"]), 1)
+            self.assertEqual(row["bundle_directory_matches"][0]["entry_kind"], "directory")
+
+    def test_regular_binary_file_has_binary_file_found_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            root = base / "target-root"
+            binary = root / "alternate/Example.framework/Example"
+            binary.parent.mkdir(parents=True)
+            binary.write_bytes(b"not-opened")
+            candidates = base / "candidates.json"
+            write_candidates(candidates, [
+                ("example", "/System/Library/Frameworks/Example.framework/Example")
+            ])
+
+            report = build_inventory(candidates, root)
+            row = report["candidates"][0]
+            self.assertEqual(row["status"], "binary-file-found")
+            self.assertEqual(len(row["binary_matches"]), 1)
+            self.assertEqual(row["binary_matches"][0]["entry_kind"], "regular-file")
 
     def test_no_match_is_reported_only_for_complete_scans(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -84,7 +120,7 @@ class FrameworkLocationInventoryTests(unittest.TestCase):
 
             report = build_inventory(candidates, root)
             row = report["candidates"][0]
-            self.assertEqual(row["status"], "match-found")
+            self.assertEqual(row["status"], "bundle-name-entry-only")
             self.assertEqual(len(row["matches"]), 1)
             self.assertEqual(row["matches"][0]["entry_kind"], "symlink")
             self.assertEqual(row["matches"][0]["match_kind"], "framework-bundle-name")
