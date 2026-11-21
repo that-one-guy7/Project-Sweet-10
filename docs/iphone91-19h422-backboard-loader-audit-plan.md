@@ -258,3 +258,29 @@ or change ownership as a guess.
 
 The target loader audit remains blocked. M6 remains in progress; M7 has not
 started. The physical iPhone 7 remains on iOS 12.1.4.
+
+
+## First successful target query (2026-11-20)
+
+The user has now run the first target query successfully using the standalone
+Linux IPSW 3.1.749 executable extracted from the official x86_64 Debian
+package. Package SHA-256:
+`333cab58451330f0080c3c2b7bec3d9e6f4be588b27f6213a5233dd08821d071`.
+The target `BackBoardServices` query exited 0 with empty stderr and returned
+a prebuilt in-cache dylib record, reference index 18, VM size
+`0x865a8000`, five regions, 12 regular dependencies, and one re-export.
+The exact dependency names and kinds match the recorded 20H392 donor
+BackBoardServices record in printed order. See
+[the target loader result](iphone91-19h422-backboard-loader-results.md).
+
+This resolves the earlier Snap-specific access problem for this workflow:
+the non-Snap executable successfully parsed the same target cache. The old
+permission-denied report remains historical evidence of the Snap attempt,
+not the current audit status. Do not repeat the Snap diagnosis.
+
+Three target records remain to be collected: BackBoardHIDEventFoundation,
+BackBoardHIDEventProcessors, and IOMobileFramebuffer. Preserve each exit
+status and stderr. Exclude the known implausible decoded Sections values;
+do not treat PrebuiltLoader reference indexes as cache image-list indexes.
+M6 remains in progress; M7/SpringBoard has not started. The physical iPhone
+7 remains on iOS 12.1.4.
