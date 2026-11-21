@@ -48,7 +48,7 @@ KernelCache identity is included only to identify the same donor build context.
 | `CFBundleShortVersionString` | `5100.27` | `6140.3` |
 | `MinimumOSVersion` | `15.8` | `16.7` |
 | `CFBundleSupportedPlatforms` | `iPhoneOS` | `iPhoneOS` |
-| `CFBundleExecutable` | `MultitouchHID` | Not included in the user's printed donor-field subset |
+| `CFBundleExecutable` | `MultitouchHID` | `MultitouchHID` |
 | Plugin type UUID | `0516B563-B15B-11DA-96EB-0014519758EF` | `0516B563-B15B-11DA-96EB-0014519758EF` |
 | Factory UUID | `0CB0FBB9-15EA-11DB-A93C-001451D47183` | `0CB0FBB9-15EA-11DB-A93C-001451D47183` |
 | Factory function | `IOHIDPlugInFactory` | `IOHIDPlugInFactory` |
@@ -57,6 +57,19 @@ The target Info.plist extraction previously confirmed its bundle identifier,
 version, minimum OS, platform, type UUID, factory UUID, and factory function.
 A target Info.plist SHA-256 was not included in the user's supplied output
 and is therefore not recorded here.
+
+## Executable declaration and CodeResources manifest
+
+The follow-up read-only Python inspection confirmed the donor plist's
+`CFBundleExecutable` value is `MultitouchHID` and its `CFBundleVersion` is
+`6140.3`. The same inspection read the donor
+`_CodeSignature/CodeResources` plist and reported these top-level keys:
+`files`, `files2`, `rules`, and `rules2`. The printed `files` and `files2`
+entries were both empty (`[]`). This records the observed plist structure;
+it is not a code-signature verification and does not establish whether the
+executable is embedded elsewhere, stored in another IPSW component, or
+represented by another system mechanism. The executable itself was not
+located by the searches documented below.
 
 ## Plug-in interface mapping
 
@@ -133,9 +146,12 @@ Therefore, neither plugin executable is currently available for a Mach-O
 comparison from the inspected bundle directories. The donor search covers
 the two stated mounted trees, not every possible IPSW component or an
 unmounted/shared-cache representation. The target finding is narrower and
-must not be generalized to its entire filesystem. The presence of
-`CodeResources` is not proof of a valid code signature and does not supply
-the executable bytes.
+must not be generalized to its entire filesystem. The pasted terminal output
+also showed a `HOME DIRECTORY EXECUTABLE SEARCH` heading with no paths after
+it, but the exact command and covered directory set are not preserved; this
+is not treated as proof that a complete target filesystem was searched. The
+presence of `CodeResources` is not proof of a valid code signature and does
+not supply the executable bytes.
 
 ## Evidence classification
 
@@ -148,6 +164,9 @@ the executable bytes.
 | Donor and target plugin type UUIDs match | Exact string equality confirmed |
 | Donor and target factory UUIDs/functions match | Exact string equality confirmed |
 | Donor `MultitouchHID*` file/symlink in the two searched mounted roots | Not found by the user's recursive search on 2026-11-20 |
+| Donor `CFBundleExecutable` declaration | `MultitouchHID` |
+| Donor `CodeResources` top-level keys | `files`, `files2`, `rules`, `rules2` |
+| Donor `CodeResources` printed resource-entry maps | `files` and `files2` both empty (`[]`); no signature verdict |
 | Donor plugin directory contents | Only `Info.plist` and `_CodeSignature/CodeResources` listed |
 | Target plugin directory contents | Only `Info.plist` listed; no whole-target-root search recorded |
 | Plugin executable bytes or Mach-O identity | Not available from the inspected plugin directories; comparison blocked |
@@ -158,16 +177,18 @@ the executable bytes.
 
 ## Next bounded host-side research
 
-The plugin plist comparison is complete, but the expected executable was
-not found in either searched donor mount tree, and the target plugin directory
-listing also did not contain it. The next bounded host-side check is to read
-the donor plist's `CFBundleExecutable` value and inspect the
-`_CodeSignature/CodeResources` manifest to determine which bundle resources
-it records. Separately, perform a filename-only recursive search of the
-complete target mounted filesystem for the target's declared executable.
-Only if actual executable files are located should their Mach-O metadata be
-compared. Do not infer signature validity from the existence of
-`CodeResources`; it is not a cryptographic verification result.
+The donor `CFBundleExecutable` declaration and `CodeResources` manifest
+have now been inspected. The declared executable name is `MultitouchHID`,
+but no matching file or symlink was found in either searched donor mount
+root. The printed `files` and `files2` resource-entry maps are empty; this
+is not a signature verdict. The target plugin directory still contains only
+its `Info.plist`, and the additional home-directory search output did not
+preserve enough command detail to prove a complete target-root search. The
+next bounded host-side task is to establish a precise inventory of the
+remaining relevant mounted IPSW component roots and report each searched
+root explicitly. Only if actual executable files are located should their
+Mach-O metadata be inspected. Do not infer signature validity from the
+existence or contents of `CodeResources` alone.
 
 Any executable comparison remains descriptive. It must not be used as a
 basis for copying donor binaries to the iPhone 7 or claiming runtime
