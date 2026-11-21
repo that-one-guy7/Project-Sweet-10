@@ -859,7 +859,7 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
 
 - 2026-11-21: Prepared a read-only metadata keyword search for the one
   supporting dependency absent as a selected top-level record in the 20H392
-  JSON inventory: \`com.apple.driver.AppleHurricaneErrorHandler\`. The new
+  JSON inventory: `com.apple.driver.AppleHurricaneErrorHandler`. The new
   helper searches string keys and values across all parsed KEXT records,
   distinguishing top-level identity, IOKit personality, dependency-reference,
   and other metadata matches. A public 2017 BridgeOS 2.0 T8010 KernelCache
