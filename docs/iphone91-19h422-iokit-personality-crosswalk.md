@@ -128,6 +128,7 @@ No device connection, firmware update, restore, partition write, exploit, or boo
 
 ## References
 
+- [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
 - [iPhone9,1 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md)
 - [iPhone9,1 19H422 parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
 - [20H392 split dyld shared-cache inventory](20h392-dyld-cache-inventory.md)
