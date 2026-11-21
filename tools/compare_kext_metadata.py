@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-SELECTED_BUNDLES = (
+CORE_BUNDLES = (
     "com.apple.driver.AppleInterruptController",
     "com.apple.driver.AppleARMPlatform",
     "com.apple.driver.AppleT8010",
@@ -25,6 +25,24 @@ SELECTED_BUNDLES = (
     "com.apple.driver.AppleT8010SmartIO",
     "com.apple.driver.AppleT8010SOCTuner",
 )
+
+# Exact bundle IDs named by the target T8010-family KEXTs' direct
+# os_bundle_libraries declarations. KPI pseudo-libraries are not included.
+SUPPORTING_BUNDLES = (
+    "com.apple.driver.ApplePMGR",
+    "com.apple.driver.AppleA7IOP",
+    "com.apple.driver.IOSlaveProcessor",
+    "com.apple.driver.RTBuddy",
+    "com.apple.driver.AppleEmbeddedPCIE",
+    "com.apple.driver.AppleHurricaneErrorHandler",
+    "com.apple.iokit.IOPCIFamily",
+    "com.apple.iokit.IOSurface",
+    "com.apple.kec.Libm",
+    "com.apple.iokit.IOCryptoAcceleratorFamily",
+    "com.apple.iokit.IOReportFamily",
+)
+
+SELECTED_BUNDLES = CORE_BUNDLES + SUPPORTING_BUNDLES
 
 BUNDLE_FIELDS = (
     "name",
@@ -230,7 +248,8 @@ def compare(
             target_present += t_record is not None
             donor_present += d_record is not None
 
-            print(f"=== {bundle_id} ===")
+            group = "core AIC/T8010" if bundle_id in CORE_BUNDLES else "supporting dependency"
+            print(f"=== [{group}] {bundle_id} ===")
             print_record("TARGET 19H422", t_record)
             print_record("DONOR 20H392", d_record)
 
@@ -300,6 +319,8 @@ def compare(
             print()
 
         print("=== SUMMARY ===")
+        print(f"Core AIC/T8010 bundle IDs: {len(CORE_BUNDLES)}")
+        print(f"Supporting dependency bundle IDs: {len(SUPPORTING_BUNDLES)}")
         print(f"Selected bundle IDs: {len(SELECTED_BUNDLES)}")
         print(f"Present in target: {target_present}")
         print(f"Present in donor: {donor_present}")

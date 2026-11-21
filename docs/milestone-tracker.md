@@ -3,7 +3,7 @@
 | ID | Milestone | Exit criterion | Status |
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
-| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; static 19H422 DeviceTree is hash-verified and parsed (227 nodes); selected ARM-IO/AIC/timer values are cross-checked against XNU 8796, while zero-filled runtime clock/memory/panic fields remain unresolved; the pinned PongoOS revision has a registered T8010 HAL backend with USB resources and T8010 AES/Recfg paths, but target runtime is untested; T8010 is still absent from the XNU 8796 machine allowlist |; exact-ID KEXT JSON comparison records all nine selected bundles in 19H422 and three in 20H392, with six T8010-family bundles target-only in these inventories; target personalities/dependencies are now recorded for AppleT8010, CLPC, PCIe, PMP firmware, PMGR, and SmartIO. This remains static metadata, not ABI/runtime evidence
+| M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; static 19H422 DeviceTree is hash-verified and parsed (227 nodes); selected ARM-IO/AIC/timer values are cross-checked against XNU 8796, while zero-filled runtime clock/memory/panic fields remain unresolved; the pinned PongoOS revision has a registered T8010 HAL backend with USB resources and T8010 AES/Recfg paths, but target runtime is untested; T8010 is still absent from the XNU 8796 machine allowlist; exact-ID KEXT JSON comparison records all nine selected bundles in 19H422 and three in 20H392, with six T8010-family bundles target-only in these inventories; target personalities/dependencies are now recorded for AppleT8010, CLPC, PCIe, PMP firmware, PMGR, and SmartIO. This remains static metadata, not ABI/runtime evidence
 | M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; 20H392 donor KernelCache reports XNU `8796.142.1.703.8~1` / `RELEASE_ARM64_T8015`, while the public candidate omits both T8015 and T8010 machine profiles; an independent UniXNU OnePlus 13 / SM8750 profile co-pins the same donor KernelCache SHA-256 with the same public XNU commit and reports 62 clean patch applications only (compilation, binary ABI, and hardware remain separate); its candidate kernel path is `DEVELOPMENT_ARM64_BCM2837`, not T8015/T8010; exact Apple source provenance, product-specific build inputs, and reproducible iPhoneOS ARM64 baseline build remain open |
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
@@ -817,3 +817,14 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   the T8010 target KEXTs. No runtime attachment, executable compatibility,
   device boot, or SpringBoard result is inferred. The physical iPhone 7
   remains on iOS 12.1.4.
+
+- 2026-11-21: Extended the selected-bundle comparison plan to include
+  eleven exact non-KPI dependency IDs directly named by the target
+  T8010-family KEXT metadata: ApplePMGR, AppleA7IOP, IOSlaveProcessor,
+  RTBuddy, AppleEmbeddedPCIE, AppleHurricaneErrorHandler, IOPCIFamily,
+  IOSurface, Libm, IOCryptoAcceleratorFamily, and IOReportFamily.
+  The comparator labels the original nine IDs separately from these
+  supporting dependencies and still counts only exact top-level records.
+  This is a bounded one-hop inventory comparison; transitive closure,
+  binary ABI compatibility, runtime loading, and hardware behavior remain
+  unresolved. No device or firmware state is accessed or changed.

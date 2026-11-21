@@ -4,6 +4,9 @@ import unittest
 from pathlib import Path
 
 from tools.compare_kext_metadata import (
+    CORE_BUNDLES,
+    SUPPORTING_BUNDLES,
+    SELECTED_BUNDLES,
     InventoryError,
     compare,
     load_inventory,
@@ -191,6 +194,49 @@ class CompareKextMetadataTests(unittest.TestCase):
         self.assertIn("DONOR 20H392 os_bundle_libraries (1 entries)", report)
         self.assertIn("com.apple.kpi.iokit", report)
         self.assertIn("TARGET 19H422: unavailable", report)
+
+
+    def test_supporting_bundle_allowlist_matches_direct_dependency_set(self):
+        expected = {
+            "com.apple.driver.ApplePMGR",
+            "com.apple.driver.AppleA7IOP",
+            "com.apple.driver.IOSlaveProcessor",
+            "com.apple.driver.RTBuddy",
+            "com.apple.driver.AppleEmbeddedPCIE",
+            "com.apple.driver.AppleHurricaneErrorHandler",
+            "com.apple.iokit.IOPCIFamily",
+            "com.apple.iokit.IOSurface",
+            "com.apple.kec.Libm",
+            "com.apple.iokit.IOCryptoAcceleratorFamily",
+            "com.apple.iokit.IOReportFamily",
+        }
+        self.assertEqual(set(SUPPORTING_BUNDLES), expected)
+        self.assertEqual(SELECTED_BUNDLES, CORE_BUNDLES + SUPPORTING_BUNDLES)
+        self.assertEqual(len(SELECTED_BUNDLES), len(set(SELECTED_BUNDLES)))
+
+    def test_supporting_dependency_is_indexed_only_as_top_level_record(self):
+        apple_pmgr = "com.apple.driver.ApplePMGR"
+        path = self.make_file([
+            {
+                "id": "com.example.Unrelated",
+                "os_bundle_libraries": {apple_pmgr: "1.0"},
+            },
+            {
+                "id": apple_pmgr,
+                "version": "1.0",
+                "io_kit_personalities": {
+                    "ApplePMGR": {
+                        "IOClass": "ApplePMGR",
+                        "IONameMatch": "pmgr1",
+                        "IOProviderClass": "AppleARMIODevice",
+                    }
+                },
+            },
+        ])
+        inventory = load_inventory(path)
+        self.assertEqual(set(inventory), {apple_pmgr})
+        self.assertEqual(inventory[apple_pmgr]["version"], "1.0")
+
 
 
 if __name__ == "__main__":
