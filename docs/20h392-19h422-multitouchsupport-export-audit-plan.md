@@ -128,4 +128,104 @@ Matching export names would show only an overlapping exported-name surface. It w
 
 Different export names or flags would identify additional static differences, but would not by themselves explain a runtime failure. Do not substitute donor binaries or libraries into the target.
 
+
+
+## Exact-set comparison of the saved logs
+
+After the two complete parser logs have been generated using the command
+above, this optional standard-library script parses the first `Dyld Exports`
+section in each log and compares names and printed kinds. It does not
+re-open or modify either cache.
+
+```bash
+python3 - "$HOME/19H422-MultitouchSupport-exports.txt" "$HOME/20H392-MultitouchSupport-exports.txt" <<'PY'
+import collections
+import re
+import sys
+from pathlib import Path
+
+line_re = re.compile(
+    r"^\\s*(0x[0-9a-fA-F]+):\\s+\\(([^)]+)\\)\\s+(\\S+)\\s*$"
+)
+
+def read_exports(filename):
+    lines = Path(filename).read_text(encoding="utf-8", errors="replace").splitlines()
+    try:
+        start = next(i for i, line in enumerate(lines) if line.strip() == "Dyld Exports")
+    except StopIteration:
+        raise ValueError(f"No Dyld Exports section in {filename}")
+
+    found = []
+    started = False
+    for line in lines[start + 1:]:
+        match = line_re.match(line)
+        if match:
+            address, kind, name = match.groups()
+            found.append((name, kind, address))
+            started = True
+        elif started and not line.strip():
+            break
+        elif started:
+            break
+
+    if not found:
+        raise ValueError(f"Dyld Exports section contained no parsed rows in {filename}")
+    return found
+
+try:
+    target_rows = read_exports(sys.argv[1])
+    donor_rows = read_exports(sys.argv[2])
+except (OSError, ValueError, IndexError) as exc:
+    print(f"Could not compare export logs: {exc}")
+else:
+    target = collections.defaultdict(list)
+    donor = collections.defaultdict(list)
+
+    for name, kind, address in target_rows:
+        target[name].append((kind, address))
+    for name, kind, address in donor_rows:
+        donor[name].append((kind, address))
+
+    target_names = set(target)
+    donor_names = set(donor)
+    common = target_names & donor_names
+
+    print("Target rows:", len(target_rows))
+    print("Target unique names:", len(target_names))
+    print("Target duplicate names:", sorted(n for n, rows in target.items() if len(rows) > 1))
+    print("Donor rows:", len(donor_rows))
+    print("Donor unique names:", len(donor_names))
+    print("Donor duplicate names:", sorted(n for n, rows in donor.items() if len(rows) > 1))
+    print("Common unique names:", len(common))
+
+    print("\\nTarget-only names:")
+    for name in sorted(target_names - donor_names):
+        print(" ", name)
+
+    print("\\nDonor-only names:")
+    for name in sorted(donor_names - target_names):
+        print(" ", name)
+
+    print("\\nNames with differing printed kinds:")
+    for name in sorted(common):
+        target_kinds = sorted({row[0] for row in target[name]})
+        donor_kinds = sorted({row[0] for row in donor[name]})
+        if target_kinds != donor_kinds:
+            print(f"  {name}: target={target_kinds}, donor={donor_kinds}")
+
+    differing_addresses = sum(
+        target[name][0][1] != donor[name][0][1] for name in common
+    )
+    print("\\nCommon names with different first printed addresses:",
+          differing_addresses)
+    print("Address differences are cache-layout metadata, not a compatibility test.")
+
+read -r -p "Press Enter to close..."
+PY
+```
+
+The script requires both complete logs to contain a parser-generated
+`Dyld Exports` heading. Preserve any parser errors rather than treating
+a missing heading as an empty export list.
+
 No cache file, binary, filesystem image, firmware file, or device state is modified or committed by this plan.
