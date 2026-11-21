@@ -1,5 +1,7 @@
 # iPhone9,1 19H422 / iPhone10,3 20H392 AGX and Metal export audit plan
 
+The AGXMetalA10 / AGXMetalA11 load-command follow-up has been completed. See [the recorded load-command and import results](19h422-20h392-agx-plugin-load-command-results.md); the command block below is retained as a reproducible read-only procedure.
+
 ## Purpose and evidence boundary
 
 This plan defines the next bounded, read-only comparison after the graphics
