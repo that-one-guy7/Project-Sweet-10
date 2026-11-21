@@ -199,3 +199,30 @@ iPhone9,1 hardware identity.
 No proprietary binary, shared-cache file, filesystem image, KernelCache,
 or raw DeviceTree is committed to this repository. No device, firmware,
 partition, activation, security, or boot state was accessed or changed.
+
+
+## Selected dependency image records from donor inventory
+
+The user supplied a read-only lookup from
+`$HOME/20H392-dyld-images.json` for the seven selected dependency image
+names used in the MultitouchHID loader comparison:
+
+| Image | Donor image-list index | Version | UUID |
+|---|---:|---|---|
+| SymptomDiagnosticReporter | 928 | `229.120.4.0.0` | `AD5E6BA8-ED20-3AF7-BD79-274FEBAC7ABD` |
+| WirelessDiagnostics | 600 | `980.0.0.0.0` | `B6D6A466-6317-3243-A8E7-D0C25575F981` |
+| CoreAccessories | 312 | `793.140.4.0.0` | `82233556-8941-3465-A570-F8529F3BCD1E` |
+| CoreAnalytics | 226 | `264.140.2.0.0` | `A973AEA3-3A5D-3AAF-985D-29E7B13AE91C` |
+| MultitouchSupport | 1648 | `6140.3.0.0.0` | `1B6ABB86-B8A9-3941-A66A-EC9715F6B034` |
+| IOKit | 30 | `2022.140.2.701.1` | `BCAE5DD8-45F9-3877-92CB-44190C3BAD70` |
+| ProtocolBuffer | 239 | `294.30.6.7.2` | `54255241-0540-398C-BD54-B2F185C6D23C` |
+
+The full donor/target side-by-side table is in
+[the dependency image comparison](20h392-19h422-multitouch-dependency-image-comparison.md).
+All seven selected image families also appear in the target 19H422 cache
+inventory, but every corresponding version string and UUID differs.
+
+These records identify different cache image builds; they do not show
+whether the differences cause runtime behavior, nor do they justify copying
+donor binaries into the target. The image-list indexes are cache-local and
+are not comparable as stable IDs.
