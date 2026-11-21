@@ -193,6 +193,15 @@ The target 19H422 DeviceTree has two CPU entries (`reg=0` running and
 topology. It does not by itself establish the final enabled CPU count or
 runtime donor handoff.
 
+A follow-up source check found that both XNU 7195 and 8796 retain the
+same `IOPMGR` compatibility shim: the newer two-argument
+`enableCPUCore(cpu_id, entry_pa)` base implementation calls the older
+one-argument virtual overload. This means a legacy PMGR subclass can still
+handle the request without consuming the new reset-vector argument. The
+previously noted 8796 zero argument is therefore not, by itself, evidence of
+a T8010 incompatibility. The target PMGR subclass and iBoot reset-vector
+setup remain unverified; see the revised CPU audit section 7.
+
 A major unresolved difference is the physical secondary-core release
 contract: XNU 7195's `AppleARMSMP::PE_cpu_start` passes the physical
 `LowResetVectorBase` address to `IOPMGR::enableCPUCore`; XNU 8796 passes
