@@ -1,12 +1,12 @@
-# Target-side launchd inventory plan: iPhone9,1 / 19H422
+# Target-side launchd inventory: iPhone9,1 / 19H422
 
 ## Purpose
 
-The repository has a detailed static LaunchDaemons inventory for the iPhone X
-20H392 donor (532 jobs and 1,668 advertised Mach service names), but no
-equivalent inventory for the iPhone 7 / D10AP target reference. The next
-useful M6 step is to run the existing read-only inspector against the
-already-audited iPhone9,1 / iOS 15.8.8 (19H422) root filesystem.
+The repository has a static LaunchDaemons inventory for the iPhone X 20H392
+donor and now has a corresponding host-side inventory for the iPhone 7 /
+D10AP 19H422 stock target reference. The collection method and remaining
+comparison gaps are recorded below; the measured target results are in
+[the target-side inventory report](iphone91-19h422-launchd-inventory-results.md).
 
 This is a **stock target-reference comparison**, not an iOS 16 target image.
 The target reference is one major iOS release older than the 20H392 donor.
@@ -17,6 +17,20 @@ evidence.
 The physical iPhone 7 remains on iOS 12.1.4. This plan uses only an extracted
 or read-only mounted IPSW filesystem on the host. It does not require a phone
 connection, firmware installation, boot operation, or device modification.
+
+## Collection status (2026-11-20)
+
+The user supplied the complete output of the existing inspector for the
+mounted 19H422 root. It reports 475 LaunchDaemons entries, 1,485 distinct
+advertised Mach service names, and source plist SHA-256
+`34b6a174d2b948035afd71ad0a4fc2d3e4e85ea807a794ee69722054b09d6bbe`.
+
+The selected GUI/core-service labels were found and their target-side service
+counts and launch-policy fields were recorded. The full 20H392 donor JSON
+provider index is not present in the repository, so exact common,
+donor-only, and target-only Mach service name sets remain pending. See the
+[results report](iphone91-19h422-launchd-inventory-results.md) for the
+bounded comparison and evidence limits.
 
 ## Existing tool
 
@@ -103,19 +117,20 @@ Record the source as **iPhone9,1 / D10AP / iOS 15.8.8 / build 19H422** and
 the comparator as **iPhone10,3 / D22AP / iOS 16.7.16 / build 20H392**.
 Do not describe 19H422 as the target iOS 16 userland.
 
-## Acceptance criteria
+## Remaining acceptance criteria
 
-This audit is complete only when:
-
+The target collection criteria are satisfied:
 1. The target plist was read successfully and its SHA-256 is recorded.
 2. The target job and service counts are recorded.
-3. The selected GUI/platform labels are compared using exact labels and
-   explicitly preserved missing entries.
-4. Donor-only and target-only service names are counted and listed in a
-   bounded report.
-5. The report states that this is static plist metadata from different
-   iOS releases, not runtime or compatibility evidence.
+3. The selected GUI/platform labels are recorded using exact labels.
 
-The result will improve M6's target-side service inventory. It will not close
+The complete cross-version service-name comparison is not yet complete:
+4. Exact donor-only and target-only service names still require the full
+   20H392 donor JSON provider index.
+5. The final report must continue to state that these are static plist
+   metadata from different iOS releases, not runtime or compatibility
+   evidence.
+
+This work improves M6's target-side service inventory. It will not close
 G9, establish an iOS 16 launchd configuration for iPhone9,1, or show that
 SpringBoard can start on the device.
