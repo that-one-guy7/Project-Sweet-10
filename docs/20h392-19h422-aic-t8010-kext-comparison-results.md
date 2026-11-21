@@ -125,7 +125,7 @@ The personality also reports bundle identifier
 
 Direct library declarations: `AppleARMPlatform=1.0.0`,
 `ApplePMGR=1.0`, `IOReportFamily=1.0`, `IOSurface=52.6.0`,
-`Libm=1.0.0`, and the six listed KPI libraries at `8.0).
+`Libm=1.0.0`, and the six listed KPI libraries at `8.0`.
 
 ### AppleT8010PCIe
 
@@ -211,3 +211,84 @@ Caveats:
   IOKit attachment, hardware function, interrupt behavior, or bootability
   is established by this report.
 - No device, firmware, partition, or boot state was accessed or modified.
+
+## Supporting dependency comparison results (20 selected IDs)
+
+The user ran the expanded comparator after PR #89. The supplied terminal
+output reports:
+
+| Result | Count |
+|---|---:|
+| Core AIC/T8010 IDs selected | 9 |
+| Supporting dependency IDs selected | 11 |
+| Total selected IDs | 20 |
+| Present in target 19H422 JSON | 20/20 |
+| Present in donor 20H392 JSON | 13/20 |
+
+Because the original nine core IDs contain 9 target records and 3 donor
+records, the aggregate implies that all 11 supporting IDs are present in
+the target JSON and 10 of the 11 are present in the donor JSON. Exactly one
+supporting ID is therefore not represented as a selected top-level donor
+record. The excerpt supplied for this appendix begins at `Libm`; the
+identity of that one donor-side omission is not inferred here.
+
+### Libm
+
+Both inventories contain `com.apple.kec.Libm` at
+`/System/Library/Extensions/Libm.kext`. The target record reports
+`name=Libm.kext`, `executable=Libm`, `version=1`,
+`short_version_string=1.0`, and `compatible_version=1.0.0d0`.
+The donor record also reports `name=Libm.kext` and the same
+`compatible_version=1.0.0d0`; several other displayed fields are
+omitted from the donor export. No selected IOKit personality differences
+were printed. The dependency name `com.apple.kpi.libkern` is present on
+both sides, with target value `8.0.0d0` and empty donor value.
+
+### IOCryptoAcceleratorFamily
+
+Both inventories contain `com.apple.iokit.IOCryptoAcceleratorFamily`.
+The target reports version and short version `1.0.1`, compatible
+version `1.0b1`, and minimum OS `15.8`; the donor reports short
+version `1.0.1` and the same compatible version `1.0b1`, while
+several other displayed fields are omitted. No selected IOKit personality
+differences were printed. The dependency names are shared in the displayed
+set; the donor values are empty where the target reports KPI versions
+`8.0`.
+
+### IOReportFamily
+
+Both inventories contain `com.apple.iokit.IOReportFamily`. The target
+reports version `47`, short version `1.0`, compatible version
+`1.0`, and minimum OS `15.8`; the donor reports version `47`,
+while several other displayed fields are omitted.
+
+The shared `IOReportHub` personality differs in two selected fields:
+
+| Field | Target 19H422 | Donor 20H392 |
+|---|---|---|
+| `IOProviderClass` | `IOResources` | empty string |
+| `IOResourceMatch` | `IOKit` | empty string |
+
+The other selected fields printed for this personality match. The target
+dependency map reports KPI versions `8.0`; the donor names are present
+with empty version values in the serialized export.
+
+### Interpretation
+
+These three examples illustrate why an empty donor field must not be
+translated into a negative compatibility conclusion. The Libm compatible
+version is identical in both exports; IOCryptoAcceleratorFamily has matching
+short/compatible versions; and IOReportHub retains the same class, match
+category, and user-client class while the donor export leaves two provider/
+resource-match fields empty.
+
+An empty string in this JSON comparison is recorded as an empty string, not
+as proof of a missing dependency or a zero-valued property. Likewise,
+omitted bundle fields are not treated as values. The differences merit
+target-side preservation and further static inspection, but do not establish
+a behavioral or binary incompatibility.
+
+The remaining eight supporting-bundle sections and the identity of the
+single donor-side supporting record not present in the selected inventory
+were not included in the excerpt received for this appendix. Those details
+remain open pending the omitted portion of the comparison output.
