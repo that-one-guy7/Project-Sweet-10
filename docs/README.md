@@ -30,6 +30,7 @@
 - [20H392 / 19H422 GUI framework loader comparison results](20h392-19h422-gui-framework-loader-comparison-results.md)
 - [iPhone9,1 GUI framework path-presence inspection plan](iphone91-19h422-gui-framework-path-presence-plan.md)
 - [iPhone9,1 GUI framework path-presence results](iphone91-19h422-gui-framework-path-presence-results.md)
+- [dyld cache and filesystem evidence semantics](dyld-cache-filesystem-evidence-semantics.md)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [iPhone9,1 AGXG9P and Metal userland audit plan](19h422-20h392-agx-metal-userland-audit-plan.md)
 - [19H422 / 20H392 graphics KEXT metadata results](19h422-20h392-agx-kext-metadata-results.md)
