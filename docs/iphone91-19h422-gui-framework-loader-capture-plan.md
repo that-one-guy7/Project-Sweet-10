@@ -24,39 +24,111 @@ identities separate when recording query output.
 
 ## Host-side query
 
-Use the existing target cache at
-`$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64`.
-Use the same standalone Linux `ipsw` version 3.1.749 already recorded in the
-target BackBoard loader audit. Save full stdout and stderr separately and
-record each exit status:
+**Use this exact standalone executable only:**
+
+`/home/hey/ipsw-standalone/ipsw`
+
+Do not call `ipsw` by its short name and do not use the Snap package.
+The script below invokes the absolute path directly, so `PATH` cannot
+select a different executable. The physical phone is not involved.
+
+The target cache is:
+
+`$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64`
+
+Run this from Ubuntu. It checks that the standalone executable and target
+cache are accessible, verifies that the output directory is writable, records
+the exact executable version, saves each query's stdout and stderr, and
+prints each exit status to the terminal.
 
 ```bash
 set -uo pipefail
 
+IPSW="/home/hey/ipsw-standalone/ipsw"
 TARGET_CACHE="$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
 OUT="$HOME/19H422-gui-framework-loader-results"
-mkdir -p "$OUT"
 
-for IMAGE in \
-  /System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard \
-  /System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard \
-  /System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices
-do
+echo "===== Standalone IPSW ====="
+if [ ! -x "$IPSW" ]; then
+  echo "ERROR: standalone IPSW is missing or not executable: $IPSW"
+  exit 1
+fi
+printf 'Executable: %s\n' "$IPSW"
+"$IPSW" version
+VERSION_STATUS=$?
+printf 'Version command exit status: %s\n' "$VERSION_STATUS"
+if [ "$VERSION_STATUS" -ne 0 ]; then
+  echo "ERROR: could not query standalone IPSW version."
+  exit 1
+fi
+
+echo
+echo "===== Target cache ====="
+if [ ! -r "$TARGET_CACHE" ]; then
+  echo "ERROR: target cache is not readable by the current Ubuntu user:"
+  echo "$TARGET_CACHE"
+  echo "No permission changes were attempted."
+  exit 1
+fi
+echo "Target cache is readable."
+
+echo
+echo "===== Output directory ====="
+if ! mkdir -p "$OUT"; then
+  echo "ERROR: could not create output directory: $OUT"
+  exit 1
+fi
+if [ ! -w "$OUT" ]; then
+  echo "ERROR: output directory is not writable: $OUT"
+  exit 1
+fi
+echo "Output directory is writable: $OUT"
+
+: > "$OUT/status.tsv" || {
+  echo "ERROR: could not create status.tsv in $OUT"
+  exit 1
+}
+"$IPSW" version > "$OUT/ipsw-version.txt" 2>&1
+printf 'Standalone executable: %s\n' "$IPSW" >> "$OUT/ipsw-version.txt"
+
+IMAGES=(
+  "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard"
+  "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard"
+  "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices"
+)
+
+for IMAGE in "${IMAGES[@]}"; do
   NAME="$(basename "$IMAGE")"
-  if ipsw dyld image "$TARGET_CACHE" "$IMAGE" \
+  echo
+  echo "===== $NAME ====="
+
+  if "$IPSW" dyld image "$TARGET_CACHE" "$IMAGE" \
       > "$OUT/$NAME.txt" 2> "$OUT/$NAME.err"; then
     STATUS=0
   else
     STATUS=$?
   fi
+
   printf '%s\t%s\n' "$IMAGE" "$STATUS" >> "$OUT/status.tsv"
+  printf 'Exit status: %s\n' "$STATUS"
+  printf 'stdout: %s/%s.txt (%s bytes)\n' "$OUT" "$NAME" "$(wc -c < "$OUT/$NAME.txt")"
+  printf 'stderr: %s/%s.err (%s bytes)\n' "$OUT" "$NAME" "$(wc -c < "$OUT/$NAME.err")"
+
+  if [ -s "$OUT/$NAME.err" ]; then
+    echo "--- stderr ---"
+    cat "$OUT/$NAME.err"
+  fi
 done
 
-printf 'Saved results in %s\n' "$OUT"
+echo
+echo "===== Saved results ====="
+cat "$OUT/status.tsv"
+echo "Reports are in: $OUT"
 ```
 
-Do not execute or extract these images. The command queries the mounted cache
-metadata only and writes text output under the user's home directory.
+Do not execute or extract these images. This queries cache metadata only and
+writes text reports under your home directory. The standalone executable is
+called directly for every IPSW command; no Snap executable is used.
 
 ## What to retain
 
