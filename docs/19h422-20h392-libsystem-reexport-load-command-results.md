@@ -120,13 +120,13 @@ does not communicate with the phone or modify the shared caches. Review the
 query-status table and stderr files; all expected queries must have status
 zero before using the archive.
 
-The next comparison will take only the 100/102 AGX imports attributed to
-`libSystem.B.dylib` and check their names against the union of export names
-from the parent image's exact re-export dependencies in the corresponding
-build. A symbol appearing in more than one re-export provider will be
-reported as ambiguous provider-name membership, not silently assigned to
-one provider. A symbol absent from the one-level re-export set will remain
-unresolved until any nested re-export relationships are examined.
+That comparison is now complete. See [the provider-by-provider
+symbol results](19h422-20h392-agx-libsystem-reexport-symbol-results.md):
+all 100 target and 102 donor imports originally attributed to
+`libSystem.B.dylib` occur in exactly one child provider's direct export
+list. None was ambiguous or absent from the one-level re-export set.
+The report includes the per-provider counts, cross-build name differences,
+a checked-in CSV mapping, and a reproducible comparator.
 
 ## Interpretation limits
 

@@ -8,8 +8,10 @@ on:
       - "tools/collect_agx_provider_exports.sh"
       - "tools/collect_libsystem_load_commands.sh"
       - "tools/collect_libsystem_reexport_exports.sh"
+      - "tools/compare_dyld_reexports.py"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
+      - "tests/test_compare_dyld_reexports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
   push:
     branches:
@@ -20,8 +22,10 @@ on:
       - "tools/collect_agx_provider_exports.sh"
       - "tools/collect_libsystem_load_commands.sh"
       - "tools/collect_libsystem_reexport_exports.sh"
+      - "tools/compare_dyld_reexports.py"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
+      - "tests/test_compare_dyld_reexports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
 
 permissions:
@@ -47,6 +51,9 @@ jobs:
 
       - name: Check import comparator CLI
         run: python3 tools/compare_dyld_imports.py --help
+
+      - name: Check re-export comparator CLI
+        run: python3 tools/compare_dyld_reexports.py --help
 
       - name: Check provider collector shell syntax
         run: bash -n tools/collect_agx_provider_exports.sh
