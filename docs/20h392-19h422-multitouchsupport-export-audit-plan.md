@@ -31,6 +31,24 @@ At that revision:
 
 This is a parser-output inspection, not an independent validation of export-trie bytes or a signature check.
 
+### Optional broader text-stub cross-check
+
+The same pinned source revision also provides
+`ipsw dyld tbd <DSC> <DYLIB> --output <directory>`. It writes a
+text-based stub that gathers external symbol-table entries, dyld export-trie
+entries, Mach-O exports, re-export declarations, and Objective-C class/ivar
+metadata when present. This is a broader interface summary than the focused
+`Dyld Exports` section above and does not preserve the export-trie flags in
+the same per-entry display. It may be used as a secondary cross-check, but
+the primary comparison remains `dyld macho --symbols -V`.
+
+Pinned implementation references:
+- [dyld_tbd.go](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/cmd/ipsw/cmd/dyld/dyld_tbd.go)
+- [dsc.go](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/internal/commands/dsc/dsc.go)
+- [tbd.go](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/tbd/tbd.go)
+- [template.go](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/tbd/template.go)
+
+
 ## Read-only cache locations
 
 The existing cache paths recorded by this project are:
