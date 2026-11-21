@@ -608,3 +608,30 @@
   `docs/xnu-public-source-vs-shipped-kernel.md`; exact source-to-binary
   provenance and target-specific configuration remain open. No kernel,
   firmware, boot, partition, or device state was changed.
+
+
+## M6 launchd inventory comparison update (2026-11-20)
+
+The user supplied the complete read-only inspector output for both the
+iPhone10,3 / D22AP / iOS 16.7.16 / 20H392 donor and the iPhone9,1 / D10AP /
+iOS 15.8.8 / 19H422 stock target reference. Exact provider-index set
+comparison: 1,451 common names, 217 donor-only names, and 34 target-only
+names. Provider-label assignments differ for 21 names present in both.
+The donor has 532 LaunchDaemons entries, 530 unique labels, 1,707 service
+occurrences, 1,668 distinct service names, and 21 multi-provider names. The
+target has 475 entries, 475 unique labels, 1,493 service occurrences,
+1,485 distinct service names, and 8 multi-provider names. The donor repeats
+the `com.apple.CommCenter` and `com.apple.sysdiagnose` labels across
+separate plist entries; the target has no duplicate job labels.
+
+Selected comparison: backboardd and runningboardd service sets match
+exactly; SpringBoard has one donor-only service; configd has one donor-only
+service; mediaserverd has six donor-only and one target-only service; wifid,
+bluetoothd, mobileactivationd, and notifyd service sets match exactly.
+The donor has an additional `CommCenter-noncellular` plist entry. All
+differences remain static plist metadata from different iOS releases, not
+proof of runtime behavior or iPhone9,1 compatibility. The complete lists
+and source plist hashes are in
+`docs/iphone91-19h422-launchd-inventory-results.md`. M6 remains in
+progress; M7/SpringBoard has not started. The physical iPhone 7 remains on
+iOS 12.1.4; no device or firmware state was changed.
