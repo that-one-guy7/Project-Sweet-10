@@ -16,7 +16,7 @@ The user reported:
 - `ipsw extract --files --device iPhone9,1` selected filesystem DMG `098-68844-067.dmg` and reached the mount stage.
 - The final error was `no HFS+ partition found in DMG`, followed by EOF errors while probing MBR, Primary GPT Header, and Backup GPT Header.
 
-The user has not yet supplied the verbose/debug output from a retry with the global `-V` flag. The precise APFS-FUSE failure is therefore unknown.
+The user supplied verbose output from the Snap-packaged command. The host path `/usr/local/bin/apfs-fuse` existed and was executable, but Snap's `ipsw` reported that the configured path did not exist from within its execution environment. The Snap connection listing showed `home` connected and `fuse-support` disconnected. The exact confinement mechanism was not independently diagnosed.
 
 ## Pinned ipsw 3.1.749 source path
 
@@ -43,6 +43,32 @@ Given the pinned code path, the MBR/GPT EOF diagnostics are consistent with the 
 
 This narrows the problem to the APFS-FUSE attempt or the image/type detection path, but does not identify the cause. Possible causes must not be asserted until the debug output and extracted image metadata are available.
 
+## Successful standalone extraction
+
+The user downloaded and extracted the standalone Linux archive for ipsw
+`3.1.749`, then retried the same 19H422 filesystem extraction using that
+binary and the explicit APFS-FUSE path. The verbose output reported:
+
+- The same IPSW and filesystem DMG `098-68844-067.dmg` were selected.
+- The DMG mounted after the filesystem-type detection selected the APFS-FUSE
+  attempt.
+- The nested
+  `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist` was
+  extracted successfully.
+- A broader driver-name query also extracted the plugin's
+  `_CodeSignature/CodeResources`.
+
+The later inspection of the extracted `Info.plist` confirmed bundle ID
+`com.apple.iokit.plugin.MultitouchHID`, version `5100.27`, supported platform
+`iPhoneOS`, minimum OS `15.8`, and the plugin type/factory UUID mappings.
+The extracted parent KEXT plist files were not returned by the broad search;
+the parent-driver metadata in the project report is sourced from the separate
+KernelCache JSON output.
+
+The standalone result proves the filesystem DMG can be mounted and selected
+metadata extracted in this host environment. It does not establish exactly
+which Snap sandbox restriction caused the earlier non-existent-file result.
+
 ## APFS-FUSE capability boundary
 
 The APFS-FUSE project describes itself as a read-only APFS FUSE driver and documents direct DMG support. Its README also lists compression limitations, including lack of transparent LZFSE decompression. That is a capability caveat, not proof that this specific 19H422 image uses an unsupported format or that compression caused the failure.
@@ -51,18 +77,14 @@ The executable's path is known, but its installed build/version and the exact AP
 
 Reference: [APFS-FUSE README at the reviewed source revision](https://github.com/sgan81/apfs-fuse/blob/66b86bd525e8cb90f9012543be89b1f092b75cf3/README.md).
 
-## Next bounded evidence
-
-The next useful item is the full output from the already prepared host-side retry:
-
-- Run the same IPSW extraction command with the global verbose flag `-V`.
-- Preserve the complete output, especially the debug line containing `apfs-fuse failed` and the command's own output.
-- Do not publish the complete filesystem image, raw DeviceTree, or private machine-specific files.
-
-Only after that log is available should a specific APFS-FUSE, image-format, or extraction issue be proposed. No phone-side action is required.
-
 ## Status
 
-**Source audit complete:** the pinned `ipsw` fallback behavior and the meaning of the outer HFS+ error are documented.
+**Resolved for this inspection:** the standalone ipsw 3.1.749 binary mounted
+the 19H422 filesystem DMG and extracted the nested multitouch plugin metadata.
 
-**Root cause pending:** the APFS-FUSE error from the user's actual image has not been captured. The nested `MultitouchHID.plugin/Info.plist` check remains pending until the matching 19H422 filesystem can be inspected. M6 remains in progress; M7 has not started.
+**Still unknown:** the exact reason the Snap-packaged binary could not see the
+host APFS-FUSE executable, the installed APFS-FUSE build/version, and the
+plugin executable's contents or runtime loading. The repository contains no
+filesystem image or proprietary executable. This remains host-side static
+research only; the physical iPhone remains on iOS 12.1.4. M6 continues, and
+M7 has not started.
