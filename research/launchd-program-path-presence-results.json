@@ -1,0 +1,191 @@
+{
+  "schema": "project-sweet-10.launchd-program-path-presence-results.v1",
+  "source_report_sha256": "33dbb1e62ded690e0660c4fd76fd7b343e3155afa3ae3053475a17c105a202d9",
+  "source_report_schema": "project-sweet-10.launchd-program-path-presence.v1",
+  "inventories": {
+    "target_19H422": {
+      "filesystem_root_count": 1,
+      "launchd_inventory_sha256": "539ae9992e6fb8395bf0354a2c3feb98cdae85933b40bb1a19a9a3e10c8270e3",
+      "launchd_source_plist_sha256": "34b6a174d2b948035afd71ad0a4fc2d3e4e85ea807a794ee69722054b09d6bbe",
+      "selected_job_count": 9,
+      "status_counts": {
+        "regular-file-found": 9
+      },
+      "matched_root": "target_root_0",
+      "matched_wrapper_depth": 1,
+      "matched_prefix": "root/"
+    },
+    "donor_20H392": {
+      "filesystem_root_count": 2,
+      "launchd_inventory_sha256": "86c9f900b2e3a02e78631a1bdc10929d493d13beb401183f4b289b93732f1d92",
+      "launchd_source_plist_sha256": "810070302b5c4d7c5f00bdc8df20aaea2dd33cd8342d2402fcdf7ff6397d374c",
+      "selected_job_count": 9,
+      "status_counts": {
+        "regular-file-found": 9
+      },
+      "matched_root": "donor_root_0",
+      "unmatched_other_root": "donor_root_1",
+      "matched_wrapper_depth": 2,
+      "matched_prefix": "root/root/"
+    }
+  },
+  "checked_wrapper_depths": [
+    0,
+    1,
+    2
+  ],
+  "total_path_checks": 81,
+  "selected_jobs": [
+    {
+      "label": "com.apple.SpringBoard",
+      "program": "/System/Library/CoreServices/SpringBoard.app/SpringBoard",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/System/Library/CoreServices/SpringBoard.app/SpringBoard"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/System/Library/CoreServices/SpringBoard.app/SpringBoard"
+      }
+    },
+    {
+      "label": "com.apple.backboardd",
+      "program": "/usr/libexec/backboardd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/libexec/backboardd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/libexec/backboardd"
+      }
+    },
+    {
+      "label": "com.apple.bluetoothd",
+      "program": "/usr/sbin/bluetoothd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/sbin/bluetoothd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/sbin/bluetoothd"
+      }
+    },
+    {
+      "label": "com.apple.configd",
+      "program": "/usr/libexec/configd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/libexec/configd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/libexec/configd"
+      }
+    },
+    {
+      "label": "com.apple.mediaserverd",
+      "program": "/usr/sbin/mediaserverd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/sbin/mediaserverd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/sbin/mediaserverd"
+      }
+    },
+    {
+      "label": "com.apple.mobileactivationd",
+      "program": "/usr/libexec/mobileactivationd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/libexec/mobileactivationd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/libexec/mobileactivationd"
+      }
+    },
+    {
+      "label": "com.apple.notifyd",
+      "program": "/usr/sbin/notifyd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/sbin/notifyd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/sbin/notifyd"
+      }
+    },
+    {
+      "label": "com.apple.runningboardd",
+      "program": "/usr/libexec/runningboardd",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/libexec/runningboardd"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/libexec/runningboardd"
+      }
+    },
+    {
+      "label": "com.apple.wifid",
+      "program": "/usr/sbin/wifid",
+      "target": {
+        "status": "regular-file-found",
+        "filesystem_root": "target_root_0",
+        "wrapper_depth": 1,
+        "relative_candidate_path": "root/usr/sbin/wifid"
+      },
+      "donor": {
+        "status": "regular-file-found",
+        "filesystem_root": "donor_root_0",
+        "wrapper_depth": 2,
+        "relative_candidate_path": "root/root/usr/sbin/wifid"
+      }
+    }
+  ],
+  "interpretation_limits": [
+    "This records bounded path presence only under the explicitly supplied roots and wrapper depths.",
+    "The scan uses lstat component-by-component and stops at symlinks.",
+    "It does not open, hash, execute, or inspect program file contents.",
+    "Regular-file presence does not validate Mach-O format, architecture, signature, entitlements, ABI, dependencies, or loadability.",
+    "It does not establish launchd registration, process launch, runtime behavior, kernel compatibility, or SpringBoard readiness."
+  ]
+}
