@@ -47,7 +47,7 @@ Counts below are parsed from the printed `Dependents` block. Dependency kinds ar
 | AGX plugin pair (A10 vs A11) | 14 regular | 14 regular | Identical |
 | AppleMetalGLRenderer | 11 regular | 11 regular | Identical |
 
-Across these ten pairs there are 102 target typed edges and 106 donor typed edges. The target edge sets are fully represented in the donor outputs; there are zero target-only typed edges. The donor has four additional typed edges total: three under Metal and one under CoreGraphics. Eight of the ten pairs have identical typed dependency sets.
+Across the ten same-install-path pairs there are 102 target typed edges and 106 donor typed edges. The target edge sets are fully represented in the donor outputs; there are zero target-only typed edges. The donor has four additional typed edges total: three under Metal and one under CoreGraphics. Eight of these ten same-path pairs have identical typed dependency sets. The separate AGXMetalA10-versus-AGXMetalA11 plugin pair adds 14 identical regular edges on each side, bringing the totals across all 11 comparisons to 116 target and 120 donor typed edges.
 
 ### Donor-only dependency edges
 
