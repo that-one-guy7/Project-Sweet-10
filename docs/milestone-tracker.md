@@ -886,7 +886,7 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   or modified.
 
 
-- 2026-11-21: Recorded selected complete KEXT JSON records for AppleA7IOP,
+- 2026-11-21: Recorded selected KEXT JSON metadata fields for AppleA7IOP,
   AppleEmbeddedTempSensor, AppleT8010/AppleT8015, Hurricane/Monsoon error
   handlers, H9P/H10P display, AGXG9P/AGXG10P GPU, and H9/H10 camera
   interfaces. The donor AppleA7IOP and target record share the displayed
