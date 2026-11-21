@@ -84,7 +84,9 @@ For the `0x0D/0x04` and `0x0D/0x20` personalities, `DefaultMultitouchProperties`
 
 `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin`
 
-This creates a documented static relationship between the generic multitouch HID service personality and the SPI multitouch plugin path. The separately listed `AppleMultitouchSPI` bundle was present in the KEXT inventory, but the user's JSON output did **not** include an `io_kit_personalities` field for that bundle. Its plugin executable, matching behavior, and runtime activation have not been independently verified.
+This creates a documented static relationship between the generic multitouch HID service personality and the SPI multitouch plugin path. Although the `AppleMultitouchSPI` KernelCache JSON record does **not** include an `io_kit_personalities` field, the user subsequently extracted the nested plugin's Info.plist from the matching 19H422 filesystem DMG. The plist identifies `com.apple.iokit.plugin.MultitouchHID`, version `5100.27`, minimum OS `15.8`, and an `IOHIDPlugInFactory` mapping. Its plug-in type UUID matches the type key referenced by the `AppleMultitouchDriver` personalities. This confirms the nested plugin metadata and its static factory mapping; the executable binary, cryptographic signature validation, runtime activation, and event path remain unverified.
+
+The plugin's `CFPlugInTypes` type UUID is `0516B563-B15B-11DA-96EB-0014519758EF`. It maps to factory UUID `0CB0FBB9-15EA-11DB-A93C-001451D47183`, whose declared function is `IOHIDPlugInFactory`. The user's extraction output listed both `Info.plist` and `_CodeSignature/CodeResources`; it did not list the plugin executable.
 
 The general `AppleHIDTransport` bundle reports a dummy transport personality matching `hid-transport,dummy` and a second personality for an `AppleHIDTransportInterface` with `InterfaceType = HID`. The exact target K1 string is matched by the separate `AppleHIDTransportSPI` personality, not by either of these general `AppleHIDTransport` personalities.
 
@@ -106,7 +108,7 @@ The text KEXT listing printed `AppleMobileDispH9P (140.0.0)`, while the JSON res
 | IOKit personality dictionary returned | Confirmed for eight of the nine; no field was returned for `AppleMultitouchSPI` |
 | Exact IONameMatch overlap with target DeviceTree | Confirmed for display, Synopsys MIPI-DSI, Samsung SPI, K1 SPI HID transport, Pinot LCD, and LM3539 backlight |
 | Display `backlight-control` property condition | Not present in the allowlisted `/arm-io/disp0` output; the extra display-to-backlight association is not established |
-| IOKit provider actually attaches at runtime | Not tested |
+| Nested `MultitouchHID.plugin` Info.plist in matching 19H422 filesystem | Confirmed; bundle ID, version, minimum OS, type UUID, and factory mapping inspected |\n| Plugin executable extracted / cryptographic signature validated | Not confirmed / not tested |\n| IOKit provider actually attaches at runtime | Not tested |
 | Display, touch, or backlight operation | Not tested |
 | Compatibility of these iOS 15 KEXTs with the separate 20H392 donor userland/kernel | Not established |
 
