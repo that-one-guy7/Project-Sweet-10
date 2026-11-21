@@ -198,3 +198,33 @@ These cache image-list records do not prove runtime dependency resolution,
 standalone filesystem presence, transitive dependency closure, or plugin
 loading. The next static comparison is the equivalent selected-name lookup
 against the donor 20H392 cache inventory.
+
+
+## Target MultitouchSupport PrebuiltLoaderSet record
+
+The user supplied a successful read-only
+`ipsw dyld image` result for
+`/System/Library/PrivateFrameworks/MultitouchSupport.framework/MultitouchSupport`
+from the target 19H422 cache. The record reports VM Size
+`0x3d3f0000`, loader reference `index: 1248`, flags
+`prebuilt|in-cache-dylib|objc|never-unload`, Info flags
+`regions=5`, and exports trie offset `0x01c64b98`, size
+`0x1ca8`. It contains five regions with permission sequence
+`r-x`, `rw-`, `rw-`, `rw-`, `r--`.
+
+The command's `Dependents` block lists six regular rows:
+IOKit.framework/Versions/A/IOKit, libIOReport.dylib,
+CoreFoundation.framework/CoreFoundation,
+Foundation.framework/Foundation, libobjc.A.dylib, and libSystem.B.dylib.
+It does not list `libc++.1.dylib`.
+
+The separate target cache image inventory identifies MultitouchSupport
+at image-list index 1249, version `5100.27.0.0.0`, UUID
+`0EAF98B3-8D31-3A90-A578-1787797B9467` [NOTE: verify UUID exact].
+
+The side-by-side target/donor loader fields, exact region rows, dependency
+lists, and parser caveat are recorded in
+[the MultitouchSupport loader comparison](20h392-19h422-multitouchsupport-loader-comparison.md).
+The displayed Sections values are excluded because they contain
+implausibly large decoded offsets/sizes. This remains static loader metadata;
+runtime resolution, loading, and touch operation are unverified.
