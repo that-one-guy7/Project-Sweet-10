@@ -25,6 +25,8 @@
 - [20H392 BackBoard framework dependency results](20h392-backboard-framework-dependency-results.md)
 - [iPhone9,1 19H422 target BackBoard loader audit plan](iphone91-19h422-backboard-loader-audit-plan.md)
 - [iPhone9,1 19H422 target BackBoard loader results](iphone91-19h422-backboard-loader-results.md)
+- [iPhone9,1 19H422 GUI framework loader results](iphone91-19h422-gui-framework-loader-results.md)
+- [20H392 GUI framework loader capture plan](20h392-gui-framework-loader-capture-plan.md)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [iPhone9,1 AGXG9P and Metal userland audit plan](19h422-20h392-agx-metal-userland-audit-plan.md)
 - [19H422 / 20H392 graphics KEXT metadata results](19h422-20h392-agx-kext-metadata-results.md)
