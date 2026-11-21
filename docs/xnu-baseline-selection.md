@@ -21,7 +21,7 @@ generation, and its XNU README describes that family as the iOS 16 generation. A
 version mapping for macOS 13.5 identifies xnu-8796.141.3. This makes it a sensible
 candidate for source-level study.
 
-This is not proof of iPhone9,1 platform support. A later UniXNU device record independently reports this same XNU tag and commit in a locally authored iPhone X D22AP 20H392 profile; see [the UniXNU reference review](unixnu-reference.md). This strengthens the candidate's relevance to the selected iPhone X reference, but remains downstream profile evidence rather than an Apple-published build-to-source mapping. The exact donor BuildManifest and kernelcache identity still need to be independently tied to the source revision.
+This is not proof of iPhone9,1 platform support. A newer downstream UniXNU profile for a OnePlus 13 / SM8750 port independently pins this same XNU tag and commit alongside the exact SHA-256 of the iPhone X 20H392 donor KernelCache already recorded by Sweet-10. Its separate report records 62 patches applying to a clean pinned source, while explicitly separating compilation, binary ABI, and hardware validation. The profile's candidate kernel path is `DEVELOPMENT_ARM64_BCM2837`, not a T8015 or T8010 build. This strengthens the case for retaining `xnu-8796.141.3` as a public research baseline, but it remains a downstream pairing rather than an Apple-published source-to-binary mapping. See [the UniXNU reference review](unixnu-reference.md) and [the 20H392 baseline cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
 
 ## Build environment observations from ios-sweet
 

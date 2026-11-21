@@ -4,7 +4,7 @@
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
 | M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; static 19H422 DeviceTree is hash-verified and parsed (227 nodes); selected ARM-IO/AIC/timer values are cross-checked against XNU 8796, while zero-filled runtime clock/memory/panic fields remain unresolved; the pinned PongoOS revision has a registered T8010 HAL backend with USB resources and T8010 AES/Recfg paths, but target runtime is untested; T8010 is still absent from the XNU 8796 machine allowlist |
-| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; 20H392 donor KernelCache reports XNU `8796.142.1.703.8~1` / `RELEASE_ARM64_T8015`, but the public candidate omits both T8015 and T8010 machine profiles; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); exact source-to-kernelcache mapping, product-specific build inputs, and reproducible iPhoneOS ARM64 baseline build remain open |
+| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; 20H392 donor KernelCache reports XNU `8796.142.1.703.8~1` / `RELEASE_ARM64_T8015`, while the public candidate omits both T8015 and T8010 machine profiles; an independent UniXNU OnePlus 13 / SM8750 profile co-pins the same donor KernelCache SHA-256 with the same public XNU commit and reports 62 clean patch applications only (compilation, binary ABI, and hardware remain separate); its candidate kernel path is `DEVELOPMENT_ARM64_BCM2837`, not T8015/T8010; exact Apple source provenance, product-specific build inputs, and reproducible iPhoneOS ARM64 baseline build remain open |
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; target-native 19H422 KernelCache (XNU 8020.241.44~1, `RELEASE_ARM64_T8010`) includes candidate display/touch/backlight KEXTs; target IOKit personalities show exact `IONameMatch` overlaps for `disp0,t8010`, `mipi-dsim-1,synopsys`, `lcd,pinot`, `spi-1,samsung`, `hid-transport,k1`, and `backlight,lm3539`; extracted `MultitouchHID.plugin/Info.plist` has type UUID `0516B563-B15B-11DA-96EB-0014519758EF`, which exactly matches the `AppleMultitouchDriver` `IOCFPlugInTypes` key; runtime provider attachment, plugin loading, and hardware operation remain unverified |
@@ -28,6 +28,17 @@
   hardware implementations are not portable A10/T8010 code.
 
 ## Change log
+
+- 2026-11-20: Added an independent UniXNU 20H392 source-baseline
+  cross-check. The downstream OnePlus 13 / SM8750 profile co-pins the
+  same iPhone10,3 donor KernelCache SHA-256 with the public
+  `xnu-8796.141.3` commit used by Sweet-10. Its strict report passes
+  62 ordered patch applications but explicitly excludes compilation,
+  binary ABI, and hardware validation. The profile's candidate kernel
+  path is `DEVELOPMENT_ARM64_BCM2837`, not a T8015/T8010 target build.
+  Added docs/unixnu-20h392-xnu-baseline-crosscheck.md and updated the
+  baseline selection, source-provenance, readiness, and UniXNU reference
+  notes. G1/M2 remain open; no device or firmware state changed.
 
 - 2026-11-19: Initial documentation scaffold prepared for iPhone 7 `iPhone9,1`.
   No device changes performed.

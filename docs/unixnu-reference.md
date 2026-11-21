@@ -37,6 +37,38 @@ That source commit matches Project Sweet-10's existing candidate pin. This is us
 
 **Evidence limitation:** this is a downstream project's profile report, not an Apple-published build-to-source mapping. The profile was authored locally; UniXNU's reviewed upstream OS-profile tree does not itself ship that iOS 16 profile. A separate device-port record notes that its local 20H392 profile did not yet have a kernelcache hash pinned. Therefore, profile completeness and donor-image identity must be checked per port; do not turn one downstream report into a universal claim about every 20H392 image.
 
+## Newer 20H392 profile cross-check: dodge / OnePlus 13
+
+A separate UniXNU device record for OnePlus 13 CPH2653 / SM8750 reports a
+locally authored iPhone10,3 / D22AP / iOS 16.7.16 (20H392) profile. At the
+pinned device-port snapshot
+[`6a527866e43734680f3b92ec7445d3d518ca70cd`](https://github.com/lihenggui/UniXNU_dodge_SM8750/tree/6a527866e43734680f3b92ec7445d3d518ca70cd),
+the profile binds:
+
+- `xnu-8796.141.3` / `1b191cb58250d0705d8a51287127505aa4bc0789`;
+- Darwin `22.6.0`;
+- the same `[kernel.prelink].kernelcache_sha256` as Sweet-10's extracted
+  20H392 donor KernelCache:
+  `2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221`.
+
+Its pinned [strict patch-application report](https://github.com/lihenggui/UniXNU_dodge_SM8750/blob/6a527866e43734680f3b92ec7445d3d518ca70cd/reports/public/ios16-rebased-patches.json)
+returns PASS for 62 ordered patches on a clean pinned source. The report's
+scope explicitly excludes compilation, binary ABI, and hardware validation.
+The profile's rebuilt-kernel output path is
+`DEVELOPMENT_ARM64_BCM2837`, not `RELEASE_ARM64_T8015` or a T8010 target.
+
+Four source-specific XNU patches are present in that profile: a native-prelink
+security-initializer hook, sparse prelink-index handling, typed-pointer/UIO
+alignment compatibility, and a project-specific exported VFS helper. These
+are source adaptations for that port's prelink, root, and build environment,
+not evidence of a general A10 implementation or patches to copy wholesale.
+
+This newer record supplies the downstream donor-digest co-pin that the earlier
+`nuwa` record did not. It still does not identify Apple's exact internal
+source commit or product-specific build inputs; it is not an Apple
+source-to-binary attestation. See
+[the detailed Sweet-10 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
+
 ## Portability boundary
 
 UniXNU is designed around a UEFI environment for non-Apple ARM64 hardware. Its public device records describe Android-based Qualcomm and other non-Apple platforms. Its architecture is useful as a comparison for separation of responsibilities, reproducibility, and evidence tracking; its UEFI integration, SoC support, device trees, drivers, memory maps, and board configuration are not iPhone 7 A10 implementation evidence.

@@ -12,7 +12,7 @@ device boot, firmware modification, or installation procedure.
 |---|---|---|
 | XNU tag and commit | Makes source identity reproducible | Candidate pinned: xnu-8796.141.3 / 1b191cb58250d0705d8a51287127505aa4bc0789 |
 | Target userland build | Establishes the OS generation being studied | Selected: iOS 16.7.16 / 20H392, iPhone X family |
-| Exact shipped Darwin/XNU version | Determines whether source revision matches userland | Unknown |
+| Exact shipped Darwin/XNU version | Determines whether source revision matches userland | Donor KernelCache reports Darwin 22.6.0 and embedded label `8796.142.1.703.8~1`; this label is not an exact public Git tag or source commit |
 | Host OS version | XNU build scripts and SDK tools are host-dependent | Not selected |
 | Xcode and command-line tools | Compiler, linker, SDK, and IIG compatibility | Not pinned |
 | SDK and platform | Selects headers, target macros, and platform build rules | Not verified |

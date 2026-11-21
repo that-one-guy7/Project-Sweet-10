@@ -23,23 +23,32 @@ Its four BuildIdentity entries use A11/T8015 chip ID 0x8015 and D22AP/D221AP
 board identities. It is a valid donor reference for userland study, not a
 target manifest for iPhone9,1.
 
-A source-versus-binary cross-check also found that the inspected 20H392 donor
-KernelCache reports `RELEASE_ARM64_T8015`, while the public
-`xnu-8796.141.3` tag exposes neither a normal T8015 nor T8010 ARM64 machine
-profile. Its embedded XNU version (`8796.142.1.703.8~1`) is not identical
-to the pinned public tag. Public XNU's version-stamping logic shows that this
-embedded token can be an XBS project/source-version label plus build number,
-not necessarily a Git tag. The donor's exact source commit and product-specific
-build inputs remain unknown. This does not prove that no private or
-product-specific source supports T8015 or could support T8010. See the
-[version-stamp provenance note](xnu-kernel-version-stamp-provenance.md) and
-[public-source versus shipped-KernelCache comparison](xnu-public-source-vs-shipped-kernel.md).
+A source-versus-binary cross-check found that the inspected 20H392 donor
+KernelCache reports `RELEASE_ARM64_T8015`, while public
+`xnu-8796.141.3` exposes neither a normal T8015 nor T8010 ARM64 machine
+profile. Its embedded label (`8796.142.1.703.8~1`) can be an XBS
+project/source-version label plus build number, not necessarily a Git tag.
+The donor's exact Apple source commit and product-specific build inputs remain
+unknown.
+
+An independent downstream UniXNU profile for a OnePlus 13 / SM8750 port now
+co-pins the same donor KernelCache SHA-256 with
+`xnu-8796.141.3` / commit
+`1b191cb58250d0705d8a51287127505aa4bc0789`. Its report records 62 patches
+applying to a clean source checkout, but explicitly leaves compilation,
+binary ABI, and hardware validation separate. Its rebuilt-kernel path is
+`DEVELOPMENT_ARM64_BCM2837`, not T8015 or T8010. This is useful downstream
+corroboration for the public candidate, not an Apple source-to-binary
+attestation or iPhone9,1 support result. See the
+[version-stamp provenance note](xnu-kernel-version-stamp-provenance.md),
+[public-source versus shipped-KernelCache comparison](xnu-public-source-vs-shipped-kernel.md),
+and [UniXNU 20H392 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
 
 ## Readiness gates
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; the 20H392 KernelCache reports RELEASE_ARM64_T8015 and an embedded build-object-root label xnu-8796.142.1.703.8~1. Public XNU version-stamping logic shows this label can encode an XBS source-version/build identifier rather than a Git tag; exact source commit and product-specific build inputs remain unknown |
+| G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; an independent downstream UniXNU profile co-pins its commit with the exact 20H392 donor KernelCache SHA and reports 62 clean patch applications. That report excludes compilation, binary ABI and hardware; the profile uses DEVELOPMENT_ARM64_BCM2837, not T8015/T8010. Public version-stamping logic explains why the donor's 8796.142.1.703.8~1 label is not necessarily a Git tag. Exact Apple source provenance and product-specific inputs remain unknown |
 | G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Public source presence/absence is pinned and checked across xnu-7195.121.3, xnu-8019.80.24, and xnu-8796.141.3; the full historical dependency graph and migration remain incomplete |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; no target-specific values are approved |
@@ -96,6 +105,7 @@ partition writes, or recovery operations.
 - [A10/T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
 - [Public XNU source versus shipped KernelCache identities](xnu-public-source-vs-shipped-kernel.md)
 - [20H392 XNU kernel version-stamp provenance](xnu-kernel-version-stamp-provenance.md)
+- [Independent UniXNU 20H392 XNU baseline cross-check](unixnu-20h392-xnu-baseline-crosscheck.md)
 - [ARM64 platform audit status](platform-audit-status.md)
 - [iPhone9,1 device-tree property inventory](../device-tree/PROPERTY_INVENTORY.md)
 - [XNU handoff requirements](../boot/HANDOFF_REQUIREMENTS.md)

@@ -57,6 +57,7 @@
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
 - [Public XNU source versus shipped KernelCache identities](xnu-public-source-vs-shipped-kernel.md)
 - [20H392 XNU kernel version-stamp provenance](xnu-kernel-version-stamp-provenance.md)
+- [Independent UniXNU 20H392 XNU baseline cross-check](unixnu-20h392-xnu-baseline-crosscheck.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [Historical T8010 XNU profile CI verification](xnu-machine-history-ci.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)
