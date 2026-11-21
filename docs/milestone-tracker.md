@@ -976,3 +976,24 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   registration, clients, runtime compatibility, or SpringBoard. The physical
   iPhone 7 remains on iOS 12.1.4; no device or firmware state was accessed
   or changed.
+
+
+- 2026-11-21: Recorded the uploaded 19H422 target and 20H392 donor
+  embedded .xpc/.appex inventory results. The reports contain 719 target
+  candidates (715 parsed, four missing Info.plists) and 855 donor
+  candidates (851 parsed, four missing Info.plists), with zero scan errors.
+  Grouping by exact bundle identifier yields 598 shared IDs, 35 target-only,
+  and 147 donor-only; 82 target IDs and 106 donor IDs have multiple inventory
+  records, so duplicates are retained rather than collapsed. Among shared
+  IDs, selected metadata differences include the expected 15.8 versus 16.7
+  MinimumOSVersion values (598 IDs), 11 executable-presence differences
+  associated with duplicate staged/placeholder records, nine extension
+  metadata differences, three executable-name differences, one package-type
+  difference, and one MachServices declaration difference. The donor report
+  declares two MachService names for one CAReportingService bundle; the
+  target report declares none. Added a read-only JSON comparator, CSV output,
+  ten synthetic tests, CI path coverage, and the detailed results report.
+  These are plist and filename-presence observations, not service launch,
+  registration, ABI, runtime, kernel, boot, or SpringBoard evidence. M6
+  remains in progress; M7/SpringBoard has not started. The physical iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was accessed or changed.
