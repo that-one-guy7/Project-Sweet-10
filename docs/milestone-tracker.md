@@ -1124,3 +1124,18 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   Added structured identity JSON and audit documentation. M6 remains in
   progress; M7 has not started. The physical iPhone 7 remains on iOS 12.1.4;
   no device, firmware, partition, security, or boot state was accessed or changed.
+
+
+- 2026-11-21: Started the next read-only target filesystem research task after
+  the target BuildManifest audit. Added a recursive basename inventory for the
+  18 selected GUI framework binary names and enclosing `.framework` bundle
+  names under one explicit mounted target OS root. The scanner uses
+  `os.walk(followlinks=False)`, explicitly prunes directory symlinks, uses
+  `lstat` for matches, and preserves traversal/stat errors so an incomplete
+  scan cannot be presented as absence. Six synthetic tests cover alternate
+  locations, bundle/binary matches, symlink non-traversal, root validation,
+  and incomplete traversal. Actual 19H422 recursive results are pending from
+  the user's Ubuntu mount. This remains filesystem-name metadata only; M6
+  remains in progress and M7 has not started. The physical iPhone 7 remains
+  on iOS 12.1.4; no device, firmware, partition, security, or boot state was
+  accessed or changed.
