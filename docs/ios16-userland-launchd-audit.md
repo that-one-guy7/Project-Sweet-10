@@ -486,3 +486,38 @@ attachment, or successful launch. M6 remains in progress; M7 has not started.
 The next static step is to cross-reference the exact install names against
 the target 19H422 dyld image inventory and mounted root, while checking the
 SpringBoard app-local rpath separately.
+
+
+## GUI-chain dependencies cross-referenced against the target dyld image list (2026-11-21)
+
+The archived target cache export contains a complete `dylibs` array with
+2,407 records (indexes 1–2,407; 2,407 unique install names). The user-reported
+raw file was `$HOME/19H422-dyld-images.json` (132,175,259 bytes). The
+archived capture `log.txt` has SHA-256
+`d2cb1fb9e75f1d2c477c1cb7c0561cd4ec2b220b19ba96d6828ee267a9a83f3b`.
+
+All **44 unique regular direct dependency paths** from the target
+`backboardd`, `runningboardd`, and SpringBoard executables are represented
+in the target `dylibs` image array: 42/42 for backboardd, 6/6 for
+runningboardd, and 4/4 for SpringBoard. The one additional unique weak
+dependency path, `/usr/appleinternal/lib/liblinkguard.dylib`, is not
+represented in that image array. This does not establish that the weak path
+is absent from the full filesystem or system installation.
+
+Notably, the three donor-only regular direct `backboardd` dependency edges
+(CarKit, SystemWake, and SoftLinking) are each present as target cache images.
+Thus they are donor-only edges in the executable's direct dependency list,
+not cache-image absences in the 19H422 target.
+
+The complete path, index, version, UUID, and consumer cross-reference is in
+[the target GUI dependency cache report](iphone91-19h422-gui-dependency-cache-crossref.md)
+and its [machine-readable JSON](../research/iphone91-19h422-gui-dependency-cache-crossref.json).
+
+The next bounded target loader queries are for SpringBoard.framework,
+RunningBoard.framework, and RunningBoardServices.framework. The procedure is
+in [the target GUI framework loader capture plan](iphone91-19h422-gui-framework-loader-capture-plan.md).
+
+**Interpretation boundary:** this is cache image-list membership only.
+It does not prove dependency resolution, file-system presence, signatures,
+ABI, successful loading, process launch, provider attachment, or SpringBoard
+readiness. M6 remains in progress; M7 has not started.
