@@ -61,14 +61,18 @@ establishes image-list presence only. It does not establish that the loader
 resolves each dependency to that exact record, that all transitive
 dependencies are satisfied, or that the plugin executes successfully.
 
-## Next bounded check
+## Completed donor/target comparison
 
-Run the same read-only name lookup against the already-generated donor
-inventory `$HOME/20H392-dyld-images.json` for these seven selected
-dependencies. Comparing the donor and target version/UUID records will
-clarify which framework builds differ between the two caches. This remains
-static cache metadata research; it does not establish binary compatibility,
-runtime loading, or cross-board support.
+The equivalent seven-name lookup from the donor
+`$HOME/20H392-dyld-images.json` is complete. Every selected dependency
+family is present in both inventories, and every corresponding target/donor
+record has a different version string and UUID. See the full side-by-side
+[donor/target dependency image comparison](20h392-19h422-multitouch-dependency-image-comparison.md)
+for all donor and target indexes, versions, and UUIDs.
+
+This is static cache metadata only. Different image versions and UUIDs do
+not by themselves explain a runtime failure, establish API or ABI
+compatibility, or justify substituting donor files into the target.
 
 No binary, shared-cache file, filesystem image, or firmware file is added
 to the repository. No device, partition, activation, security, boot, or
