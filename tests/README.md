@@ -52,3 +52,11 @@ declarations. Synthetic tests verify exact-ID filtering, field comparisons,
 duplicate rejection, malformed input handling, and that dependency mentions
 are not misclassified as top-level bundles. It is a JSON metadata comparison,
 not a KEXT loader, ABI validator, or device test.
+
+
+The dyld export-log comparator reads only saved text output from
+\`ipsw dyld macho --symbols -V\`. Synthetic tests cover export-section
+parsing, missing/empty sections, target-only and donor-only names, printed
+kind changes, duplicate symbol rows, and cache-local address differences.
+It does not read cache binaries, extract images, or establish ABI/runtime
+compatibility.
