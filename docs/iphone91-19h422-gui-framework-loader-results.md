@@ -136,9 +136,25 @@ Do not use these section offsets or sizes for file-range calculations, memory-la
 
 ## Comparison with the 20H392 donor
 
-The existing donor report records the iPhone X 20H392 **SpringBoard executable** loader entry and its four direct dependent names. That is not the same image as the SpringBoard.framework loader record captured here. The currently documented donor audit does not contain matching SpringBoard.framework, RunningBoard, or RunningBoardServices framework records for an apples-to-apples comparison.
+Matching framework loader records have now been captured from the iPhone X
+20H392 donor cache for all three exact install names. All three donor queries
+exited with status 0. See
+[the comparative report](20h392-19h422-gui-framework-loader-comparison-results.md)
+and its [machine-readable data](../research/20h392-19h422-gui-framework-loader-comparison.json).
 
-Therefore, this report makes no target-versus-donor dependency-difference claim for these three frameworks. Equivalent 20H392 framework records must be collected before comparing their direct rows.
+At summary level:
+
+- SpringBoard.framework reports 198 regular and 10 weak-link rows in each
+  cache; the ten weak-link install names match. This does not prove the full
+  regular path sets are identical.
+- RunningBoard has 20 shared install names, two donor-only names, and three
+  shared paths whose regular/weak-link kinds change.
+- RunningBoardServices has the same eight install names in both caches,
+  with Security and BaseBoard switching edge kinds.
+
+The two caches' PrebuiltLoader reference indexes are distinct from their
+cache image-list indexes. The comparison preserves that distinction and
+excludes the malformed `Sections` fields.
 
 ## What this establishes—and what it does not
 
