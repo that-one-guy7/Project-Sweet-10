@@ -14,6 +14,8 @@ on:
     paths:
       - "tools/compare_kext_metadata.py"
       - "tests/test_compare_kext_metadata.py"
+      - "tools/search_kext_inventory.py"
+      - "tests/test_search_kext_inventory.py"
       - ".github/workflows/kext-metadata-compare-tests.yml"
 
 permissions:
