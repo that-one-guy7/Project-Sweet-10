@@ -1,0 +1,981 @@
+{
+  "schema": "project-sweet-10.iphone91-19h422-buildmanifest.v1",
+  "source": {
+    "repository_path": "BuildManifest.plist",
+    "git_blob_sha": "1a00587e7bcf3208a95ae160d5d19099953b27fe",
+    "note": "Git blob SHA, not a SHA-256 digest of the original IPSW archive.",
+    "product_version": "15.8.8",
+    "product_build_version": "19H422",
+    "manifest_version": 0,
+    "supported_product_types": [
+      "iPhone9,1",
+      "iPhone9,3"
+    ]
+  },
+  "summary": {
+    "identity_count": 4,
+    "iphone91_target_identity_indexes": [
+      1,
+      3
+    ],
+    "iphone93_sibling_identity_indexes": [
+      0,
+      2
+    ],
+    "distinct_manifest_component_keys": [
+      "AOP",
+      "AVE",
+      "Ap,SystemVolumeCanonicalMetadata",
+      "AppleLogo",
+      "BasebandFirmware",
+      "BatteryCharging0",
+      "BatteryCharging1",
+      "BatteryFull",
+      "BatteryLow0",
+      "BatteryLow1",
+      "BatteryPlugin",
+      "DeviceTree",
+      "Homer",
+      "KernelCache",
+      "LLB",
+      "Liquid",
+      "OS",
+      "RecoveryMode",
+      "RestoreDeviceTree",
+      "RestoreKernelCache",
+      "RestoreLogo",
+      "RestoreRamDisk",
+      "RestoreSEP",
+      "RestoreTrustCache",
+      "SE,Bootloader",
+      "SE,Firmware",
+      "SE,MigrationOS",
+      "SE,OS",
+      "SEP",
+      "StaticTrustCache",
+      "SystemVolume",
+      "ftap",
+      "ftsp",
+      "iBEC",
+      "iBSS",
+      "iBoot",
+      "rfta",
+      "rfts"
+    ],
+    "cryptex1_systemos_component_key_present": false
+  },
+  "identities": [
+    {
+      "identity_index": 0,
+      "device_class": "d101ap",
+      "board_id": "0x0C",
+      "chip_id": "0x8010",
+      "restore_behavior": "Erase",
+      "variant": "Customer Erase Install (IPSW)",
+      "minimum_system_partition": 7260,
+      "os_var_content_size": 268353536,
+      "components": {
+        "AOP": {
+          "path": "Firmware/AOP/aopfw-t8010aop.im4p",
+          "digest_base64": "KSzjGWNTS7A1KR1JMiQvXIt2v+TRVkDiggKnIRyfiylsTmgO0tloILlefYfyLfNF",
+          "hash_method": null,
+          "trusted": false
+        },
+        "AVE": {
+          "path": "Firmware/ave/AppleAVE2FW_H9.im4p",
+          "digest_base64": "RMVKcbwAWmHrSCZU8GscLubS1iejxH0qVuQJUJaKMP01pqCp1pSemgMh1AJaELEy",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Ap,SystemVolumeCanonicalMetadata": {
+          "path": "Firmware/098-68844-067.dmg.mtree",
+          "digest_base64": "iPtSrvaYq6HL8O9t7zHVmyHV3SjU7L/uw+28iu63amOTdZQuGeSMEHLz6FteLssZ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "AppleLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "wOq/X9O9SLJfyAJ3CLMt2YhvXaTbX1je+yehleeKFfKMVAgDxJSmyQxsNlYhIKOd",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BasebandFirmware": {
+          "path": "Firmware/ICE16-6.03.02.Release.bbfw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "BatteryCharging0": {
+          "path": "Firmware/all_flash/batterycharging0@2x~iphone.im4p",
+          "digest_base64": "thvG/TxcyMhG9DvzBcVNu01SuARHa1z3RK5Sygel3ocu60FSZbOTeP6irPKgs2xt",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryCharging1": {
+          "path": "Firmware/all_flash/batterycharging1@2x~iphone.im4p",
+          "digest_base64": "FMQjiGfURiCO0SQHMvqSAJF76dHeJRWpJ37HPW1JscSrOVGPUjA+Dl95tcfxPy/F",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryFull": {
+          "path": "Firmware/all_flash/batteryfull@2x~iphone.im4p",
+          "digest_base64": "z+kyfLxzhIws8EFLt77It+EVObLTAmA/hSyO+rtG1yYpgVM544m11D4kXBODUvKV",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow0": {
+          "path": "Firmware/all_flash/batterylow0@2x~iphone.im4p",
+          "digest_base64": "W6PuhxNtlNUgw8o+4MCvoGTHh71qB4y+0rvbCr74NCmfsPA9AjxABsbmLahBa61D",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow1": {
+          "path": "Firmware/all_flash/batterylow1@2x~iphone.im4p",
+          "digest_base64": "MFtGbJlFTo5GQl3hPComL6TPYoX45GkrlOTTQIrnLxZKbR9fTaEDvTcXY0xgSVPs",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryPlugin": {
+          "path": "Firmware/all_flash/glyphplugin@1334~iphone-lightning.im4p",
+          "digest_base64": "4ycMIHK3C5uW589ZKPguHTPRmOHBLgftnKWIBUqdGJkZmu70aOckQWksDVZ8CgbS",
+          "hash_method": null,
+          "trusted": true
+        },
+        "DeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d101ap.im4p",
+          "digest_base64": "mgMMl6kididGBfCNhqahKbOY1rSwhsjkqWjrfRZny7slK5N4E73yhs+1W3SqNsC8",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Homer": {
+          "path": "Firmware/homer_D101.im4p",
+          "digest_base64": "Czor6LdcY3FH/g5mjRsafIZWJfA/OMc0hTY9fBhJ2YH4aPqWcIm6/ZyfSWeEAvsU",
+          "hash_method": null,
+          "trusted": false
+        },
+        "KernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "6YBD7gzW2XYbzCMx/xGOl53BwzqmZthBuZ5ErJBqX184ukcuXOb4X137zrDF4wrQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "LLB": {
+          "path": "Firmware/all_flash/LLB.d10.RELEASE.im4p",
+          "digest_base64": "nLh//UE0NEhTv4JucMywDKOlObtODwmvvQxBHBlbyIA0zHD0KMjA4Kjwz9QOP77J",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Liquid": {
+          "path": "Firmware/all_flash/liquiddetect@1334~iphone-lightning.im4p",
+          "digest_base64": "2bcDKEOt+4OeLh6OuRPG8kjLxcH5VY/mhyi+FsM0R7sZ9PSug38YEd15anMEGyBv",
+          "hash_method": null,
+          "trusted": true
+        },
+        "OS": {
+          "path": "098-68844-067.dmg",
+          "digest_base64": "ygaA4oaR1CG+l7hC8Ah5m3QeXw9bDRACy8bLRM7Y9QF729dOU3N6BG/JGNVT+X3E",
+          "hash_method": "sha2-384",
+          "trusted": true
+        },
+        "RecoveryMode": {
+          "path": "Firmware/all_flash/recoverymode@1334~iphone-lightning.im4p",
+          "digest_base64": "fSh1P0odrLT1Um7CB8fkaMDIV7EQ1eZ+TqJxgXHkDEBBSC3aPMeVWroKjc2dKQ/1",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreDeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d101ap.im4p",
+          "digest_base64": "vDF+1p6xlYRnOtUIxPiI4ioajYxWyEjxn26OB07lTzbNsDUpyxKxf7OeqTskPOJu",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreKernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "kD43HYWcyK7deIq1QFapP1eeLG3hlu7npZ9rmo0dGwOk6CC1b9z7Gc0b7fDcDYnj",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "VxL7nSvcvmEezn3h8fqX5BZLb3KEbadf/ekjx2o/rpTZqnIk/vpazTAhvwNul05X",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreRamDisk": {
+          "path": "098-68700-067.dmg",
+          "digest_base64": "uo4hQ7j1Iddugt7OPlFrG6y9HX+2Byd4Zh5kQjb8cTol58c4Wv2xNg5sxlqyXDFG",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreSEP": {
+          "path": "Firmware/all_flash/sep-firmware.d101.RELEASE.im4p",
+          "digest_base64": "hwKwpzw4go74YViifBaw8xJxvbqIz61P7AnFMjmtMInbx+qDQWqRyZpcfrfzrO5+",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreTrustCache": {
+          "path": "Firmware/098-68700-067.dmg.trustcache",
+          "digest_base64": "llyFDk2OfCsvP8GbivO8CFKHezDxQusXyrIsTVpBt5II9DYDc8LcFtz/qS8/iWBQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SEP": {
+          "path": "Firmware/all_flash/sep-firmware.d101.RELEASE.im4p",
+          "digest_base64": "yUMEijIpIxCUzUbP6Igq4kNwGfOSiG70wTuml2BKduqkPwEFWTryAmJ/jnaL5C0j",
+          "hash_method": null,
+          "trusted": true
+        },
+        "StaticTrustCache": {
+          "path": "Firmware/098-68844-067.dmg.trustcache",
+          "digest_base64": "7pW5pQquAXedD0VRRGAcTndKtjBJgjjbuXZx/aFrSo0z0Iu5wLMtJdBitJBhM2I3",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SystemVolume": {
+          "path": "Firmware/098-68844-067.dmg.root_hash",
+          "digest_base64": "++K5XS5RJE9U1+w8EsbBQj3XDscIVILoUlC5REKl54zYZNC8Acmt5mU/d+Uvic4v",
+          "hash_method": null,
+          "trusted": true
+        },
+        "ftap": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "ftsp": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "iBEC": {
+          "path": "Firmware/dfu/iBEC.d10.RELEASE.im4p",
+          "digest_base64": "VhOdjPUEK41haULEfjRPUPZpZl1LLEcbbw+ofhfstZh6Mr+5A7e+xqYV4noZfh7U",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBSS": {
+          "path": "Firmware/dfu/iBSS.d10.RELEASE.im4p",
+          "digest_base64": "Xge2bsJJ1hQCO0AtqtxcjXlVeeOGWhFkqndhmCdtMPuaHivzMTEtbZS2uEs2PMUW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBoot": {
+          "path": "Firmware/all_flash/iBoot.d10.RELEASE.im4p",
+          "digest_base64": "OC9G23rF3OtHFdJ/HrakpWV6wnWyWp+ger38+QPzqZqIBmN5m8iDYdlc1A7evryz",
+          "hash_method": null,
+          "trusted": true
+        },
+        "rfta": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "rfts": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        }
+      }
+    },
+    {
+      "identity_index": 1,
+      "device_class": "d10ap",
+      "board_id": "0x08",
+      "chip_id": "0x8010",
+      "restore_behavior": "Erase",
+      "variant": "Customer Erase Install (IPSW)",
+      "minimum_system_partition": 7260,
+      "os_var_content_size": 268353536,
+      "components": {
+        "AOP": {
+          "path": "Firmware/AOP/aopfw-t8010aop.im4p",
+          "digest_base64": "KSzjGWNTS7A1KR1JMiQvXIt2v+TRVkDiggKnIRyfiylsTmgO0tloILlefYfyLfNF",
+          "hash_method": null,
+          "trusted": false
+        },
+        "AVE": {
+          "path": "Firmware/ave/AppleAVE2FW_H9.im4p",
+          "digest_base64": "RMVKcbwAWmHrSCZU8GscLubS1iejxH0qVuQJUJaKMP01pqCp1pSemgMh1AJaELEy",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Ap,SystemVolumeCanonicalMetadata": {
+          "path": "Firmware/098-68844-067.dmg.mtree",
+          "digest_base64": "iPtSrvaYq6HL8O9t7zHVmyHV3SjU7L/uw+28iu63amOTdZQuGeSMEHLz6FteLssZ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "AppleLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "wOq/X9O9SLJfyAJ3CLMt2YhvXaTbX1je+yehleeKFfKMVAgDxJSmyQxsNlYhIKOd",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BasebandFirmware": {
+          "path": "Firmware/Mav16-12.00.00.Release.bbfw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "BatteryCharging0": {
+          "path": "Firmware/all_flash/batterycharging0@2x~iphone.im4p",
+          "digest_base64": "thvG/TxcyMhG9DvzBcVNu01SuARHa1z3RK5Sygel3ocu60FSZbOTeP6irPKgs2xt",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryCharging1": {
+          "path": "Firmware/all_flash/batterycharging1@2x~iphone.im4p",
+          "digest_base64": "FMQjiGfURiCO0SQHMvqSAJF76dHeJRWpJ37HPW1JscSrOVGPUjA+Dl95tcfxPy/F",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryFull": {
+          "path": "Firmware/all_flash/batteryfull@2x~iphone.im4p",
+          "digest_base64": "z+kyfLxzhIws8EFLt77It+EVObLTAmA/hSyO+rtG1yYpgVM544m11D4kXBODUvKV",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow0": {
+          "path": "Firmware/all_flash/batterylow0@2x~iphone.im4p",
+          "digest_base64": "W6PuhxNtlNUgw8o+4MCvoGTHh71qB4y+0rvbCr74NCmfsPA9AjxABsbmLahBa61D",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow1": {
+          "path": "Firmware/all_flash/batterylow1@2x~iphone.im4p",
+          "digest_base64": "MFtGbJlFTo5GQl3hPComL6TPYoX45GkrlOTTQIrnLxZKbR9fTaEDvTcXY0xgSVPs",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryPlugin": {
+          "path": "Firmware/all_flash/glyphplugin@1334~iphone-lightning.im4p",
+          "digest_base64": "4ycMIHK3C5uW589ZKPguHTPRmOHBLgftnKWIBUqdGJkZmu70aOckQWksDVZ8CgbS",
+          "hash_method": null,
+          "trusted": true
+        },
+        "DeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+          "digest_base64": "18t8aS4gATwoYCxsPgXrBFKUtt7hLarf+IIv0X/Bt5+NcJipXZD88mNuf/fT22CW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Homer": {
+          "path": "Firmware/homer_D10.im4p",
+          "digest_base64": "Czor6LdcY3FH/g5mjRsafIZWJfA/OMc0hTY9fBhJ2YH4aPqWcIm6/ZyfSWeEAvsU",
+          "hash_method": null,
+          "trusted": false
+        },
+        "KernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "6YBD7gzW2XYbzCMx/xGOl53BwzqmZthBuZ5ErJBqX184ukcuXOb4X137zrDF4wrQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "LLB": {
+          "path": "Firmware/all_flash/LLB.d10.RELEASE.im4p",
+          "digest_base64": "nLh//UE0NEhTv4JucMywDKOlObtODwmvvQxBHBlbyIA0zHD0KMjA4Kjwz9QOP77J",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Liquid": {
+          "path": "Firmware/all_flash/liquiddetect@1334~iphone-lightning.im4p",
+          "digest_base64": "2bcDKEOt+4OeLh6OuRPG8kjLxcH5VY/mhyi+FsM0R7sZ9PSug38YEd15anMEGyBv",
+          "hash_method": null,
+          "trusted": true
+        },
+        "OS": {
+          "path": "098-68844-067.dmg",
+          "digest_base64": "ygaA4oaR1CG+l7hC8Ah5m3QeXw9bDRACy8bLRM7Y9QF729dOU3N6BG/JGNVT+X3E",
+          "hash_method": "sha2-384",
+          "trusted": true
+        },
+        "RecoveryMode": {
+          "path": "Firmware/all_flash/recoverymode@1334~iphone-lightning.im4p",
+          "digest_base64": "fSh1P0odrLT1Um7CB8fkaMDIV7EQ1eZ+TqJxgXHkDEBBSC3aPMeVWroKjc2dKQ/1",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreDeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+          "digest_base64": "WQXqXjFgjpGQcYA6yrph2ANgWQPPCsivUzLsbd6pGjycw5xVUo4VLSqI8P+L7tJI",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreKernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "kD43HYWcyK7deIq1QFapP1eeLG3hlu7npZ9rmo0dGwOk6CC1b9z7Gc0b7fDcDYnj",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "VxL7nSvcvmEezn3h8fqX5BZLb3KEbadf/ekjx2o/rpTZqnIk/vpazTAhvwNul05X",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreRamDisk": {
+          "path": "098-68700-067.dmg",
+          "digest_base64": "uo4hQ7j1Iddugt7OPlFrG6y9HX+2Byd4Zh5kQjb8cTol58c4Wv2xNg5sxlqyXDFG",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreSEP": {
+          "path": "Firmware/all_flash/sep-firmware.d10.RELEASE.im4p",
+          "digest_base64": "EEhCfXDo4hWqdI43PGTjrYQkWBHuUIdkf1T930YE7229HyWSFLCYfJCJgjA0QTeg",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreTrustCache": {
+          "path": "Firmware/098-68700-067.dmg.trustcache",
+          "digest_base64": "llyFDk2OfCsvP8GbivO8CFKHezDxQusXyrIsTVpBt5II9DYDc8LcFtz/qS8/iWBQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SE,Bootloader": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,Firmware": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,MigrationOS": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,OS": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SEP": {
+          "path": "Firmware/all_flash/sep-firmware.d10.RELEASE.im4p",
+          "digest_base64": "y9+fTJ6hiSP1B5pMNSpnIEjpUrxTQXnuA+M1EgHBSzpm/pMFja7Ojvk2eSYo96KF",
+          "hash_method": null,
+          "trusted": true
+        },
+        "StaticTrustCache": {
+          "path": "Firmware/098-68844-067.dmg.trustcache",
+          "digest_base64": "7pW5pQquAXedD0VRRGAcTndKtjBJgjjbuXZx/aFrSo0z0Iu5wLMtJdBitJBhM2I3",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SystemVolume": {
+          "path": "Firmware/098-68844-067.dmg.root_hash",
+          "digest_base64": "++K5XS5RJE9U1+w8EsbBQj3XDscIVILoUlC5REKl54zYZNC8Acmt5mU/d+Uvic4v",
+          "hash_method": null,
+          "trusted": true
+        },
+        "ftap": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "ftsp": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "iBEC": {
+          "path": "Firmware/dfu/iBEC.d10.RELEASE.im4p",
+          "digest_base64": "VhOdjPUEK41haULEfjRPUPZpZl1LLEcbbw+ofhfstZh6Mr+5A7e+xqYV4noZfh7U",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBSS": {
+          "path": "Firmware/dfu/iBSS.d10.RELEASE.im4p",
+          "digest_base64": "Xge2bsJJ1hQCO0AtqtxcjXlVeeOGWhFkqndhmCdtMPuaHivzMTEtbZS2uEs2PMUW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBoot": {
+          "path": "Firmware/all_flash/iBoot.d10.RELEASE.im4p",
+          "digest_base64": "OC9G23rF3OtHFdJ/HrakpWV6wnWyWp+ger38+QPzqZqIBmN5m8iDYdlc1A7evryz",
+          "hash_method": null,
+          "trusted": true
+        },
+        "rfta": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "rfts": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        }
+      }
+    },
+    {
+      "identity_index": 2,
+      "device_class": "d101ap",
+      "board_id": "0x0C",
+      "chip_id": "0x8010",
+      "restore_behavior": "Update",
+      "variant": "Customer Upgrade Install (IPSW)",
+      "minimum_system_partition": 7260,
+      "os_var_content_size": 268353536,
+      "components": {
+        "AOP": {
+          "path": "Firmware/AOP/aopfw-t8010aop.im4p",
+          "digest_base64": "KSzjGWNTS7A1KR1JMiQvXIt2v+TRVkDiggKnIRyfiylsTmgO0tloILlefYfyLfNF",
+          "hash_method": null,
+          "trusted": false
+        },
+        "AVE": {
+          "path": "Firmware/ave/AppleAVE2FW_H9.im4p",
+          "digest_base64": "RMVKcbwAWmHrSCZU8GscLubS1iejxH0qVuQJUJaKMP01pqCp1pSemgMh1AJaELEy",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Ap,SystemVolumeCanonicalMetadata": {
+          "path": "Firmware/098-68844-067.dmg.mtree",
+          "digest_base64": "iPtSrvaYq6HL8O9t7zHVmyHV3SjU7L/uw+28iu63amOTdZQuGeSMEHLz6FteLssZ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "AppleLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "wOq/X9O9SLJfyAJ3CLMt2YhvXaTbX1je+yehleeKFfKMVAgDxJSmyQxsNlYhIKOd",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BasebandFirmware": {
+          "path": "Firmware/ICE16-6.03.02.Release.bbfw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "BatteryCharging0": {
+          "path": "Firmware/all_flash/batterycharging0@2x~iphone.im4p",
+          "digest_base64": "thvG/TxcyMhG9DvzBcVNu01SuARHa1z3RK5Sygel3ocu60FSZbOTeP6irPKgs2xt",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryCharging1": {
+          "path": "Firmware/all_flash/batterycharging1@2x~iphone.im4p",
+          "digest_base64": "FMQjiGfURiCO0SQHMvqSAJF76dHeJRWpJ37HPW1JscSrOVGPUjA+Dl95tcfxPy/F",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryFull": {
+          "path": "Firmware/all_flash/batteryfull@2x~iphone.im4p",
+          "digest_base64": "z+kyfLxzhIws8EFLt77It+EVObLTAmA/hSyO+rtG1yYpgVM544m11D4kXBODUvKV",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow0": {
+          "path": "Firmware/all_flash/batterylow0@2x~iphone.im4p",
+          "digest_base64": "W6PuhxNtlNUgw8o+4MCvoGTHh71qB4y+0rvbCr74NCmfsPA9AjxABsbmLahBa61D",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow1": {
+          "path": "Firmware/all_flash/batterylow1@2x~iphone.im4p",
+          "digest_base64": "MFtGbJlFTo5GQl3hPComL6TPYoX45GkrlOTTQIrnLxZKbR9fTaEDvTcXY0xgSVPs",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryPlugin": {
+          "path": "Firmware/all_flash/glyphplugin@1334~iphone-lightning.im4p",
+          "digest_base64": "4ycMIHK3C5uW589ZKPguHTPRmOHBLgftnKWIBUqdGJkZmu70aOckQWksDVZ8CgbS",
+          "hash_method": null,
+          "trusted": true
+        },
+        "DeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d101ap.im4p",
+          "digest_base64": "mgMMl6kididGBfCNhqahKbOY1rSwhsjkqWjrfRZny7slK5N4E73yhs+1W3SqNsC8",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Homer": {
+          "path": "Firmware/homer_D101.im4p",
+          "digest_base64": "Czor6LdcY3FH/g5mjRsafIZWJfA/OMc0hTY9fBhJ2YH4aPqWcIm6/ZyfSWeEAvsU",
+          "hash_method": null,
+          "trusted": false
+        },
+        "KernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "6YBD7gzW2XYbzCMx/xGOl53BwzqmZthBuZ5ErJBqX184ukcuXOb4X137zrDF4wrQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "LLB": {
+          "path": "Firmware/all_flash/LLB.d10.RELEASE.im4p",
+          "digest_base64": "nLh//UE0NEhTv4JucMywDKOlObtODwmvvQxBHBlbyIA0zHD0KMjA4Kjwz9QOP77J",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Liquid": {
+          "path": "Firmware/all_flash/liquiddetect@1334~iphone-lightning.im4p",
+          "digest_base64": "2bcDKEOt+4OeLh6OuRPG8kjLxcH5VY/mhyi+FsM0R7sZ9PSug38YEd15anMEGyBv",
+          "hash_method": null,
+          "trusted": true
+        },
+        "OS": {
+          "path": "098-68844-067.dmg",
+          "digest_base64": "ygaA4oaR1CG+l7hC8Ah5m3QeXw9bDRACy8bLRM7Y9QF729dOU3N6BG/JGNVT+X3E",
+          "hash_method": "sha2-384",
+          "trusted": true
+        },
+        "RecoveryMode": {
+          "path": "Firmware/all_flash/recoverymode@1334~iphone-lightning.im4p",
+          "digest_base64": "fSh1P0odrLT1Um7CB8fkaMDIV7EQ1eZ+TqJxgXHkDEBBSC3aPMeVWroKjc2dKQ/1",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreDeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d101ap.im4p",
+          "digest_base64": "vDF+1p6xlYRnOtUIxPiI4ioajYxWyEjxn26OB07lTzbNsDUpyxKxf7OeqTskPOJu",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreKernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "kD43HYWcyK7deIq1QFapP1eeLG3hlu7npZ9rmo0dGwOk6CC1b9z7Gc0b7fDcDYnj",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "VxL7nSvcvmEezn3h8fqX5BZLb3KEbadf/ekjx2o/rpTZqnIk/vpazTAhvwNul05X",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreRamDisk": {
+          "path": "098-68739-067.dmg",
+          "digest_base64": "LvSAFlPU0OceIdIrCS92sKo0YuV8cDOwQ+AUqieOVoX0m+T/aWN9QWtACCOD2ZgJ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreSEP": {
+          "path": "Firmware/all_flash/sep-firmware.d101.RELEASE.im4p",
+          "digest_base64": "hwKwpzw4go74YViifBaw8xJxvbqIz61P7AnFMjmtMInbx+qDQWqRyZpcfrfzrO5+",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreTrustCache": {
+          "path": "Firmware/098-68739-067.dmg.trustcache",
+          "digest_base64": "uvROWkjasnuiP614eY0x2+q2+SxF8gzfq2ndg6um+6exQaJ/NJLEoQTduf/fyobl",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SEP": {
+          "path": "Firmware/all_flash/sep-firmware.d101.RELEASE.im4p",
+          "digest_base64": "yUMEijIpIxCUzUbP6Igq4kNwGfOSiG70wTuml2BKduqkPwEFWTryAmJ/jnaL5C0j",
+          "hash_method": null,
+          "trusted": true
+        },
+        "StaticTrustCache": {
+          "path": "Firmware/098-68844-067.dmg.trustcache",
+          "digest_base64": "7pW5pQquAXedD0VRRGAcTndKtjBJgjjbuXZx/aFrSo0z0Iu5wLMtJdBitJBhM2I3",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SystemVolume": {
+          "path": "Firmware/098-68844-067.dmg.root_hash",
+          "digest_base64": "++K5XS5RJE9U1+w8EsbBQj3XDscIVILoUlC5REKl54zYZNC8Acmt5mU/d+Uvic4v",
+          "hash_method": null,
+          "trusted": true
+        },
+        "ftap": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "ftsp": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "iBEC": {
+          "path": "Firmware/dfu/iBEC.d10.RELEASE.im4p",
+          "digest_base64": "VhOdjPUEK41haULEfjRPUPZpZl1LLEcbbw+ofhfstZh6Mr+5A7e+xqYV4noZfh7U",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBSS": {
+          "path": "Firmware/dfu/iBSS.d10.RELEASE.im4p",
+          "digest_base64": "Xge2bsJJ1hQCO0AtqtxcjXlVeeOGWhFkqndhmCdtMPuaHivzMTEtbZS2uEs2PMUW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBoot": {
+          "path": "Firmware/all_flash/iBoot.d10.RELEASE.im4p",
+          "digest_base64": "OC9G23rF3OtHFdJ/HrakpWV6wnWyWp+ger38+QPzqZqIBmN5m8iDYdlc1A7evryz",
+          "hash_method": null,
+          "trusted": true
+        },
+        "rfta": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "rfts": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        }
+      }
+    },
+    {
+      "identity_index": 3,
+      "device_class": "d10ap",
+      "board_id": "0x08",
+      "chip_id": "0x8010",
+      "restore_behavior": "Update",
+      "variant": "Customer Upgrade Install (IPSW)",
+      "minimum_system_partition": 7260,
+      "os_var_content_size": 268353536,
+      "components": {
+        "AOP": {
+          "path": "Firmware/AOP/aopfw-t8010aop.im4p",
+          "digest_base64": "KSzjGWNTS7A1KR1JMiQvXIt2v+TRVkDiggKnIRyfiylsTmgO0tloILlefYfyLfNF",
+          "hash_method": null,
+          "trusted": false
+        },
+        "AVE": {
+          "path": "Firmware/ave/AppleAVE2FW_H9.im4p",
+          "digest_base64": "RMVKcbwAWmHrSCZU8GscLubS1iejxH0qVuQJUJaKMP01pqCp1pSemgMh1AJaELEy",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Ap,SystemVolumeCanonicalMetadata": {
+          "path": "Firmware/098-68844-067.dmg.mtree",
+          "digest_base64": "iPtSrvaYq6HL8O9t7zHVmyHV3SjU7L/uw+28iu63amOTdZQuGeSMEHLz6FteLssZ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "AppleLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "wOq/X9O9SLJfyAJ3CLMt2YhvXaTbX1je+yehleeKFfKMVAgDxJSmyQxsNlYhIKOd",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BasebandFirmware": {
+          "path": "Firmware/Mav16-12.00.00.Release.bbfw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "BatteryCharging0": {
+          "path": "Firmware/all_flash/batterycharging0@2x~iphone.im4p",
+          "digest_base64": "thvG/TxcyMhG9DvzBcVNu01SuARHa1z3RK5Sygel3ocu60FSZbOTeP6irPKgs2xt",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryCharging1": {
+          "path": "Firmware/all_flash/batterycharging1@2x~iphone.im4p",
+          "digest_base64": "FMQjiGfURiCO0SQHMvqSAJF76dHeJRWpJ37HPW1JscSrOVGPUjA+Dl95tcfxPy/F",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryFull": {
+          "path": "Firmware/all_flash/batteryfull@2x~iphone.im4p",
+          "digest_base64": "z+kyfLxzhIws8EFLt77It+EVObLTAmA/hSyO+rtG1yYpgVM544m11D4kXBODUvKV",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow0": {
+          "path": "Firmware/all_flash/batterylow0@2x~iphone.im4p",
+          "digest_base64": "W6PuhxNtlNUgw8o+4MCvoGTHh71qB4y+0rvbCr74NCmfsPA9AjxABsbmLahBa61D",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryLow1": {
+          "path": "Firmware/all_flash/batterylow1@2x~iphone.im4p",
+          "digest_base64": "MFtGbJlFTo5GQl3hPComL6TPYoX45GkrlOTTQIrnLxZKbR9fTaEDvTcXY0xgSVPs",
+          "hash_method": null,
+          "trusted": true
+        },
+        "BatteryPlugin": {
+          "path": "Firmware/all_flash/glyphplugin@1334~iphone-lightning.im4p",
+          "digest_base64": "4ycMIHK3C5uW589ZKPguHTPRmOHBLgftnKWIBUqdGJkZmu70aOckQWksDVZ8CgbS",
+          "hash_method": null,
+          "trusted": true
+        },
+        "DeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+          "digest_base64": "18t8aS4gATwoYCxsPgXrBFKUtt7hLarf+IIv0X/Bt5+NcJipXZD88mNuf/fT22CW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Homer": {
+          "path": "Firmware/homer_D10.im4p",
+          "digest_base64": "Czor6LdcY3FH/g5mjRsafIZWJfA/OMc0hTY9fBhJ2YH4aPqWcIm6/ZyfSWeEAvsU",
+          "hash_method": null,
+          "trusted": false
+        },
+        "KernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "6YBD7gzW2XYbzCMx/xGOl53BwzqmZthBuZ5ErJBqX184ukcuXOb4X137zrDF4wrQ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "LLB": {
+          "path": "Firmware/all_flash/LLB.d10.RELEASE.im4p",
+          "digest_base64": "nLh//UE0NEhTv4JucMywDKOlObtODwmvvQxBHBlbyIA0zHD0KMjA4Kjwz9QOP77J",
+          "hash_method": null,
+          "trusted": true
+        },
+        "Liquid": {
+          "path": "Firmware/all_flash/liquiddetect@1334~iphone-lightning.im4p",
+          "digest_base64": "2bcDKEOt+4OeLh6OuRPG8kjLxcH5VY/mhyi+FsM0R7sZ9PSug38YEd15anMEGyBv",
+          "hash_method": null,
+          "trusted": true
+        },
+        "OS": {
+          "path": "098-68844-067.dmg",
+          "digest_base64": "ygaA4oaR1CG+l7hC8Ah5m3QeXw9bDRACy8bLRM7Y9QF729dOU3N6BG/JGNVT+X3E",
+          "hash_method": "sha2-384",
+          "trusted": true
+        },
+        "RecoveryMode": {
+          "path": "Firmware/all_flash/recoverymode@1334~iphone-lightning.im4p",
+          "digest_base64": "fSh1P0odrLT1Um7CB8fkaMDIV7EQ1eZ+TqJxgXHkDEBBSC3aPMeVWroKjc2dKQ/1",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreDeviceTree": {
+          "path": "Firmware/all_flash/DeviceTree.d10ap.im4p",
+          "digest_base64": "WQXqXjFgjpGQcYA6yrph2ANgWQPPCsivUzLsbd6pGjycw5xVUo4VLSqI8P+L7tJI",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreKernelCache": {
+          "path": "kernelcache.release.iphone9",
+          "digest_base64": "kD43HYWcyK7deIq1QFapP1eeLG3hlu7npZ9rmo0dGwOk6CC1b9z7Gc0b7fDcDYnj",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreLogo": {
+          "path": "Firmware/all_flash/applelogo@2x~iphone.im4p",
+          "digest_base64": "VxL7nSvcvmEezn3h8fqX5BZLb3KEbadf/ekjx2o/rpTZqnIk/vpazTAhvwNul05X",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreRamDisk": {
+          "path": "098-68739-067.dmg",
+          "digest_base64": "LvSAFlPU0OceIdIrCS92sKo0YuV8cDOwQ+AUqieOVoX0m+T/aWN9QWtACCOD2ZgJ",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreSEP": {
+          "path": "Firmware/all_flash/sep-firmware.d10.RELEASE.im4p",
+          "digest_base64": "EEhCfXDo4hWqdI43PGTjrYQkWBHuUIdkf1T930YE7229HyWSFLCYfJCJgjA0QTeg",
+          "hash_method": null,
+          "trusted": true
+        },
+        "RestoreTrustCache": {
+          "path": "Firmware/098-68739-067.dmg.trustcache",
+          "digest_base64": "uvROWkjasnuiP614eY0x2+q2+SxF8gzfq2ndg6um+6exQaJ/NJLEoQTduf/fyobl",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SE,Bootloader": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,Firmware": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,MigrationOS": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SE,OS": {
+          "path": "Firmware/SE/Icefall.RELEASE.sefw",
+          "digest_base64": null,
+          "hash_method": null,
+          "trusted": null
+        },
+        "SEP": {
+          "path": "Firmware/all_flash/sep-firmware.d10.RELEASE.im4p",
+          "digest_base64": "y9+fTJ6hiSP1B5pMNSpnIEjpUrxTQXnuA+M1EgHBSzpm/pMFja7Ojvk2eSYo96KF",
+          "hash_method": null,
+          "trusted": true
+        },
+        "StaticTrustCache": {
+          "path": "Firmware/098-68844-067.dmg.trustcache",
+          "digest_base64": "7pW5pQquAXedD0VRRGAcTndKtjBJgjjbuXZx/aFrSo0z0Iu5wLMtJdBitJBhM2I3",
+          "hash_method": null,
+          "trusted": true
+        },
+        "SystemVolume": {
+          "path": "Firmware/098-68844-067.dmg.root_hash",
+          "digest_base64": "++K5XS5RJE9U1+w8EsbBQj3XDscIVILoUlC5REKl54zYZNC8Acmt5mU/d+Uvic4v",
+          "hash_method": null,
+          "trusted": true
+        },
+        "ftap": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "ftsp": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "iBEC": {
+          "path": "Firmware/dfu/iBEC.d10.RELEASE.im4p",
+          "digest_base64": "VhOdjPUEK41haULEfjRPUPZpZl1LLEcbbw+ofhfstZh6Mr+5A7e+xqYV4noZfh7U",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBSS": {
+          "path": "Firmware/dfu/iBSS.d10.RELEASE.im4p",
+          "digest_base64": "Xge2bsJJ1hQCO0AtqtxcjXlVeeOGWhFkqndhmCdtMPuaHivzMTEtbZS2uEs2PMUW",
+          "hash_method": null,
+          "trusted": true
+        },
+        "iBoot": {
+          "path": "Firmware/all_flash/iBoot.d10.RELEASE.im4p",
+          "digest_base64": "OC9G23rF3OtHFdJ/HrakpWV6wnWyWp+ger38+QPzqZqIBmN5m8iDYdlc1A7evryz",
+          "hash_method": null,
+          "trusted": true
+        },
+        "rfta": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        },
+        "rfts": {
+          "path": null,
+          "digest_base64": null,
+          "hash_method": "sha2-256",
+          "trusted": true
+        }
+      }
+    }
+  ]
+}
