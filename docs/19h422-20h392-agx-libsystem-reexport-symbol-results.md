@@ -156,6 +156,16 @@ names, a provider with no export heading, malformed empty sections,
 consumer-provider filtering, and cross-build stability. CI runs the unit
 tests and the comparator's `--help` check.
 
+## Mach-O terminology reference
+
+Apple's XNU Mach-O header defines `LC_REEXPORT_DYLIB` as a load command
+to "load and re-export dylib" and lists it among the dylib load commands.
+This supports the load-command interpretation used in this report; the
+symbol-level matches above still come from the uploaded build-specific
+parser logs, not from a claim about runtime dyld resolution.
+
+Reference: [Apple XNU Mach-O loader.h](https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/loader.h).
+
 ## Interpretation limits
 
 The result is an exact symbol-name comparison against the direct export
