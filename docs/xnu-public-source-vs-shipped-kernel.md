@@ -79,6 +79,27 @@ reports `RELEASE_ARM64_T8010`, but its XNU version is
 was built for T8010 in its own XNU generation. It does not show that the
 selected iOS 16-era 8796 source contains a usable T8010 profile.
 
+## Interpretation of the embedded XNU label
+
+A follow-up review of Apple's public `xnu-8796.141.3` version-stamping
+logic shows that the embedded `xnu-8796.142.1.703.8~1` text should not be
+treated automatically as a Git tag. `config/version.c` places
+`KERNEL_BUILD_OBJROOT` in the kernel version string. In the public
+`config/newvers.pl`, when `RC_XBS` is defined, an `RC_STRING` is
+constructed from `RC_ProjectNameAndSourceVersion` and
+`RC_ProjectBuildVersion`; in the build-object-path-under-`OBJROOT`
+branch, that value becomes the leading object-root label. Thus the donor
+string is consistent with an XBS project/source-version label plus build
+number, but the donor's exact build environment has not been recovered.
+The exact source commit and the product-specific build inputs remain unknown.
+
+The public tag-ref query for `xnu-8796` returned the tags
+`xnu-8796.101.5`, `xnu-8796.121.2`, and `xnu-8796.141.3`; it did not
+return an `xnu-8796.142.*` tag. This does not exclude private Apple source
+or separately published build records. See
+[Interpreting the 20H392 XNU version-stamp string](xnu-kernel-version-stamp-provenance.md)
+for the bounded source analysis and official source links.
+
 ## Bounded conclusions
 
 What the evidence establishes:
