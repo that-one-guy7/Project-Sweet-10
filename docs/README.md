@@ -90,6 +90,7 @@
 - [ARM64 platform audit status](platform-audit-status.md)
 - [A10 / T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
 - [Historical H9 feature-macro consumer audit](h9-feature-macro-consumer-audit.md)
+- [H9/T8010 migration-risk classification against XNU 8796](h9-t8010-migration-risk-classification.md)
 - [H9/T8010 full-tree source consumer audit](h9-source-fulltree-audit.md)
 - [ARM64 platform-interface comparison](arm64-platform-interface-comparison.md)
 - [ARM64 interrupt and timer interface audit](interrupt-timer-interface-audit.md)
