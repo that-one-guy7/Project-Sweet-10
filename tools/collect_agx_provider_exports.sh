@@ -4,11 +4,11 @@
 
 set -u
 
-IPSW="\${IPSW:-$HOME/ipsw-standalone/ipsw}"
-TARGET_CACHE="\${TARGET_CACHE:-$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64}"
-DONOR_CACHE="\${DONOR_CACHE:-$HOME/20H392/systemos-mnt/root/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64}"
-OUT="\${OUT:-$HOME/agx-metal-static-audit/provider-symbols}"
-ARCHIVE="\${ARCHIVE:-$HOME/agx-metal-static-audit/agx-provider-export-logs.tar.gz}"
+IPSW="${IPSW:-$HOME/ipsw-standalone/ipsw}"
+TARGET_CACHE="${TARGET_CACHE:-$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64}"
+DONOR_CACHE="${DONOR_CACHE:-$HOME/20H392/systemos-mnt/root/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64}"
+OUT="${OUT:-$HOME/agx-metal-static-audit/provider-symbols}"
+ARCHIVE="${ARCHIVE:-$HOME/agx-metal-static-audit/agx-provider-export-logs.tar.gz}"
 
 test -x "$IPSW" || { echo "Standalone ipsw executable not found: $IPSW" >&2; exit 1; }
 test -r "$TARGET_CACHE" || { echo "Target shared cache is not readable: $TARGET_CACHE" >&2; exit 1; }
@@ -16,28 +16,31 @@ test -r "$DONOR_CACHE" || { echo "Donor shared cache is not readable: $DONOR_CAC
 
 mkdir -p "$OUT" "$(dirname "$ARCHIVE")"
 : > "$OUT/query-status.tsv"
+FAILED=0
 
 run_one() {
-  LABEL="$1"
-  CACHE="$2"
-  KEY="$3"
-  IMAGE="$4"
-  LOG="$OUT/$LABEL-$KEY.txt"
-  ERR="$OUT/$LABEL-$KEY.err"
+  local label="$1"
+  local cache="$2"
+  local key="$3"
+  local image="$4"
+  local log="$OUT/$label-$key.txt"
+  local err="$OUT/$label-$key.err"
+  local status
 
-  if "$IPSW" dyld macho "$CACHE" "$IMAGE" --symbols -V > "$LOG" 2> "$ERR"; then
-    STATUS=0
+  if "$IPSW" dyld macho "$cache" "$image" --symbols -V > "$log" 2> "$err"; then
+    status=0
   else
-    STATUS=$?
+    status=$?
+    FAILED=1
   fi
-  printf '%s\t%s\t%s\t%s\n' "$LABEL" "$KEY" "$IMAGE" "$STATUS" >> "$OUT/query-status.tsv"
-  printf '%s %s: exit %s\n' "$LABEL" "$KEY" "$STATUS"
+  printf '%s\t%s\t%s\t%s\n' "$label" "$key" "$image" "$status" >> "$OUT/query-status.tsv"
+  printf '%s %s: exit %s\n' "$label" "$key" "$status"
 }
 
-while IFS='|' read -r KEY IMAGE; do
-  [ -n "$KEY" ] || continue
-  run_one 19H422 "$TARGET_CACHE" "$KEY" "$IMAGE"
-  run_one 20H392 "$DONOR_CACHE" "$KEY" "$IMAGE"
+while IFS='|' read -r key image; do
+  [ -n "$key" ] || continue
+  run_one 19H422 "$TARGET_CACHE" "$key" "$image"
+  run_one 20H392 "$DONOR_CACHE" "$key" "$image"
 done <<'PROVIDERS'
 AggregateDictionary|/System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary
 CoreAnalytics|/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics
@@ -50,8 +53,17 @@ CoreFoundation|/System/Library/Frameworks/CoreFoundation.framework/CoreFoundatio
 libobjc|/usr/lib/libobjc.A.dylib
 PROVIDERS
 
-tar -czf "$ARCHIVE" -C "$OUT" .
+if ! tar -czf "$ARCHIVE" -C "$OUT" .; then
+  echo "Failed to create provider export archive: $ARCHIVE" >&2
+  exit 1
+fi
+
 echo "=== parser query status ==="
 cat "$OUT/query-status.tsv"
 echo "Archive: $ARCHIVE"
 ls -lh "$ARCHIVE"
+
+if [ "$FAILED" -ne 0 ]; then
+  echo "One or more provider queries failed; inspect the status table and .err files." >&2
+  exit 2
+fi
