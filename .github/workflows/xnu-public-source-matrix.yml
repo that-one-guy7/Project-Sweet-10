@@ -1,0 +1,159 @@
+name: Verify public XNU T8010/H9 source matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "xnu/BASELINE.lock.json"
+      - "xnu/history/**"
+      - "tools/audit_xnu_machine_history.py"
+      - "tools/audit_xnu_public_source_matrix.py"
+      - "tools/verify_xnu_source.py"
+      - "tests/test_xnu_machine_history.py"
+      - "tests/test_xnu_public_source_matrix.py"
+      - ".github/workflows/xnu-public-source-matrix.yml"
+  push:
+    branches: [main]
+    paths:
+      - "xnu/BASELINE.lock.json"
+      - "xnu/history/**"
+      - "tools/audit_xnu_machine_history.py"
+      - "tools/audit_xnu_public_source_matrix.py"
+      - "tools/verify_xnu_source.py"
+      - "tests/test_xnu_machine_history.py"
+      - "tests/test_xnu_public_source_matrix.py"
+      - ".github/workflows/xnu-public-source-matrix.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit-public-xnu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Project Sweet-10
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read all six pinned XNU commits
+        id: xnu-locks
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          locks = (
+              ("xnu7195", "xnu/history/xnu-7195.121.3.lock.json"),
+              ("xnu8020", "xnu/history/xnu-8020.101.4.lock.json"),
+              ("xnu8019", "xnu/history/xnu-8019.80.24.lock.json"),
+              ("xnu8796early", "xnu/history/xnu-8796.101.5.lock.json"),
+              ("xnu8796baseline", "xnu/BASELINE.lock.json"),
+              ("xnu12377", "xnu/history/xnu-12377.1.9.lock.json"),
+          )
+          for output, filename in locks:
+              record = json.loads(Path(filename).read_text(encoding="utf-8"))
+              print("{}={}".format(output, record["commit_sha"]))
+          PY
+
+      - name: Check out historical XNU 7195
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu7195 }}
+          path: xnu/historical-7195
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out target-era public XNU 8020
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu8020 }}
+          path: xnu/target-era-8020
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out intermediate XNU 8019
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu8019 }}
+          path: xnu/transition-8019
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out early XNU 8796
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu8796early }}
+          path: xnu/early-8796
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out selected XNU 8796 baseline
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu8796baseline }}
+          path: xnu/upstream
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out later public XNU 12377
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu12377 }}
+          path: xnu/latest-public
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Verify all pinned source identities
+        run: |
+          python3 tools/verify_xnu_source.py xnu/historical-7195 xnu/history/xnu-7195.121.3.lock.json
+          python3 tools/verify_xnu_source.py xnu/target-era-8020 xnu/history/xnu-8020.101.4.lock.json
+          python3 tools/verify_xnu_source.py xnu/transition-8019 xnu/history/xnu-8019.80.24.lock.json
+          python3 tools/verify_xnu_source.py xnu/early-8796 xnu/history/xnu-8796.101.5.lock.json
+          python3 tools/verify_xnu_source.py xnu/upstream xnu/BASELINE.lock.json
+          python3 tools/verify_xnu_source.py xnu/latest-public xnu/history/xnu-12377.1.9.lock.json
+
+      - name: Run synthetic host-side tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Audit six-snapshot T8010/H9 source matrix
+        run: |
+          python3 tools/audit_xnu_public_source_matrix.py \
+            xnu/historical-7195 xnu/target-era-8020 xnu/transition-8019 \
+            xnu/early-8796 xnu/upstream xnu/latest-public
