@@ -1002,3 +1002,21 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   loadability, runtime compatibility, kernel boot, or SpringBoard. M6 remains
   in progress and M7/SpringBoard has not started; the physical iPhone 7
   remains on iOS 12.1.4.
+
+
+- 2026-11-21: Added the identifier-level comparison of the uploaded
+  19H422/20H392 embedded .xpc/.appex inventories. Exact bundle-identifier
+  grouping yields 598 shared IDs, 35 target-only, and 147 donor-only. The
+  duplicate-aware multiset has 677 matched occurrences, with 38 additional
+  target and 174 additional donor occurrences; 12 shared IDs have different
+  occurrence counts. Shared-ID selected metadata differences affect 598
+  MinimumOSVersion values, 11 executable-presence states, nine extension
+  metadata groups, three executable filenames, one package type, and one
+  MachServices declaration group. The report and one-row-per-ID CSV
+  comparator preserve duplicate records and paths. Ten synthetic tests
+  passed on the original PR head; the comparator changes are covered by the
+  host-side CI workflow. This is still sanitized plist and filename-presence
+  metadata only, not proof of registration, service launch, ABI, runtime,
+  kernel boot, or SpringBoard. M6 remains in progress; M7 has not started.
+  The physical iPhone 7 remains on iOS 12.1.4; no device or firmware state
+  was accessed or changed.

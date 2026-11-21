@@ -111,3 +111,10 @@ check \`scan_errors\` before comparing inventories.
 This tool and its tests are host-side static metadata work only. It does not
 read or modify the physical device, firmware, partitions, security state, or
 boot state. M6 remains in progress; M7/SpringBoard has not started.
+
+
+The identifier-level comparison and duplicate-aware CSV output are documented
+in [the comparison results](embedded-xpc-service-comparison-results.md).
+The reusable comparator is `tools/compare_embedded_services.py`; it compares
+only the sanitized JSON inventories and preserves repeated identifiers and
+their observed source-root/path occurrences.
