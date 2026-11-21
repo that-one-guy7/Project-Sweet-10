@@ -91,6 +91,29 @@ def _format_rows(rows: list[ExportRow]) -> str:
     return "[" + ", ".join(values) + "]"
 
 
+def _kind_category(kind: str) -> str:
+    """Normalize resolver addresses while preserving the resolver category."""
+    return "resolver" if kind.startswith("resolver=") else kind
+
+
+def _resolver_addresses(rows: list[ExportRow]) -> Counter[int]:
+    """Return cache-local resolver addresses printed for resolver exports."""
+    addresses: Counter[int] = Counter()
+    for row in rows:
+        if row.kind.startswith("resolver=0x"):
+            try:
+                addresses[int(row.kind.split("=", 1)[1], 16)] += 1
+            except ValueError:
+                continue
+    return addresses
+
+
+def _format_addresses(addresses: Counter[int]) -> str:
+    return "[" + ", ".join(
+        f"0x{address:x} x{count}" for address, count in sorted(addresses.items())
+    ) + "]"
+
+
 def compare_exports(target_rows: list[ExportRow], donor_rows: list[ExportRow]) -> str:
     """Create a deterministic summary of names, kinds, duplicates, and addresses."""
     target = group_by_name(target_rows)
@@ -104,11 +127,17 @@ def compare_exports(target_rows: list[ExportRow], donor_rows: list[ExportRow]) -
     duplicate_donor = sorted(name for name, entries in donor.items() if len(entries) > 1)
 
     kind_differences: list[tuple[str, list[ExportRow], list[ExportRow]]] = []
+    resolver_address_differences: list[tuple[str, Counter[int], Counter[int]]] = []
     for name in sorted(common_names):
-        target_kinds = Counter(row.kind for row in target[name])
-        donor_kinds = Counter(row.kind for row in donor[name])
+        target_kinds = Counter(_kind_category(row.kind) for row in target[name])
+        donor_kinds = Counter(_kind_category(row.kind) for row in donor[name])
         if target_kinds != donor_kinds:
             kind_differences.append((name, target[name], donor[name]))
+
+        target_resolvers = _resolver_addresses(target[name])
+        donor_resolvers = _resolver_addresses(donor[name])
+        if target_resolvers and donor_resolvers and target_resolvers != donor_resolvers:
+            resolver_address_differences.append((name, target_resolvers, donor_resolvers))
 
     address_differences = sum(
         target[name][0].address != donor[name][0].address for name in common_names
@@ -127,8 +156,9 @@ def compare_exports(target_rows: list[ExportRow], donor_rows: list[ExportRow]) -
         f"Common unique names: {len(common_names)}",
         f"Target-only unique names: {len(target_only)}",
         f"Donor-only unique names: {len(donor_only)}",
-        f"Common names with differing kind multisets: {len(kind_differences)}",
-        f"Common names with different first printed addresses: {address_differences}",
+        f"Common names with differing export-kind categories: {len(kind_differences)}",
+        f"Common resolver names with different printed resolver addresses: {len(resolver_address_differences)}",
+        f"Common names with different first printed export addresses: {address_differences}",
         "",
         "Target-only export names:",
     ]
@@ -143,12 +173,20 @@ def compare_exports(target_rows: list[ExportRow], donor_rows: list[ExportRow]) -
     if not donor_only:
         lines.append("  (none)")
 
-    lines.append("\nCommon names with differing export kinds:")
+    lines.append("\nCommon names with differing export-kind categories:")
     lines.extend(
         f"  {name}: target={_format_rows(left)}; donor={_format_rows(right)}"
         for name, left, right in kind_differences
     )
     if not kind_differences:
+        lines.append("  (none)")
+
+    lines.append("\nCommon resolver names with different printed resolver addresses:")
+    lines.extend(
+        f"  {name}: target={_format_addresses(left)}; donor={_format_addresses(right)}"
+        for name, left, right in resolver_address_differences
+    )
+    if not resolver_address_differences:
         lines.append("  (none)")
 
     lines.extend(
