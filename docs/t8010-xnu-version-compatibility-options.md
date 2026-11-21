@@ -48,6 +48,21 @@ Not automatically.
 
 **Revised recommendation:** keep the intended 20H392 research target documented, but do not claim that a newer public XNU revision has a T8010 profile. Before proposing any source change, establish the exact historical removal point and inventory the platform-specific files/configuration that changed between 7195 and 8019. This is static source research only.
 
+## Additional T8010 reference in current public XNU
+
+A follow-up inspection found one important nuance: current public XNU still contains a T8010 string in a test concerning PMAP code-signing support. In `tests/vm_test_code_signing.c` at commit `f6217f891ac0bb64f3d375211650a4c1ff8ca1ea`, the test lists `T8010`, `T8011`, `T8012`, and `T8015` as SoCs where PMAP_CS is disabled by default unless an explicit `pmap_cs=1` boot argument is present.
+
+This is **not** a T8010 board configuration or a normal ARM64 build allowlist entry. It is a test's description of a feature policy for kernels whose reported platform string matches those SoCs. It therefore does not contradict the missing T8010 board block and build allowlist reported above, and it does not establish that current public XNU can build for or boot on T8010.
+
+A bounded check of `osfmk/arm64/cpu.c` at the same four refs also found no T8010-specific conditional in that file; the later three snapshots contain a `T6000`-specific `wfe_allowed` conditional. This observation is limited to that file and those refs, not a complete source-tree search.
+
+The test file was not found at the three older pinned tags through the repository contents API, so it is recorded only as a current-main observation, not as a historical change.
+
+| Current-main evidence | Git blob SHA | Interpretation |
+|---|---|---|
+| `tests/vm_test_code_signing.c` | `c728d9325e4d897c40c5bbc6f29900841bddea4a` | T8010 appears in PMAP_CS default-policy test logic only |
+| `osfmk/arm64/cpu.c` | `b58e288185b247a95815a1624190e173254ce491` | Selected CPU source contains a T6000 conditional, not a T8010 conditional |
+
 ## Reproducibility
 
 Files read directly from `apple-oss-distributions/xnu`:
