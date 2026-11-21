@@ -110,9 +110,15 @@ A subsequent user-side directory check found no file or symlink named
 `$HOME/20H392/mnt/root/root` and
 `$HOME/20H392/systemos-mnt/root/root`. The donor plugin directory itself
 contains only `Info.plist` and
-`_CodeSignature/CodeResources`. The inspected 19H422 target plugin
-directory contains only `Info.plist`; a recursive search of the complete
-target filesystem has not yet been recorded.
+`_CodeSignature/CodeResources`. A follow-up plist inspection confirmed
+`CFBundleExecutable=MultitouchHID`. Its `CodeResources` plist has top-level
+keys `files`, `files2`, `rules`, and `rules2`; the printed `files` and
+`files2` entries were both empty. This is a manifest-structure observation,
+not code-signature verification. The inspected 19H422 target plugin
+directory contains only `Info.plist`; the pasted transcript also showed a
+home-directory executable-search heading with no matching paths displayed,
+but did not preserve the exact command or searched roots, so a complete
+target-filesystem search is still unconfirmed.
 
 Consequently, the shared plugin type/factory UUID metadata remains confirmed,
 but no donor or target plugin executable is currently available from the
