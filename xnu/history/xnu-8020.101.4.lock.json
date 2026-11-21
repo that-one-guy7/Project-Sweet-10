@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-8020.101.4",
+  "tag_object_sha": "e85ea7aeb398b8f16c30f59a04a541f46ca080bd",
+  "commit_sha": "e7776783b89a353188416a9a346c6cdb4928faad",
+  "tag_signature": "unsigned",
+  "status": "target-era-public-reference-only",
+  "reason": "Public Darwin 21-era XNU source snapshot used to compare against the iPhone9,1 19H422 shipped KernelCache version family; its audited ARM64 machine list and board header omit T8010/H9. The shipped KernelCache reports a later 8020.241.44~1 build label, so this tag is not claimed as its exact source.",
+  "not_a_device_support_claim": true
+}
