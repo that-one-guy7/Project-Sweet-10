@@ -51,8 +51,8 @@ and [UniXNU 20H392 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
 | G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; an independent downstream UniXNU profile co-pins its commit with the exact 20H392 donor KernelCache SHA and reports 62 clean patch applications. That report excludes compilation, binary ABI and hardware; the profile uses DEVELOPMENT_ARM64_BCM2837, not T8015/T8010. Public version-stamping logic explains why the donor's 8796.142.1.703.8~1 label is not necessarily a Git tag. Exact Apple source provenance and product-specific inputs remain unknown |
 | G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Public source presence/absence is pinned and checked across xnu-7195.121.3, xnu-8019.80.24, and xnu-8796.141.3; the full historical dependency graph and migration remain incomplete |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
-| G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; no target-specific values are approved |
-| G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Not established; current inventory documents consumers only |
+| G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete: static 19H422 DeviceTree identifies the AIC master and AIC-timebase nodes and first register windows consumed by the generic XNU mapper; full IRQ routing, per-core delivery, EOI, runtime timebase frequency, memory map, and service behavior remain unresolved |
+| G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Partial: 19H422 static tree is fully parsed and selected properties are cross-checked, but runtime-tree differences and several property encodings remain open (including the unusual multitouch `reg` field) |
 | G6 — Entry/handoff contract | Exact XNU entry ABI, boot-argument format/version, execution state, memory ownership, and device-tree handoff requirements for the selected source | Not established |
 | G7 — Static and host validation | Reproducible compile/static checks, unit tests for supporting tools, and review of all target-specific patches | Not started for a target-specific kernel |
 | G8 — Early platform services | Evidence-backed plans for interrupt controller, timer, console/diagnostics, storage/root discovery, and required security services | Incomplete |
@@ -177,3 +177,22 @@ contracts are resolved. Do not assume AIC or copy donor/Qualcomm register
 values. The next highest-value source task is the full transitive T8010/H9
 dependency and conditional-consumer closure, beyond the existing direct
 feature-macro scan.
+
+
+## H9 full-tree source scan and AIC/timer evidence refinement
+
+The earlier H9 consumer review is now supported by a read-only full-tree
+scanner, `tools/audit_h9_source_closure.py`, with synthetic tests and a
+GitHub Actions workflow that checks out the pinned 7195 and 8796 source trees
+and uploads a JSON report. The report is a textual macro-reference and local
+include inventory, not preprocessor evaluation or proof of hardware support.
+See [H9 full-tree source consumer scan](h9-source-fulltree-audit.md).
+
+The target's static DeviceTree evidence should not be described as having no
+AIC/timer node or register information. The parsed 19H422 tree identifies
+`/arm-io/aic` as an `aic,1` master and
+`/arm-io/aic-timebase` as a timer; their first register windows correlate
+with the generic XNU mapper. The still-open requirements are final runtime
+tree values, full interrupt specifiers/routing, EOI and IPI behavior, timer
+counter/frequency semantics, and an audited controller implementation for
+the selected source. Static mapping inputs are not driver validation.

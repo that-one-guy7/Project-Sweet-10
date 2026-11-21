@@ -173,16 +173,16 @@ interrupt routing and timer source agree with the header's assumptions.
 
 This audit does not establish:
 
-- The actual iPhone9,1 interrupt-controller node, compatible string,
-  physical register range, or register mapping.
+- The final runtime iPhone9,1 DeviceTree and whether its AIC/timebase nodes
+  retain the same properties and values as the static 19H422 IPSW component.
 - The target interrupt specifiers, IRQ numbers, trigger modes, priorities,
-  CPU routing, or IPI delivery mechanism.
-- Whether the relevant target uses the AIC paths described by these generic
-  headers or another controller implementation.
-- The actual iPhone9,1 timer DeviceTree node, register range, and relationship
-  to the architectural generic timer.
+  CPU routing, per-core delivery, or IPI delivery mechanism.
+- The AIC driver's complete source/initialization contract and whether the
+  selected XNU 8796 build has a compatible implementation for this target.
+- The relationship between the static `aic-timebase` register window and
+  the architectural generic timer at runtime.
 - The target's validated `timebase-frequency`, counter behavior, timer
-  interrupt source, or EOI requirements.
+  interrupt source, EOI requirements, or CPU-specific decrementer callbacks.
 - Which CPU-specific decrementer callbacks, if any, are required by an A10
   implementation.
 - The exact interrupt/timer configuration used by the 20H392 iPhone X kernel;
@@ -191,14 +191,15 @@ This audit does not establish:
 ## Decision
 
 The interrupt mapping wrapper and ARM64 timer APIs remain useful generic
-interfaces. They do not provide an iPhone9,1 interrupt controller or timer
-configuration. Keep the hardware addresses, interrupt assignments, counter
-frequency, and callback selection marked unknown until supported by
-authoritative target-specific evidence.
+interfaces. The later parsed 19H422 DeviceTree audit supplies static AIC and
+AIC-timebase node identities and the first register windows consumed by the
+generic mapper; it does **not** supply a complete interrupt/timer driver
+contract. Keep the static mapping inputs separate from the still-unknown
+runtime IRQ routing, EOI, timebase frequency, and callback selection.
 
-Do not infer IRQ IDs, copy AIC register mappings, or reuse iPhone X or
-Qualcomm values. This document is a source audit, not a device configuration,
-kernel patch, or boot procedure.
+Do not infer IRQ IDs or runtime behavior from the compatible string alone.
+The values below are host-side static IPSW evidence, not a device
+configuration, kernel patch, or boot procedure.
 
 ## Source files
 
@@ -221,3 +222,33 @@ kernel patch, or boot procedure.
 - [Modern H13 CPU configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/H13.h)
 
 No device operation, firmware modification, or boot procedure is included.
+
+
+## Target static DeviceTree evidence update
+
+The separate [parsed iPhone9,1 19H422 DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
+now supplies a bounded set of target-reference mapping inputs that were not
+part of this original XNU source-only comparison:
+
+- `/arm-io/aic` has `compatible = aic,1`,
+  `device_type = interrupt-controller`,
+  `interrupt-controller = master`, and `#interrupt-cells = 1`.
+- Its first `reg` pair is ARM-IO-relative offset
+  `0x0e100000`, length `0x8000`. It also has a second pair
+  at offset `0x0e108000`, length `0x1000`.
+- `/arm-io/aic-timebase` has `device_type = timer` and a
+  `reg` pair at offset `0x0e108000`, length `0x1000`.
+- The same parsed artifact and the pinned XNU `pe_arm_get_soc_base_phys()`
+  source select the static SoC base `0x0000000200000000`.
+- The address inputs to the generic first-window mappings are therefore
+  `0x000000020e100000` for the AIC window and
+  `0x000000020e108000` for the timebase window.
+
+The pinned XNU 8796 generic mapper searches for the master interrupt-controller
+node and the `device_type = timer` node, then maps their first `reg` pairs.
+That confirms a static property-to-source mapping relationship. It does not
+prove runtime register access, a complete AIC interrupt implementation,
+interrupt specifier decoding, IRQ routing, EOI behavior, timer counter
+semantics, or a valid runtime timebase frequency. The static CPU0
+`timebase-frequency` property is zero in the extracted IPSW DeviceTree, so
+the runtime value remains unknown.
