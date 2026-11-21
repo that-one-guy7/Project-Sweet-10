@@ -48,22 +48,60 @@ The correct evidence statement is:
 - **Confirmed:** `AppleMultitouchSPI` is present in the target KernelCache KEXT inventory.
 - **Confirmed:** the supplied `AppleMultitouchDriver` personality metadata references `MultitouchHID.plugin` under `AppleMultitouchSPI.kext/PlugIns`.
 - **Confirmed:** the `AppleMultitouchSPI` JSON object did not serialize an `io_kit_personalities` field.
-- **Not established:** whether the corresponding plugin is present in the target 19H422 root filesystem, its bundle identifier/version/executable, its plugin interface metadata, or whether any runtime service loads it.
+- **Confirmed:** the matching 19H422 filesystem query extracted the nested plugin `Info.plist` and `_CodeSignature/CodeResources`.
+- **Confirmed:** the plugin bundle identifier is `com.apple.iokit.plugin.MultitouchHID`, version `5100.27`, supported platform `iPhoneOS`, minimum OS `15.8`, and SDK/platform build `19H402`.
+- **Confirmed:** the plugin advertises type UUID `0516B563-B15B-11DA-96EB-0014519758EF`, mapped to factory UUID `0CB0FBB9-15EA-11DB-A93C-001451D47183` and `IOHIDPlugInFactory`.
+- **Not established:** whether the declared `MultitouchHID` executable was extracted, can be loaded, or is instantiated by a runtime IOKit service.
 - **Not established:** any runtime touch operation or successful IOKit attachment.
 
 Do not rephrase the missing JSON field as "AppleMultitouchSPI has no personalities" or "the plugin is missing."
 
-## Correct next evidence source
+## Matching 19H422 filesystem result
 
-The next artifact to inspect is the **matching iPhone9,1 / D10AP / 19H422 filesystem bundle** containing:
+The user successfully mounted the target 19H422 filesystem DMG on the analysis
+computer using the standalone Linux build of ipsw 3.1.749. The selected
+filesystem DMG was `098-68844-067.dmg`. The extracted plugin path was:
 
 ```text
-AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist
+/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist
 ```
 
-The inspection should record only the small set of bundle metadata fields needed to identify the plugin, such as `CFBundleIdentifier`, `CFBundleName`, `CFBundleExecutable`, `CFBundleVersion`, and any explicit plugin/interface type identifiers. Do not publish the complete plist, executable, or filesystem image. Do not substitute the iPhone X 20H392 donor's similarly named file for target-native 19H422 evidence.
+The broad driver-name extraction also returned the plugin's
+`_CodeSignature/CodeResources`. The extracted `Info.plist` reports:
 
-If the matching 19H422 filesystem has not been extracted on the host, this check remains pending. It does not require changing or updating the physical phone.
+| Field | Value |
+|---|---|
+| Bundle identifier | `com.apple.iokit.plugin.MultitouchHID` |
+| Bundle name | Multitouch HID Service Plugin |
+| Declared executable | `MultitouchHID` |
+| Bundle version | `5100.27` |
+| Supported platform | `iPhoneOS` |
+| Minimum OS | `15.8` |
+| Platform / SDK build | `19H402` |
+| SDK name | `iphoneos15.8.internal` |
+| Required capability | `arm64` |
+
+The plugin's `CFPlugInTypes` declares
+`0516B563-B15B-11DA-96EB-0014519758EF` and maps it to factory UUID
+`0CB0FBB9-15EA-11DB-A93C-001451D47183`. The factory name is
+`IOHIDPlugInFactory`.
+
+The target KernelCache's `AppleMultitouchDriver` personality maps the same
+type UUID to
+`AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin`. The type UUID
+therefore links the parent's plugin request to the plugin's own declared
+factory interface at the static metadata level.
+
+The declared executable name is not evidence that the executable bytes were
+extracted by the reported query. The extracted file list contains the
+`Info.plist` and `_CodeSignature/CodeResources`, not the plugin executable.
+No conclusion is made about code validity, runtime loading, IOKit attachment,
+or touch delivery. The parent KEXT metadata remains sourced from the
+KernelCache JSON; the unsuccessful search for parent bundle plists does not
+prove those bundles are absent from the filesystem.
+
+This closes the static filesystem-plugin metadata check. It does not establish
+compatibility with the separate iOS 16.7.16 / 20H392 donor.
 
 ## Pinned source references
 
@@ -76,4 +114,4 @@ If the matching 19H422 filesystem has not been extracted on the host, this check
 
 **Source audit complete.** The `ipsw` JSON omission semantics and extraction boundary are confirmed from the pinned implementation.
 
-**Filesystem check pending.** The matching 19H422 `MultitouchHID.plugin` bundle has not yet been inspected. M6 remains in progress; M7 has not started.
+**Filesystem metadata check complete.** The matching 19H422 plugin `Info.plist` and `CodeResources` were extracted and its type/factory UUIDs cross-checked against `AppleMultitouchDriver`. Plugin executable extraction/loading, runtime IOKit attachment, touch delivery, and 20H392 compatibility remain unverified. M6 remains in progress; M7 has not started.
