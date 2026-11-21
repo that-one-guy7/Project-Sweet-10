@@ -1013,7 +1013,7 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   MinimumOSVersion values, 11 executable-presence states, nine extension
   metadata groups, three executable filenames, one package type, and one
   MachServices declaration group. The report and one-row-per-ID CSV
-  comparator preserve duplicate records and paths. Ten synthetic tests
+  comparator preserve duplicate records and paths. Eleven synthetic tests
   passed on the original PR head; the comparator changes are covered by the
   host-side CI workflow. This is still sanitized plist and filename-presence
   metadata only, not proof of registration, service launch, ABI, runtime,
@@ -1044,7 +1044,7 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   donor inventories. The checker validates the launchd JSON schema, tests
   exact paths under each supplied mounted root and explicit root-wrapper
   depths 0 through 2, records symlinks without following them, and never
-  opens or executes program files. Ten synthetic tests passed locally.
+  opens or executes program files. Eleven synthetic tests passed locally.
   The two saved launchd inventories each contain all nine selected labels.
   Actual filesystem presence remains pending because those roots are mounted
   only in the user's Ubuntu VM. This check will report only regular-file,
