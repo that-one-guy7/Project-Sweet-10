@@ -57,4 +57,3 @@
 - [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
 
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.
-- [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
