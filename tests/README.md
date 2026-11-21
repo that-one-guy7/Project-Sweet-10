@@ -75,3 +75,24 @@ is static bundle metadata, not evidence of runtime service registration.
 The first supplied 19H422 target and 20H392 donor inventory run is summarized
 in `docs/embedded-xpc-service-results.md`. These are actual sanitized plist
 reports, separate from the synthetic fixtures used by the unit tests.
+
+
+The embedded-service comparison tool reads the sanitized JSON outputs from
+the .xpc/.appex inventory collector. It groups records by exact bundle
+identifier, preserves duplicate occurrence counts and source-root paths,
+compares selected metadata-value sets, and can write one CSV row per unique
+identifier. It does not inspect or execute bundle binaries. Ten synthetic
+tests cover target-only/donor-only/common identities, duplicate identifiers,
+metadata differences, missing identifiers, CSV output, schema validation,
+and MachServices declaration accounting. Results remain static metadata,
+not runtime service availability or ABI evidence.
+
+
+The embedded-service / launchd cross-check reads sanitized .xpc/.appex
+inventory JSON and the matching central LaunchDaemons inventory JSON. It
+joins bundle-declared MachServices strings to launchd provider-index names,
+preserves repeated bundle occurrences, and reports provider labels when an
+exact string is present. It does not infer clients, registration, or runtime
+availability. Nine synthetic tests cover matches, unmatched names, duplicate
+records, unparsed bundles, empty declaration sets, schema validation, and
+malformed service-index entries.
