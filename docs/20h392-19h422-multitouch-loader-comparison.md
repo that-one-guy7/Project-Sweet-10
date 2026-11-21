@@ -143,16 +143,19 @@ These differences are static metadata only. They do not identify the
 cause of the version or UUID difference, prove a missing target framework,
 or demonstrate compatibility or incompatibility on T8010.
 
-## Next bounded check
+## Completed donor/target dependency image inventory comparison
 
-The selected target dependency-name lookup is complete. Its seven
-relevant cache image records, including target
-`SymptomDiagnosticReporter`, are recorded in the [target dependency image
-inventory](iphone91-19h422-multitouch-dependency-image-inventory.md).
-The next bounded check is the equivalent read-only lookup against the
-already-generated donor JSON inventory `$HOME/20H392-dyld-images.json`, so
-the target and donor framework versions/UUIDs can be compared. Cache image
-presence does not establish runtime dependency resolution.
+The selected-name lookups in both existing read-only dyld image inventories
+are complete. All seven selected dependency image families are represented
+in both caches, and every corresponding record has a different version
+string and Mach-O UUID. The donor and target image-list indexes also differ;
+indexes are local to each cache and are not stable cross-cache identifiers.
+
+The full side-by-side paths, indexes, versions, and UUIDs are recorded in
+the [donor/target dependency image comparison](20h392-19h422-multitouch-dependency-image-comparison.md).
+This comparison is static cache metadata. It does not establish byte-level
+differences beyond the distinct UUID identities, code-signature validity,
+loader resolution, runtime loading, or cross-board compatibility.
 
 No binary, cache, filesystem image, or firmware file is added to the
 repository. No device, partition, activation, security, boot, or restore
