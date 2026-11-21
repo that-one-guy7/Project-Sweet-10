@@ -97,11 +97,15 @@ regular row:
 
 Therefore, the target record reports six dependent-loader rows, while the
 donor reports seven. The only printed row difference is donor-side
-`libc++.1.dylib`. The absence of that row from the target record does not
-prove that libc++ is absent from the target filesystem or dyld cache image
-inventory. That presence question remains open until the target and donor
-image inventories are searched for the exact `/usr/lib/libc++.1.dylib`
-image record.
+`libc++.1.dylib`. The subsequent exact-path search found one
+`/usr/lib/libc++.1.dylib` image-list record in each cache: target index
+150, version `1300.36.0.0.0`, UUID
+`16BE14F2-A677-3DF1-984D-BBAB893EE3B9`; donor index 93, version
+`1500.65.0.0.0`, UUID
+`07F1FD58-7392-34FF-8D56-AE101EBC175A`. Thus, libc++ is represented in
+both cache image lists even though it is not printed as a direct dependent
+of the target MultitouchSupport record. See the
+[libc++ cache-image comparison](20h392-19h422-libcxx-cache-image-comparison.md).
 
 The six shared rows are listed as `regular` in both outputs. No other
 weak-link or re-export rows were printed for these two records.
@@ -134,13 +138,24 @@ MultitouchSupport image versions and UUIDs:
 versus `6140.3.0.0.0` / `1B6ABB86-B8A9-3941-A66A-EC9715F6B034`
 on donor.
 
-## Next bounded host-side check
+## Completed libc++ cache-image lookup
 
-Search both existing read-only dyld image inventories for the exact
-`/usr/lib/libc++.1.dylib` path. Record its image-list index, version,
-and UUID where present. This will distinguish a donor-only loader edge
-from actual target cache-image-list absence. It will not prove filesystem
-presence outside the cache, runtime resolution, or library loading.
+The exact `/usr/lib/libc++.1.dylib` path was searched in both existing
+read-only cache image inventories. Each returned one record. The target
+record is index 150, version `1300.36.0.0.0`, UUID
+`16BE14F2-A677-3DF1-984D-BBAB893EE3B9`; the donor record is index 93,
+version `1500.65.0.0.0`, UUID
+`07F1FD58-7392-34FF-8D56-AE101EBC175A`. The comparison is documented in
+[the libc++ cache-image comparison](20h392-19h422-libcxx-cache-image-comparison.md).
+
+This closes the cache image-list presence question only. It does not
+establish dependency resolution for the target MultitouchSupport loader,
+filesystem presence outside the cache, or runtime library loading.
+
+The next bounded host-side check is a static comparison of the target and
+donor `MultitouchSupport` exported-symbol metadata, followed by a
+careful comparison of relevant `MultitouchHID` metadata if parser output
+is reliable.
 
 No binary, shared-cache file, filesystem image, firmware file, or device
 state is changed or committed by this documentation.
