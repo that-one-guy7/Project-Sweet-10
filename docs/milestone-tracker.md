@@ -1020,3 +1020,20 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   kernel boot, or SpringBoard. M6 remains in progress; M7 has not started.
   The physical iPhone 7 remains on iOS 12.1.4; no device or firmware state
   was accessed or changed.
+
+
+- 2026-11-21: Cross-referenced the embedded-bundle MachServices declarations
+  against the target and donor central LaunchDaemons provider indexes using
+  the saved 19H422/20H392 launchd JSON files. The target bundle inventory has
+  zero declared names. The donor CAReportingService.xpc has two; one,
+  com.apple.osanalytics.diagnosticmonitor, is present in both launchd
+  indexes and maps in both builds to com.apple.osanalytics.osanalyticshelper
+  at /System/Library/CoreServices/osanalyticshelper. The second,
+  com.apple.usernotifications.delegate.com.apple.coreaudio.audiocapturer.notification,
+  is absent from both central LaunchDaemons indexes. This is only a
+  comparison against the central LaunchDaemons dictionaries; the unmatched
+  name is not globally absent, and a shared name does not prove a client
+  relationship or runtime registration. Added a host-side JSON cross-checker
+  and nine synthetic tests. M6 remains in progress; M7/SpringBoard has not
+  started. The physical iPhone 7 remains on iOS 12.1.4; no device, firmware,
+  partition, security, or boot state was accessed or changed.

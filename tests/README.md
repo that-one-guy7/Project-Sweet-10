@@ -86,3 +86,13 @@ tests cover target-only/donor-only/common identities, duplicate identifiers,
 metadata differences, missing identifiers, CSV output, schema validation,
 and MachServices declaration accounting. Results remain static metadata,
 not runtime service availability or ABI evidence.
+
+
+The embedded-service / launchd cross-check reads sanitized .xpc/.appex
+inventory JSON and the matching central LaunchDaemons inventory JSON. It
+joins bundle-declared MachServices strings to launchd provider-index names,
+preserves repeated bundle occurrences, and reports provider labels when an
+exact string is present. It does not infer clients, registration, or runtime
+availability. Nine synthetic tests cover matches, unmatched names, duplicate
+records, unparsed bundles, empty declaration sets, schema validation, and
+malformed service-index entries.

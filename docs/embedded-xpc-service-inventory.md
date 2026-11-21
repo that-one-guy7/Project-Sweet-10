@@ -118,3 +118,10 @@ in [the comparison results](embedded-xpc-service-comparison-results.md).
 The reusable comparator is `tools/compare_embedded_services.py`; it compares
 only the sanitized JSON inventories and preserves repeated identifiers and
 their observed source-root/path occurrences.
+
+
+The bundle-declared MachServices names have also been compared with the
+central LaunchDaemons provider indexes; see
+[the cross-check results](embedded-xpc-launchd-crosscheck-results.md).
+This remains a static declaration comparison, not runtime registration or
+client evidence.
