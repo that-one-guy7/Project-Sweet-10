@@ -661,3 +661,53 @@ that the frameworks are absent; no target loader records were collected.
 The audit plan now requests read-only `namei -l`, `stat`, and
 `test -r` output before any retry. M6 remains in progress; M7/SpringBoard
 has not started. The physical iPhone 7 remains on iOS 12.1.4.
+
+
+## M6 first successful target BackBoard loader result (2026-11-20)
+
+The user supplied a successful standalone-ipsw 3.1.749 query for the
+iPhone9,1 / D10AP / 19H422 target-reference cache:
+`BackBoardServices.framework/BackBoardServices`. The locally extracted
+official Linux x86_64 Debian package SHA-256 was verified as
+`333cab58451330f0080c3c2b7bec3d9e6f4be588b27f6213a5233dd08821d071`.
+The query exited 0 with no stderr and returned a prebuilt in-cache dylib
+loader record (reference index 18, VM size `0x865a8000`, five regions),
+with 12 regular dependencies and one AssertionServices re-export. The
+printed dependency names and kinds match the recorded 20H392 donor
+BackBoardServices record in the same order. The suspicious decoded
+Swift/Objective-C Sections fields remain excluded; loader reference index
+18 is not a cache image-list index, and no BindTargets section was printed.
+This is one successful record only: target queries for
+BackBoardHIDEventFoundation, BackBoardHIDEventProcessors, and
+IOMobileFramebuffer remain pending. M6 remains in progress and M7/SpringBoard
+has not started. Static loader metadata does not prove runtime loading,
+IOKit attachment, HID event delivery, display operation, or iPhone9,1
+compatibility. The physical iPhone 7 remains on iOS 12.1.4; no device or
+firmware state was accessed or changed.
+
+
+## M6 target BackBoard loader comparison completed (2026-11-20)
+
+The four planned iPhone9,1 / D10AP / iOS 15.8.8 (19H422) target-reference
+loader queries returned all four requested framework records using the
+standalone IPSW 3.1.749 executable. Three supplied command results explicitly
+show exit status 0 and empty stderr; the BackBoardHIDEventFoundation output
+contains a valid record and empty stderr, but its explicit exit-status line
+was absent from the supplied excerpt and is not asserted.
+
+The target records contain 33 regular dependency rows, one re-export, and
+zero weak-link rows. The corresponding iPhone10,3 / D22AP / iOS 16.7.16
+(20H392) donor records contain 35 regular rows, one re-export, and zero
+weak-link rows. BackBoardServices matches exactly (12 regular plus one
+AssertionServices re-export); IOMobileFramebuffer matches exactly (four
+regular); each target HID framework has one fewer regular dependency because
+the donor lists StudyLog and the target output does not. No target-only
+dependency rows were found. This difference is not attributed to hardware:
+the source records are from different iOS releases and different devices.
+
+The exact records and row-level comparison are in
+`docs/iphone91-19h422-backboard-loader-results.md`. This completes the
+bounded four-framework target BackBoard audit only. M6 remains in progress
+for the broader userland investigation; M7/SpringBoard has not started.
+The physical iPhone 7 remains on iOS 12.1.4. No device or firmware state
+was accessed or changed.
