@@ -179,6 +179,15 @@ for MPIDR-based indexing. The historical H9 profile does not define
 topology, but does not prove the missing T8010 product configuration selects
 that path.
 
+A follow-up review also classified the three remaining 8796
+`APPLEHURRICANE` references: cache-line definitions in `proc_reg.h`,
+a Hurricane-specific PMU EL3-counter setting in `monotonic_arm64.c`, and
+a CPU-name string in `sleh.c`. The first two are retained functional
+compile-time behavior if the macro is selected; the third is diagnostic.
+This strengthens the case that some H9-era CPU assumptions remain in the
+newer generic source, but it does not prove a T8010 product build enables
+them.
+
 The target 19H422 DeviceTree has two CPU entries (`reg=0` running and
 `reg=1` waiting), which is structurally consistent with a simple legacy
 topology. It does not by itself establish the final enabled CPU count or
