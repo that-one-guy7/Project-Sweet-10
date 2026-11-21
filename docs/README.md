@@ -55,7 +55,7 @@
 - [iPhone9,1 19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md)
 - [iPhone9,1 19H422 artifact verification](iphone91-19h422-artifact-verification.md)
 - [iPhone9,1 19H422 parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
-- [iPhone9,1 19H422 DeviceTree survey methodology review](iphone91-survey-methodology-review.md)
+- [iPhone9,1 19H422 DeviceTree survey methodology review](iphone91-19h422-survey-methodology-review.md)
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
 - [Public XNU source versus shipped KernelCache identities](xnu-public-source-vs-shipped-kernel.md)
 - [20H392 XNU kernel version-stamp provenance](xnu-kernel-version-stamp-provenance.md)
