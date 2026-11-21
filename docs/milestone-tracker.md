@@ -1090,3 +1090,19 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   structured result and interpretation document. M6 remains in progress;
   M7 has not started. The physical iPhone 7 remains on iOS 12.1.4; no device,
   firmware, partition, or boot state was accessed or changed.
+
+
+- 2026-11-21: Added an Apple-source-backed interpretation note for dyld
+  shared-cache image presence, PrebuiltLoader validation, and index namespaces.
+  Apple's published implementation distinguishes cache-resident dylibs from
+  non-cache files during PrebuiltLoader validation; standalone file absence
+  alone therefore cannot establish cache-image absence. Apple's dyld4 design
+  describes LoaderRef indexes within PrebuiltLoaderSets separately from the
+  shared-cache image-list API. The current public dyld main branch is not
+  claimed to be the exact dyld source snapshot for 20H392 or 19H422. Also
+  recorded that the 20H392 donor has separately mounted OS-root and SystemOS
+  images, but that layout must not be assumed for the 19H422 target. The next
+  checkpoint is the target build's own BuildManifest/component inventory and
+  explicit mounted-root coverage. M6 remains in progress; M7 has not started.
+  The physical iPhone 7 remains on iOS 12.1.4; no device, firmware, partition,
+  or boot state was accessed or changed.
