@@ -62,7 +62,7 @@ Other section
         donor = [ExportRow(0x900, "regular", "_shared")]
         report = compare_exports(target, donor)
         self.assertIn("Common names with different first printed addresses: 1", report)
-        self.assertIn("Common names with differing kind multisets: 0", report)
+        self.assertIn("Common names with differing export-kind categories: 0", report)
 
     def test_kind_changes_are_reported(self):
         target = [ExportRow(0x100, "regular", "_shared")]
