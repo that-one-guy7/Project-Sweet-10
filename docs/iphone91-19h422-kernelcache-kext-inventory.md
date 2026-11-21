@@ -85,66 +85,29 @@ The KEXT inventory and personality metadata now establish six exact static IONam
 
 ## Target multitouch plugin metadata
 
-The standalone Linux build of ipsw 3.1.749 successfully mounted the selected
-19H422 filesystem DMG and extracted the nested plugin metadata from:
+The standalone Linux ipsw 3.1.749 binary mounted the target 19H422 filesystem
+DMG and extracted the nested `MultitouchHID.plugin/Info.plist` and
+`_CodeSignature/CodeResources`. The plugin metadata identifies bundle
+`com.apple.iokit.plugin.MultitouchHID`, version `5100.27`, platform
+`iPhoneOS`, and minimum OS `15.8`.
 
-`/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/`
+The plugin declares type UUID
+`0516B563-B15B-11DA-96EB-0014519758EF` and maps it to factory UUID
+`0CB0FBB9-15EA-11DB-A93C-001451D47183` / `IOHIDPlugInFactory`.
+The target `AppleMultitouchDriver` personality's `IOCFPlugInTypes` map
+references the same type UUID and the nested plugin path. Separately,
+`AppleHIDTransportSPI` names the target DeviceTree compatible
+`hid-transport,k1`.
 
-The observed extracted files were `Info.plist` and
-`_CodeSignature/CodeResources`. The broad driver-name filesystem query returned
-these plugin files; it did not return separate top-level parent KEXT
-`Info.plist` files. That search result is not evidence that the parent KEXTs
-are absent from the filesystem. The parent KEXT metadata summarized below comes
-from the separately inspected KernelCache `--json` output.
+The detailed field inventory, extraction record, and evidence limitations are
+in the [dedicated 19H422 multitouch plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md).
+The parent KEXT metadata in this report comes from the KernelCache JSON. The
+absence of an optional `io_kit_personalities` field from the
+`AppleMultitouchSPI` JSON record does not establish that the plugin is absent.
 
-The extracted plugin `Info.plist` reports:
+This is static metadata only. It does not prove that a provider attaches, the
+plugin executable loads, or touch events reach userland.
 
-| Field | Value |
-|---|---|
-| `CFBundleIdentifier` | `com.apple.iokit.plugin.MultitouchHID` |
-| `CFBundleName` | Multitouch HID Service Plugin |
-| `CFBundleExecutable` | `MultitouchHID` (declared name; executable not extracted by the reported query) |
-| `CFBundleVersion` / short version | `5100.27` |
-| `CFBundleSupportedPlatforms` | `iPhoneOS` |
-| `MinimumOSVersion` | `15.8` |
-| `DTPlatformBuild` / `DTSDKBuild` | `19H402` |
-| `DTSDKName` | `iphoneos15.8.internal` |
-| `UIRequiredDeviceCapabilities` | `arm64` |
-
-The plugin declares `CFPlugInTypes` type UUID
-`0516B563-B15B-11DA-96EB-0014519758EF`, mapped to factory UUID
-`0CB0FBB9-15EA-11DB-A93C-001451D47183`. Its
-`CFPlugInFactories` maps that factory UUID to `IOHIDPlugInFactory`.
-
-The target KernelCache JSON output provides the other side of the static link:
-
-- `AppleHIDTransportSPI` (version `5100.32`) has personality
-  `AppleHIDTransportDeviceSPI`, provider class `AppleARMSPIDevice`, and
-  `IONameMatch` values `hid-transport,k1` and `hid-transport,spi`. The
-  first value exactly overlaps the target DeviceTree's
-  `/arm-io/spi2/multi-touch` compatible string.
-- `AppleMultitouchDriver` (version `5100.27`) has
-  `AppleMultitouchHIDService` personalities with provider class
-  `IOHIDInterface`. The reported `0x0D/0x04`, `0x0D/0x20`, and
-  vendor-defined `0xFF60/0x1002` entries include an
-  `IOCFPlugInTypes` mapping from the same type UUID
-  `0516B563-B15B-11DA-96EB-0014519758EF` to
-  `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin`.
-- `AppleMultitouchSPI` (version `5100.27`) is present in the KernelCache
-  inventory. Its serialized KernelCache JSON record did not include an
-  `io_kit_personalities` field; the absence of that optional field is not
-  evidence that the nested plugin or its relationship is absent.
-
-This establishes a two-sided, static identifier/path relationship between the
-`AppleMultitouchDriver` plugin-type declaration and the nested plugin's
-`CFPlugInTypes` factory declaration. It also establishes that the target K1
-transport string is named by the target's `AppleHIDTransportSPI` personality.
-
-It does **not** prove that an `IOHIDInterface` is created, that the provider
-chain attaches at runtime, that the plugin executable is present or loads, that
-touch events are delivered, or that this iOS 15.8.8 stack is compatible with
-the separate iOS 16.7.16 (20H392) donor system. The plugin's iOS 15.8 SDK
-metadata is target-reference evidence, not a transplant recommendation.
 ## Evidence levels and limits
 
 Keep these levels separate:
