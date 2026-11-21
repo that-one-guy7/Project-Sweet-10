@@ -1,0 +1,80 @@
+{
+  "schema": "project-sweet-10.t8010-xnu-source-matrix.v1",
+  "source_repository": "apple-oss-distributions/xnu",
+  "files_compared": [
+    "pexpert/pexpert/arm64/board_config.h",
+    "makedefs/MakeInc.def"
+  ],
+  "refs": [
+    {
+      "ref": "xnu-7195.121.3",
+      "board_config_blob_sha": "0990f9885ea9adb9ca453e3a57241f0d0155fa78",
+      "makeinc_blob_sha": "bf2b6f8a805da4a8abce2590a118dea390ca9f7d",
+      "board_config_t8010": true,
+      "makeinc_t8010_allowlist": true,
+      "makeinc_t8010_flags": "-DARM64_BOARD_CONFIG_T8010 -mcpu=hurricane",
+      "board_config_details": {
+        "cpu_header": "H9.h",
+        "max_cpus": 3,
+        "max_cpu_clusters": 1,
+        "max_l2_cline": 7,
+        "pmap_cs_debug": true,
+        "pmap_cs_enable_debug": 0
+      }
+    },
+    {
+      "ref": "xnu-8019.80.24",
+      "board_config_blob_sha": "259962b3430420e9b90222b4a42282eb6c623209",
+      "makeinc_blob_sha": "3a15620d70d85af974fd296c9e87666a5867f1ff",
+      "board_config_t8010": false,
+      "makeinc_t8010_allowlist": false,
+      "normal_arm64_allowlist": [
+        "BCM2837",
+        "T6000",
+        "T8101",
+        "VMAPPLE"
+      ]
+    },
+    {
+      "ref": "xnu-8796.141.3",
+      "board_config_blob_sha": "945453413cd8f055449a654639fbea6a083e74cc",
+      "makeinc_blob_sha": "5bd6f23dd10c3316ba0ac3ca5a1515256753975e",
+      "board_config_t8010": false,
+      "makeinc_t8010_allowlist": false,
+      "normal_arm64_allowlist": [
+        "BCM2837",
+        "T6000",
+        "T8101",
+        "T8103",
+        "VMAPPLE"
+      ]
+    },
+    {
+      "ref": "main",
+      "board_config_blob_sha": "159356da70e354cb4affbf7951c02aa2ab8c87e1",
+      "makeinc_blob_sha": "cccb411ec9b9fa0d842cc6bbcb02b6e1b7e0355f",
+      "board_config_t8010": false,
+      "makeinc_t8010_allowlist": false,
+      "normal_arm64_allowlist": [
+        "T6000",
+        "T6020",
+        "T6030",
+        "T6031",
+        "T6041",
+        "T8101",
+        "T8103",
+        "T8112",
+        "T8122",
+        "T8132",
+        "VMAPPLE"
+      ]
+    }
+  ],
+  "conclusion": "T8010 exists in the audited 7195 public source, but is absent from both files in 8019, 8796, and current public main. Exact removal commit is not yet identified.",
+  "limitations": [
+    "This is a comparison of two source files at four refs, not a complete XNU platform audit.",
+    "Absence from public source does not establish absence from Apple's private build inputs.",
+    "A historical board configuration does not establish that a newer kernel can be made compatible by copying that block.",
+    "No build, device boot, or runtime behavior is established by this metadata."
+  ]
+}
