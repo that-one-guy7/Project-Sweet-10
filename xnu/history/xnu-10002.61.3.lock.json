@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-10002.61.3",
+  "tag_object_sha": "a01637e17c0e667cf87fd3ac57c98fba3040af60",
+  "commit_sha": "0f4c859e951fba394238ab619495c4e1d54d0f34",
+  "tag_signature": "unsigned",
+  "status": "later-public-reference-only",
+  "reason": "Published public XNU xnu-10002.61.3 snapshot, tagged 2023-12-15. Included only to extend the read-only T8010/H9 source comparison; it is not an exact source mapping for the 20H392 KernelCache.",
+  "not_a_device_support_claim": true
+}
