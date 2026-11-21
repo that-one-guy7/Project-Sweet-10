@@ -70,3 +70,14 @@ executes bundle binaries. Synthetic tests cover bundle discovery, multiple
 roots, service/provider indexing, extension metadata, malformed/missing
 plists, unsafe executable names, symlinks, and source-file preservation. This
 is static bundle metadata, not evidence of runtime service registration.
+
+
+The embedded-service comparison tool reads the sanitized JSON outputs from
+the .xpc/.appex inventory collector. It groups records by exact bundle
+identifier, preserves duplicate occurrence counts and source-root paths,
+compares sets of selected metadata fields, and can write one CSV row per
+unique identifier. It does not inspect or execute bundle binaries. Synthetic
+tests cover target-only/donor-only/common identities, duplicate identifiers,
+metadata differences, missing identifiers, CSV output, schema validation,
+and MachServices declaration accounting. Results remain static metadata,
+not runtime service availability or ABI evidence.
