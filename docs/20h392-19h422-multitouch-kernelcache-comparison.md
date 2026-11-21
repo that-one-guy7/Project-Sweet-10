@@ -114,17 +114,23 @@ contains only `Info.plist` and
 `CFBundleExecutable=MultitouchHID`. Its `CodeResources` plist has top-level
 keys `files`, `files2`, `rules`, and `rules2`; the printed `files` and
 `files2` entries were both empty. This is a manifest-structure observation,
-not code-signature verification. The inspected 19H422 target plugin
-directory contains only `Info.plist`; the pasted transcript also showed a
-home-directory executable-search heading with no matching paths displayed,
-but did not preserve the exact command or searched roots, so a complete
-target-filesystem search is still unconfirmed.
+not code-signature verification. The complete 19H422 target filesystem DMG was subsequently mounted
+read-only at `$HOME/19H422-full-fs-mount`. The user verified
+`root/System/Library/Extensions` exists and searched the complete mount
+for regular files and symlinks whose case-insensitive names match
+`MultitouchHID*`. No paths were returned. This closes the full-filesystem
+search for that filename pattern within the mounted 19H422 filesystem DMG;
+it does not cover other IPSW components or unmounted/shared-cache images.
 
-Consequently, the shared plugin type/factory UUID metadata remains confirmed,
-but no donor or target plugin executable is currently available from the
-inspected directories for Mach-O inspection. This is an artifact-availability
-limitation, not evidence that the executable is absent from every IPSW
-component or every unmounted/shared-cache location. The mere presence of
+Consequently, the target's compiled plugin image is now confirmed as an
+entry in the 19H422 dyld shared-cache inventory (index 1948, version
+`5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`), despite no standalone
+`MultitouchHID*` file being returned by the complete filesystem search.
+The donor standalone executable remains unlocated in the two searched donor
+filesystem roots. The actual Mach-O bytes have not been separately extracted
+or compared. The dyld image entry is stronger than plist-only metadata but
+is not signature validation or runtime proof. The mere presence of
 `CodeResources` does not verify a code signature.
 
 ## Interpretation
@@ -160,15 +166,15 @@ plist declares `CFBundleExecutable=MultitouchHID`; its
 `CodeResources` plist reports top-level keys `files`, `files2`,
 `rules`, and `rules2`, with empty printed `files` and `files2`
 entries. No matching donor executable was found in either searched mounted
-donor root. The target plugin directory listing contains only
-`Info.plist`; the additional home-directory search displayed no matches,
-but its exact command and coverage were not preserved, so a complete
-target-root search remains unconfirmed. The next bounded static task is to
-enumerate and document any remaining relevant mounted IPSW component roots.
-A Mach-O comparison is deferred until executable files are actually
-located. The `CodeResources` output is not signature verification. Keep
-donor and target artifacts separate; metadata does not prove runtime
-compatibility.
+donor root. The 19H422 dyld image inventory now contains
+`/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID`
+at index 1948, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`. The next bounded static task is
+to query the separate 20H392 donor SystemOS dyld cache for the corresponding
+image path, version, and UUID. A binary comparison remains deferred until
+actual cache image bytes are separately obtained and statically inspected.
+The `CodeResources` output is not signature verification. Keep donor and
+target artifacts separate; metadata does not prove runtime compatibility.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,

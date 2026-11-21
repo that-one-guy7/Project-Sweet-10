@@ -172,24 +172,57 @@ plugin factory executes, or that touch events reach applications.
 | `AppleMultitouchDriver` references `MultitouchHID.plugin` | Confirmed in supplied KEXT personality metadata |
 | Nested plugin Info.plist exists in the matching 19H422 filesystem | Confirmed by successful host-side extraction |
 | Plugin bundle identifier, version, minimum OS, platform, and factory mapping | Confirmed in extracted Info.plist |
-| Plugin executable extracted and inspected | Not confirmed by the supplied file listing |
+| Plugin standalone file in complete 19H422 filesystem | No matching regular file or symlink named `MultitouchHID*` returned; the dyld shared-cache inventory separately lists the compiled image |
 | Code signature cryptographically validated | Not tested; extracting `_CodeSignature/CodeResources` alone is not validation |
+| Target dyld shared-cache image | Image index 1948; path ends in `MultitouchHID.plugin/MultitouchHID`; version `5100.27.0.0.0`; UUID `304953E6-6B67-3CF1-B7CA-E011978210DE` |
 | Runtime IOKit matching, provider attachment, plugin load, or touch operation | Not tested |
 | Compatibility with iPhone X 20H392 donor kernel/userland | Not established |
 
-## Next bounded host-side research
+## Full target-filesystem executable search
 
-The useful next static comparison is the corresponding multitouch metadata in
-the separate 20H392 donor artifacts. Compare bundle identifiers, versions,
-minimum OS/platform declarations, IOKit personalities, plugin type/factory
-UUIDs, and dependencies. Keep the target-native 19H422 evidence and the
-iPhone X 20H392 donor evidence in separate columns; matching names or versions
-would not prove cross-device compatibility.
+The user successfully mounted the complete 19H422 iPhone9,1 filesystem DMG
+read-only with ipsw 3.1.749. The selected component was
+`098-68844-067.dmg`, mounted at:
 
-The plugin executable and signature can also be examined as a separate
-host-side artifact if they are extracted later. Do not infer their contents
-from Info.plist or CodeResources.
+```text
+/home/hey/19H422-full-fs-mount
+```
+
+The mount was confirmed by `findmnt` as FUSE with read-only options. The
+user found the target extension directory at:
+
+```text
+/home/hey/19H422-full-fs-mount/root/System/Library/Extensions
+```
+
+A filename-only search was then run over the complete mount point, including
+regular files and symlinks, for case-insensitive names matching
+`MultitouchHID*`. It returned no paths. The command suppressed permission
+and traversal diagnostics, so this is recorded as “no matching path returned
+by the completed search,” not as a cryptographic or runtime result.
+
+Together with the earlier target bundle extraction, this means the target
+plugin Info.plist is present in the extracted metadata set, but no matching
+plugin executable file or symlink was located anywhere in the mounted
+19H422 filesystem DMG under the declared executable-name prefix. This does
+not establish absence from every other IPSW component, an unmounted image,
+or another shared-cache representation.
+
+The target plugin image is now located in the 19H422 dyld shared-cache
+image inventory (index 1948, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`). The complete filesystem search
+found no separate file, but the shared-cache entry demonstrates that the
+compiled image is represented in the cache. See
+[the 19H422 dyld shared-cache audit](iphone91-19h422-dyld-cache-multitouch-audit.md).
+
+The next bounded static check is to query the separate 20H392 donor
+SystemOS cache for its `MultitouchHID` image path, version, and UUID and
+compare those records. Keep A11/T8015 donor and A10/T8010 target evidence
+separate. Cache image metadata does not prove that a plugin loads at runtime,
+that a provider attaches, or that touch events reach applications.
 
 No device connection, firmware update, restore, partition write, exploit, or
 boot operation is part of this report. No KernelCache, KEXT executable,
 plugin executable, raw DeviceTree, or filesystem image is committed.
+
+See also [the 19H422 dyld shared-cache multitouch image audit](iphone91-19h422-dyld-cache-multitouch-audit.md).
