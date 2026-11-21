@@ -35,7 +35,7 @@ This avoids the broad-substring issue in the earlier 129-location output.
 From the repository root, run:
 
 \`\`\`bash
-python3 -m unittest tests.test_compare_kext_metadata -v
+python3 -m unittest discover -s tests -p 'test_compare_kext_metadata.py' -v
 
 python3 tools/compare_kext_metadata.py \\
   --target "$HOME/19H422-kernel-inspect/analysis/kexts.json" \\
