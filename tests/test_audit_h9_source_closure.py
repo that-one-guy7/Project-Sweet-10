@@ -90,6 +90,15 @@ class H9SourceClosureTests(unittest.TestCase):
             self.assertEqual(macros["HAS_MIGSTS"]["old_reference_count"], 2)
             self.assertEqual(macros["HAS_MIGSTS"]["new_reference_count"], 1)
             self.assertTrue(
+                any(x["path"] == "osfmk/arm64/proc_reg.h"
+                    and x["context"] == "preprocessor-condition"
+                    for x in macros["APPLEHURRICANE"]["new_occurrences"])
+            )
+            self.assertTrue(any(
+                x["context"] == "comment"
+                for x in macros["APPLEHURRICANE"]["new_occurrences"]
+            ))
+            self.assertTrue(
                 any(x["include"] == "mach/machine.h"
                     for x in result["old_h9_include_closure"]["unresolved_includes"])
             )
