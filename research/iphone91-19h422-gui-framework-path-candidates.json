@@ -1,0 +1,126 @@
+{
+  "schema": "project-sweet-10.framework-path-candidates.v1",
+  "target_reference": {
+    "device": "iPhone9,1",
+    "board": "D10AP",
+    "build": "19H422",
+    "ios_version": "15.8.8"
+  },
+  "donor_reference": {
+    "device": "iPhone10,3",
+    "board": "D22AP",
+    "build": "20H392",
+    "ios_version": "16.7.16"
+  },
+  "purpose": "Check selected donor GUI-framework install names against exact paths in the mounted 19H422 target filesystem. Cache-image-list membership is separate evidence.",
+  "candidates": [
+    {
+      "id": "extensionfoundation-donor-path",
+      "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "group": "RunningBoard",
+      "reason": "Exact donor-only install path; target cache inventory instead lists the same basename under PrivateFrameworks."
+    },
+    {
+      "id": "extensionfoundation-target-alternate",
+      "path": "/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "group": "RunningBoard",
+      "reason": "Known alternate path represented in the target 19H422 cache image list (index 1093)."
+    },
+    {
+      "id": "privacydisclosurecore",
+      "path": "/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+      "group": "RunningBoard",
+      "reason": "Donor weak-link dependency with no same-basename target cache image-list record."
+    },
+    {
+      "id": "systemaperture",
+      "path": "/System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "activitykit",
+      "path": "/System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "activityuiservices",
+      "path": "/System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "posterboardui",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "backlightservices",
+      "path": "/System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "backlightserviceshost",
+      "path": "/System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "posterboardservices",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "posterkit",
+      "path": "/System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "coversheetkit",
+      "path": "/System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "sessionassertion",
+      "path": "/System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "biomelibrary",
+      "path": "/System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "pointeruisystemservices",
+      "path": "/System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "paperboardui",
+      "path": "/System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "systemstatusui",
+      "path": "/System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    },
+    {
+      "id": "systemapertureui",
+      "path": "/System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record."
+    }
+  ]
+}
