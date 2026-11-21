@@ -69,10 +69,24 @@ Their imports are **unassessed**, not missing:
 The plugin's load-command metadata lists 14 direct dylib dependencies. The
 saved undefined-import rows use 13 distinct provider labels in the target and
 12 in the donor; `libcompression.dylib` is a direct dependency but has no
-undefined import row attributed to it in these two Symtab logs. The next
-static collection step is to obtain export logs for the nine provider labels
-above, then rerun the same comparison. Exact install-name paths are recorded
-in the AGX plugin load-command report.
+undefined import row attributed to it in these two Symtab logs. The nine remaining images have the following exact install-name paths
+from the paired AGXMetalA10/A11 load-command records:
+
+| Provider label | Install-name path |
+|---|---|
+| AggregateDictionary | `/System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary` |
+| CoreAnalytics | `/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics` |
+| CoreFoundation | `/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation` |
+| Foundation | `/System/Library/Frameworks/Foundation.framework/Foundation` |
+| GPURawCounter | `/System/Library/PrivateFrameworks/GPURawCounter.framework/GPURawCounter` |
+| libMobileGestalt.dylib | `/usr/lib/libMobileGestalt.dylib` |
+| libSystem.B.dylib | `/usr/lib/libSystem.B.dylib` |
+| libc++.1.dylib | `/usr/lib/libc++.1.dylib` |
+| libobjc.A.dylib | `/usr/lib/libobjc.A.dylib` |
+
+These names are the provider labels used in the saved Symtab output. The
+collector writes output files using those same labels, so the logs can be
+passed directly to `compare_dyld_imports.py`.
 
 ## Reproduction
 
@@ -94,10 +108,31 @@ python3 tools/compare_dyld_imports.py \
   --donor-provider "IOSurface=$LOG_DIR/20H392-IOSurface.txt"
 ```
 
-The tool reuses the repository's `compare_dyld_exports.py` parser for
-provider exports. Seven synthetic tests cover normal/weak import parsing,
-malformed inputs, provider-map validation, matched names, missing names, and
-the distinction between unassessed providers and missing exports.
+To collect the nine remaining provider logs from the two already-mounted shared
+caches on Ubuntu, run this from the repository root:
+
+```bash
+bash tools/collect_agx_provider_exports.sh
+```
+
+The collector runs 18 read-only `ipsw dyld macho ... --symbols -V` queries,
+writes one text log and one stderr file per query plus a status table, and
+creates:
+
+```
+$HOME/agx-metal-static-audit/agx-provider-export-logs.tar.gz
+```
+
+It does not use `--extract`, execute an iOS binary, access the phone, or alter
+either shared cache. It exits nonzero if any provider query fails. Check the
+status table and the matching `.err` files before treating the archive as
+complete. Environment variables `IPSW`, `TARGET_CACHE`, `DONOR_CACHE`,
+`OUT`, and `ARCHIVE` can override the documented defaults.
+
+The comparison tool reuses the repository's `compare_dyld_exports.py`
+parser for provider exports. Seven synthetic tests cover normal/weak import
+parsing, malformed inputs, provider-map validation, matched names, missing
+names, and the distinction between unassessed providers and missing exports.
 
 ## Interpretation limits
 
