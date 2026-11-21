@@ -15,48 +15,48 @@ def make_tree(root, old=True):
     (root / "osfmk/arm64").mkdir(parents=True)
     if old:
         (root / "pexpert/pexpert/arm64/H9.h").write_text(
-            "#ifndef _PEXPERT_ARM64_H9_H\\n"
-            "#define _PEXPERT_ARM64_H9_H\\n"
-            "#define APPLEHURRICANE\\n"
-            "#define HAS_MIGSTS 1\\n"
-            "#include <pexpert/arm64/apple_arm64_common.h>\\n"
-            "#endif\\n",
+            "#ifndef _PEXPERT_ARM64_H9_H\n"
+            "#define _PEXPERT_ARM64_H9_H\n"
+            "#define APPLEHURRICANE\n"
+            "#define HAS_MIGSTS 1\n"
+            "#include <pexpert/arm64/apple_arm64_common.h>\n"
+            "#endif\n",
             encoding="utf-8",
         )
         (root / "pexpert/pexpert/arm64/apple_arm64_common.h").write_text(
-            "#define SHARED_FEATURE 1\\n#include <mach/machine.h>\\n",
+            "#define SHARED_FEATURE 1\n#include <mach/machine.h>\n",
             encoding="utf-8",
         )
         (root / "pexpert/pexpert/arm64/board_config.h").write_text(
-            '#include <pexpert/arm64/H9.h>\\n', encoding="utf-8"
+            '#include <pexpert/arm64/H9.h>\n', encoding="utf-8"
         )
         (root / "osfmk/arm64/start.s").write_text(
-            "#ifdef APPLEHURRICANE\\n"
-            "  nop\\n"
-            "#endif\\n",
+            "#ifdef APPLEHURRICANE\n"
+            "  nop\n"
+            "#endif\n",
             encoding="utf-8",
         )
         (root / "osfmk/arm64/sleh.c").write_text(
-            "/* HAS_MIGSTS used on old CPU */\\n"
-            "#if HAS_MIGSTS\\n"
-            "  report_status();\\n"
-            "#endif\\n",
+            "/* HAS_MIGSTS used on old CPU */\n"
+            "#if HAS_MIGSTS\n"
+            "  report_status();\n"
+            "#endif\n",
             encoding="utf-8",
         )
     else:
         (root / "pexpert/pexpert/arm64/H13.h").write_text(
-            "#define APPLEFIRESTORM 1\\n#define NO_MONITOR 1\\n",
+            "#define APPLEFIRESTORM 1\n#define NO_MONITOR 1\n",
             encoding="utf-8",
         )
         (root / "osfmk/arm64/start.s").write_text(
-            "/* APPLEHURRICANE comment only */\\n", encoding="utf-8"
+            "/* APPLEHURRICANE comment only */\n", encoding="utf-8"
         )
         (root / "osfmk/arm64/proc_reg.h").write_text(
-            "#if defined(APPLEHURRICANE)\\n#define MMU_CLINE 6\\n#endif\\n",
+            "#if defined(APPLEHURRICANE)\n#define MMU_CLINE 6\n#endif\n",
             encoding="utf-8",
         )
         (root / "osfmk/arm64/sleh.c").write_text(
-            "/* old HAS_MIGSTS path removed */\\n", encoding="utf-8"
+            "/* old HAS_MIGSTS path removed */\n", encoding="utf-8"
         )
     return root
 
@@ -66,10 +66,10 @@ class H9SourceClosureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             header = Path(temp) / "H9.h"
             header.write_text(
-                "#ifndef _PEXPERT_ARM64_H9_H\\n"
-                "#define _PEXPERT_ARM64_H9_H\\n"
-                "#define APPLEHURRICANE\\n"
-                "#define HAS_MIGSTS 1\\n",
+                "#ifndef _PEXPERT_ARM64_H9_H\n"
+                "#define _PEXPERT_ARM64_H9_H\n"
+                "#define APPLEHURRICANE\n"
+                "#define HAS_MIGSTS 1\n",
                 encoding="utf-8",
             )
             self.assertEqual(
