@@ -1,4 +1,4 @@
-name: KEXT metadata comparator tests
+name: Host-side metadata comparator tests
 
 on:
   pull_request:
@@ -7,6 +7,8 @@ on:
       - "tests/test_compare_kext_metadata.py"
       - "tools/search_kext_inventory.py"
       - "tests/test_search_kext_inventory.py"
+      - "tools/compare_dyld_exports.py"
+      - "tests/test_compare_dyld_exports.py"
       - ".github/workflows/kext-metadata-compare-tests.yml"
   push:
     branches:
@@ -16,13 +18,15 @@ on:
       - "tests/test_compare_kext_metadata.py"
       - "tools/search_kext_inventory.py"
       - "tests/test_search_kext_inventory.py"
+      - "tools/compare_dyld_exports.py"
+      - "tests/test_compare_dyld_exports.py"
       - ".github/workflows/kext-metadata-compare-tests.yml"
 
 permissions:
   contents: read
 
 jobs:
-  compare-kext-metadata:
+  metadata-comparators:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -36,8 +40,11 @@ jobs:
       - name: Run synthetic tests
         run: python3 -m unittest discover -s tests -v
 
-      - name: Check existing comparator CLI
+      - name: Check KEXT metadata comparator CLI
         run: python3 tools/compare_kext_metadata.py --help
 
       - name: Check inventory search CLI
         run: python3 tools/search_kext_inventory.py --help
+
+      - name: Check dyld export comparator CLI
+        run: python3 tools/compare_dyld_exports.py --help

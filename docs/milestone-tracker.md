@@ -934,3 +934,18 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
 - 2026-11-21: Recorded 22 successful target/donor graphics PrebuiltLoader queries from the uploaded archive. Ten image pairs were compared by typed dependent install-name rows: eight pairs have identical sets; donor Metal adds Security and libcompression regular dependencies plus a libllvm-flatbuffers weak link, and donor CoreGraphics adds a CoreAnalytics weak link; no target-only typed dependency edges were printed. The A10/A11 AGX plugin records have identical 14-row dependency-name/kind sets but remain generation-specific images. Implausible decoded Sections offsets are excluded, and loader reference indexes remain cache-local; no UUID, runtime loading, ABI, GPU, boot, or SpringBoard conclusion is inferred.
 
 - 2026-11-21: Follow-up queried five dependency images in each cache (10/10 commands status 0): Security, libcompression, libllvm-flatbuffers, libGPUCompilerUtils, and CoreAnalytics. All five have prebuilt records in both caches; their printed dependency rows match pairwise. This confirms the four donor-only edges in the selected parent Metal/CoreGraphics records are not explained by the dependency images being absent from the target cache. No ABI/runtime conclusion is inferred; malformed Sections offsets remain excluded.
+
+- 2026-11-21: Added a bounded host-side AGX/Metal Mach-O export audit plan
+  for five image pairs: AGXMetalA10 versus AGXMetalA11, plus same-path
+  Metal, IOGPU, IOAccelerator, and AGXCompilerCore images. The plan pins
+  the standalone ipsw 3.1.749 parser revision and uses its
+  `dyld macho --symbols -V` export-trie report. Added
+  `tools/compare_dyld_exports.py` and six synthetic unit tests; the
+  comparator preserves duplicate names and export kinds, excludes
+  cache-specific addresses, and refuses to treat missing or unparseable
+  export sections as empty results. CI now runs the comparator tests and
+  CLI check. This is a collection plan only: no new AGX export results,
+  ABI, runtime, GPU, boot, or SpringBoard result is claimed. M6 remains
+  in progress; M7/SpringBoard has not started. The physical iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was accessed or
+  changed.
