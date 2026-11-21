@@ -36,3 +36,11 @@ labels, executable paths, MachServices provider names, selected KeepAlive and
 scheduling metadata, and environment-variable names (not values). It does not
 execute jobs or modify the root. Synthetic tests use generated plist fixtures;
 they do not validate the actual 20H392 donor image.
+
+
+The expanded `test_xnu_public_source_matrix.py` validates the pinned
+six-snapshot public XNU matrix: historical T8010/H9 presence in
+`xnu-7195.121.3`, absence in target-era public `xnu-8020.101.4`,
+intermediate `xnu-8019.80.24`, early and selected `xnu-8796` snapshots,
+and later `xnu-12377.1.9`. This is a synthetic, host-only source-structure
+test; it does not compile XNU or establish device support.

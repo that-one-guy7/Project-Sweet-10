@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-8796.101.5",
+  "tag_object_sha": "d7ba6a094659175bea45418224e85e9dd2c15f48",
+  "commit_sha": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+  "tag_signature": "unsigned",
+  "status": "early-ios16-era-public-reference-only",
+  "reason": "Early public Darwin 22-era XNU snapshot. Its audited ARM64 machine list and board header omit T8010/H9; it is an additional historical point, not the exact 20H392 shipped-kernel source.",
+  "not_a_device_support_claim": true
+}

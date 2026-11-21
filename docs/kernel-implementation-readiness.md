@@ -141,3 +141,39 @@ kernel and product-specific inputs remains unresolved. Do not bypass that
 selection check, copy H9 wholesale, or claim that a VMAPPLE build is an
 iPhone7 build. See the
 [public-source versus shipped-KernelCache comparison](xnu-public-source-vs-shipped-kernel.md).
+
+
+## Expanded public-source comparison and implementation gate (2026-11-20)
+
+The source-history audit has been expanded to six pinned public XNU
+snapshots. Historical `xnu-7195.121.3` includes T8010/H9, while public
+`xnu-8020.101.4`, `xnu-8019.80.24`, `xnu-8796.101.5`,
+`xnu-8796.141.3`, and `xnu-12377.1.9` omit the T8010/H9 profile at the
+audited ARM64 machine-selection and board-configuration paths. The later
+source matrix is checked by `tools/audit_xnu_public_source_matrix.py`;
+pinned commits and tag-object identities are stored under `xnu/history/`.
+
+This finding must be read alongside both shipped KernelCache identities:
+the iPhone7 19H422 target reports `8020.241.44~1/RELEASE_ARM64_T8010`,
+and the iPhoneX 20H392 donor reports
+`8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The public comparison tags
+`xnu-8020.101.4` and `xnu-8796.141.3` are not exact source attestations
+for those shipped binaries. Exact Apple source revisions and
+product-specific build inputs remain unknown. The missing public T8010
+profile is a source-provenance and porting blocker; it does not prove that
+the shipped target kernel lacked T8010 support.
+
+Apple's official iOS 16 compatibility list does not include iPhone7; the
+list starts at iPhone8. Apple's security-release table lists iOS 15.8.8 for
+iPhone7 and iOS 16.7.16 for iPhone8, iPhone8 Plus, and iPhoneX. The project's
+20H392 userland is consequently a donor reference, not an official iPhone7
+build. See [the kernel and driver implementation roadmap](driver-kernel-implementation-roadmap.md).
+
+The implementation threshold is explicit: do not start target-specific
+XNU platform or driver code until G1-G6 have evidence-backed answers and
+G7 host verification is in place. The first hardware driver cannot be
+selected until the actual D10AP interrupt-controller and timer DeviceTree
+contracts are resolved. Do not assume AIC or copy donor/Qualcomm register
+values. The next highest-value source task is the full transitive T8010/H9
+dependency and conditional-consumer closure, beyond the existing direct
+feature-macro scan.
