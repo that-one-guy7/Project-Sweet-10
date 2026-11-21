@@ -962,3 +962,17 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   implementation/ABI compatibility, runtime loading, GPU initialization,
   boot, or SpringBoard. The physical iPhone 7 remains on iOS 12.1.4; no
   device, firmware, partition, security, or boot state was accessed or changed.
+
+
+- 2026-11-21: Added a bounded host-side inventory for embedded .xpc and
+  .appex bundles to extend the existing LaunchDaemons metadata comparison.
+  The tool scans one or more already-mounted roots, reads only Info.plist or
+  Contents/Info.plist, emits allowlisted bundle/XPC/extension fields and
+  hashes, and indexes explicitly declared MachServices. It records missing,
+  invalid, unreadable, and symlinked plist cases instead of treating them as
+  empty metadata. Twelve synthetic tests passed locally; CI will run the full
+  host-side suite. No real 19H422 or 20H392 embedded-bundle results are claimed
+  yet. This is static plist metadata only, not proof of service launch,
+  registration, clients, runtime compatibility, or SpringBoard. The physical
+  iPhone 7 remains on iOS 12.1.4; no device or firmware state was accessed
+  or changed.
