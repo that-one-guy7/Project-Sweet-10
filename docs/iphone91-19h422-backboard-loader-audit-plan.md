@@ -280,12 +280,9 @@ the non-Snap executable successfully parsed the same target cache. The old
 permission-denied report remains historical evidence of the Snap attempt,
 not the current audit status. Do not repeat the Snap diagnosis.
 
-Three target records remain to be collected: BackBoardHIDEventFoundation,
-BackBoardHIDEventProcessors, and IOMobileFramebuffer. Preserve each exit
-status and stderr. Exclude the known implausible decoded Sections values;
-do not treat PrebuiltLoader reference indexes as cache image-list indexes.
-M6 remains in progress; M7/SpringBoard has not started. The physical iPhone
-7 remains on iOS 12.1.4.
+At the time this initial success note was added, three target records
+remained to be collected. That interim status was superseded by the
+"Completed target collection and donor comparison" section below.
 
 
 ## Completed target collection and donor comparison (2026-11-20)
