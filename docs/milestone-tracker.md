@@ -29,6 +29,19 @@
 
 ## Change log
 
+- 2026-11-21: Completed matching 20H392 donor PrebuiltLoader captures for
+  SpringBoard.framework, RunningBoard, and RunningBoardServices; all three
+  queries exited 0 with standalone IPSW 3.1.749. Compared them with 19H422:
+  RunningBoard has two donor-only names and three edge-kind changes;
+  RunningBoardServices keeps the same eight names with two edge-kind changes;
+  SpringBoard.framework has matching 198-regular/10-weak row totals and
+  matching weak rows, while a complete regular-path diff remains unclaimed.
+  Selected donor paths were cross-referenced against the target's 2,407-image
+  list, including the ExtensionFoundation directory variation and the
+  PrivacyDisclosureCore image-list miss. Static metadata only; M6 remains
+  in progress and M7 has not started.
+
+
 - 2026-11-20: Added an independent UniXNU 20H392 source-baseline
   cross-check. The downstream OnePlus 13 / SM8750 profile co-pins the
   same iPhone10,3 donor KernelCache SHA-256 with the public
