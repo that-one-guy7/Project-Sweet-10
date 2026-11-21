@@ -711,3 +711,31 @@ bounded four-framework target BackBoard audit only. M6 remains in progress
 for the broader userland investigation; M7/SpringBoard has not started.
 The physical iPhone 7 remains on iOS 12.1.4. No device or firmware state
 was accessed or changed.
+
+
+## M1/M2 public XNU source matrix expanded (2026-11-20)
+
+Extended the public T8010/H9 source survey beyond the original
+7195/8019/8796 comparison. In the official
+`apple-oss-distributions/xnu` repository, `xnu-8020.101.4`,
+`xnu-8796.101.5`, `xnu-8796.141.3`, and `xnu-12377.1.9` all omit
+T8010/H9 from the audited normal ARM64 machine-selection and board
+configuration paths. Historical `xnu-7195.121.3` includes T8010,
+`-mcpu=hurricane`, and the H9 header. Added exact tag-object and peeled
+commit locks plus a six-snapshot host-only CI audit.
+
+Important caveat: the target 19H422 KernelCache reports
+`8020.241.44~1/RELEASE_ARM64_T8010`, while the public comparison tag is
+`xnu-8020.101.4`; the donor 20H392 KernelCache reports
+`8796.142.1.703.8~1/RELEASE_ARM64_T8015`, while the public candidate is
+`xnu-8796.141.3`. Neither public tag is an exact source attestation for its
+shipped binary. Product-specific build inputs and exact source commits remain
+unknown; public source absence is not proof of absent shipped support.
+
+Added `docs/driver-kernel-implementation-roadmap.md`. Target-specific kernel
+and hardware-driver implementation remains blocked on G1-G6 source, build,
+platform, DeviceTree, and handoff evidence. The next preparation task is the
+transitive T8010/H9 source dependency closure. The first hardware driver cannot
+be selected until the actual D10AP interrupt-controller and timer contracts
+are resolved. M6 remains in progress; M7/SpringBoard has not started. The
+physical iPhone 7 remains on iOS 12.1.4; no device or firmware state changed.
