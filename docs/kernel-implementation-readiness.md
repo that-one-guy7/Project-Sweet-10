@@ -49,7 +49,7 @@ and [UniXNU 20H392 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
 | Gate | Required evidence | Current status |
 |---|---|---|
 | G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; an independent downstream UniXNU profile co-pins its commit with the exact 20H392 donor KernelCache SHA and reports 62 clean patch applications. That report excludes compilation, binary ABI and hardware; the profile uses DEVELOPMENT_ARM64_BCM2837, not T8015/T8010. Public version-stamping logic explains why the donor's 8796.142.1.703.8~1 label is not necessarily a Git tag. Exact Apple source provenance and product-specific inputs remain unknown |
-| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | The read-only source matrix now checks ten public XNU snapshots (7195, 8020, 8019, 8796.101, 8796.141, 12377.1.9, and four 10002 tags); T8010/H9 appears only in xnu-7195.121.3 at the audited machine-selection and board paths. Full historical dependency closure and migration remain incomplete; private/product-specific inputs and full-tree source references are outside this matrix |
+| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | The read-only source matrix now checks ten public XNU snapshots (7195, 8020, 8019, 8796.101, 8796.141, 12377.1.9, and four 10002 tags); T8010/H9 appears only in xnu-7195.121.3 at the audited machine-selection and board paths. A full-tree textual scan now covers 3,508 XNU 7195 and 3,961 XNU 8796 source/build files for all 12 H9 macros; 23 locally resolvable include files and two resolver gaps were recorded. This completes the textual inventory, not conditional evaluation, private/generated inputs, full dependency closure, or migration review |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; the 19H422 KernelCache now confirms an AppleInterruptController KEXT and `aic,1` personality, but IRQ routing, EOI, timer, CPU/memory, storage, and runtime provider contracts remain unresolved |
 | G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Incomplete; static `aic,1` DeviceTree / KEXT IONameMatch overlap is confirmed, but cell/property requirements, full interrupt specifiers, timer contract, and runtime-populated values are not established |
@@ -207,3 +207,27 @@ a target configuration, compilation, hardware support, ABI compatibility,
 runtime behavior, or bootability. G1/G2 remain open; no target-specific
 kernel implementation is authorized by this result. The physical iPhone 7
 remains on iOS 12.1.4 and M7/SpringBoard has not started.
+
+
+## Full-tree H9 consumer audit update (2026-11-21)
+
+The read-only scanner inventories all 12 feature macros defined by historical
+XNU 7195 `H9.h` across the pinned XNU 7195 and 8796 source trees. The scan
+covered 3,508 and 3,961 candidate source/build files respectively, resolved
+23 local include files, and retained two unresolved SDK-style include names.
+Notable results include persistent generic Hurricane, PMU/AIC, page-size,
+PAN, sleep, and kernel-protection references, while
+`HAS_MIGSTS`, `HAS_CPMU_L2C_EVENTS`, and
+`SINGLE_STEP_RETIRE_ERRATA` had no textual matches in the scanned candidate
+files. H13 defines several shared feature macros, but its values are not
+substitutes for H9/T8010 values.
+
+This is a textual source inventory, not a preprocessor, linker, or build-input
+dependency graph. It does not establish active conditional branches, Apple
+product build settings, hardware feature state, ABI compatibility, or target
+support. The full-tree scan and its limits are documented in
+[the H9/T8010 source audit](h9-source-fulltree-audit.md). The original
+workflow passed on PR #82 run
+[44864823137](https://github.com/that-one-guy7/Project-Sweet-10/actions/runs/44864823137);
+this current-main port reruns the same validation before merge. G2 remains
+open pending manual per-feature migration and interface review.
