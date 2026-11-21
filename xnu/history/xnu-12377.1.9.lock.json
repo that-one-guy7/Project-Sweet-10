@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/apple-oss-distributions/xnu",
+  "tag": "xnu-12377.1.9",
+  "tag_object_sha": "922377cef03530cfab6543b4020679f5270a9d83",
+  "commit_sha": "f6217f891ac0bb64f3d375211650a4c1ff8ca1ea",
+  "tag_signature": "unsigned",
+  "status": "later-public-reference-only",
+  "reason": "Later public XNU source snapshot used to check whether the T8010/H9 profile reappeared in a subsequent public release. Its audited ARM64 machine list and board header omit T8010/H9; it is not a candidate kernel baseline for Sweet-10.",
+  "not_a_device_support_claim": true
+}
