@@ -100,6 +100,32 @@ or separately published build records. See
 [Interpreting the 20H392 XNU version-stamp string](xnu-kernel-version-stamp-provenance.md)
 for the bounded source analysis and official source links.
 
+## Independent downstream co-pin of the 20H392 donor
+
+A separate UniXNU port for OnePlus 13 / SM8750 publishes a local
+iPhone10,3 / D22AP / iOS 16.7.16 (20H392) profile. Its profile pairs
+`xnu-8796.141.3` / commit
+`1b191cb58250d0705d8a51287127505aa4bc0789` with the same
+`[kernel.prelink].kernelcache_sha256` already recorded for the donor
+KernelCache in this repository:
+`2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221`.
+The external port's patch-application report records 62 patches applied in
+order to a clean checkout of that pinned public source.
+
+This is stronger downstream artifact co-pinning than the earlier version
+string comparison alone, but it is not an Apple source-to-binary attestation.
+The report explicitly separates patch application from compilation, binary
+ABI, and hardware validation. The downstream profile's candidate kernel
+output path is `DEVELOPMENT_ARM64_BCM2837`, not
+`RELEASE_ARM64_T8015` or an iPhone9,1/T8010 build. Its port-specific
+security-init, sparse-index, typed-delete/UIO-alignment, and VFS helper
+patches must not be treated as general Apple source requirements or copied
+wholesale into Sweet-10.
+
+See [the detailed UniXNU 20H392 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md)
+for the immutable profile, report, and patch references. The exact Apple
+source revision and product-specific inputs remain unknown.
+
 ## Bounded conclusions
 
 What the evidence establishes:
