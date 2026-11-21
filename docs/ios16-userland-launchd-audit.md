@@ -545,6 +545,14 @@ not filesystem or runtime results.
 The target and donor differ in both product generation and OS build, so
 observed differences cannot be attributed to hardware alone.
 
+The next bounded host-side check is the exact-path filesystem inventory in
+[the GUI framework path-presence plan](iphone91-19h422-gui-framework-path-presence-plan.md).
+It checks 18 selected 20H392 donor paths (including both known
+ExtensionFoundation path variants) under the existing 19H422 mount with
+component-by-component `lstat`, bounded root-wrapper depths, and no symlink
+following. Actual filesystem results are pending; cache-image-list absence
+must not be reported as file absence.
+
 **Interpretation boundary:** cache image-list membership and PrebuiltLoader
 metadata do not prove dependency resolution, file-system presence, signatures,
 ABI, successful loading, process launch, provider attachment, or SpringBoard

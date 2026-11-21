@@ -29,6 +29,19 @@
 
 ## Change log
 
+- 2026-11-21: Added a bounded read-only filesystem path inspector for the
+  selected GUI-framework paths identified by the 20H392/19H422 PrebuiltLoader
+  comparison. The candidate list contains 18 exact paths, including the
+  donor ExtensionFoundation Frameworks path and the target cache's known
+  PrivateFrameworks alternate. The checker uses component-wise lstat,
+  checks wrapper depths 0–2, stops at symlinks, and never opens or executes
+  framework files. Fourteen synthetic tests cover path, wrapper, symlink,
+  schema, and status behavior. Actual target filesystem results remain
+  pending from the user's Ubuntu mount; cache-image-list membership is kept
+  separate from filesystem presence. M6 remains in progress; M7 has not
+  started. The physical iPhone 7 remains on iOS 12.1.4.
+
+
 - 2026-11-21: Completed matching 20H392 donor PrebuiltLoader captures for
   SpringBoard.framework, RunningBoard, and RunningBoardServices; all three
   queries exited 0 with standalone IPSW 3.1.749. Compared them with 19H422:
