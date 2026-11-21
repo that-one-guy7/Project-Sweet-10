@@ -33,7 +33,6 @@ __os_log_pack_fill,True,libsystem_trace,False,UNMATCHED
 __os_log_pack_size,True,libsystem_trace,False,UNMATCHED
 __os_log_send_and_compose_impl,False,UNMATCHED,True,libsystem_trace
 __os_signpost_emit_with_name_impl,True,libsystem_trace,True,libsystem_trace
-__os_signpost_emit_with_name_impl,True,libsystem_trace,True,libsystem_trace
 _abort,True,libsystem_c,True,libsystem_c
 _backtrace,True,libsystem_c,True,libsystem_c
 _basename_r,True,libsystem_c,True,libsystem_c
