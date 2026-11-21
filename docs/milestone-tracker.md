@@ -498,7 +498,32 @@
   distinct from image-list indexes. Implausible Sections output is excluded.
   Added docs/20h392-19h422-multitouchsupport-loader-comparison.md and
   updated target/donor cache audits, dependency comparison, and docs index.
-  The next bounded read-only check is to look up the exact
-  `/usr/lib/libc++.1.dylib` image record in both dyld inventories, since
-  absence from the target loader row does not prove cache-image absence.
-  Runtime resolution, plugin loading, and touch behavior remain unverified.
+  The exact `/usr/lib/libc++.1.dylib` image-list path was then
+  confirmed once in each cache: target index 150/version 1300.36.0.0.0/
+  UUID 16BE14F2-A677-3DF1-984D-BBAB893EE3B9 and donor index
+  93/version 1500.65.0.0.0/UUID
+  07F1FD58-7392-34FF-8D56-AE101EBC175A. Thus, the donor-only
+  MultitouchSupport dependent-loader row is not evidence of target
+  cache-image absence. Added
+  docs/20h392-19h422-libcxx-cache-image-comparison.md and updated both
+  cache audits and the MultitouchSupport loader comparison. Next bounded
+  host-side check: compare target/donor MultitouchSupport export metadata.
+  Runtime dependency resolution, plugin loading, and touch behavior remain
+  unverified.
+
+   
+- 2026-11-20: Completed the exact `/usr/lib/libc++.1.dylib` lookup in
+  the read-only target 19H422 and donor 20H392 dyld image inventories.
+  Both contain one matching image-list entry. The target is index 150,
+  version `1300.36.0.0.0`, UUID
+  `16BE14F2-A677-3DF1-984D-BBAB893EE3B9`; the donor is index 93,
+  version `1500.65.0.0.0`, UUID
+  `07F1FD58-7392-34FF-8D56-AE101EBC175A`. The extra donor
+  `MultitouchSupport` dependent-loader row is therefore not proof that
+  libc++ is missing from the target cache. Image-list presence does not
+  prove loader resolution or runtime loading. Added
+  docs/20h392-19h422-libcxx-cache-image-comparison.md and updated the
+  target/donor cache audits, MultitouchSupport loader comparison, parent
+  dependency-image comparison, and docs index. Next bounded host-side check:
+  compare target/donor `MultitouchSupport` export metadata. No device or
+  firmware state was accessed or changed.
