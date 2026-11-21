@@ -168,7 +168,7 @@ not supply the executable bytes.
 | Donor `CodeResources` top-level keys | `files`, `files2`, `rules`, `rules2` |
 | Donor `CodeResources` printed resource-entry maps | `files` and `files2` both empty (`[]`); no signature verdict |
 | Donor plugin directory contents | Only `Info.plist` and `_CodeSignature/CodeResources` listed |
-| Target plugin directory contents | Only `Info.plist` listed; no whole-target-root search recorded |
+| Target 19H422 complete filesystem search | No regular file or symlink matching `MultitouchHID*` returned from the full read-only mount of `098-68844-067.dmg`; other IPSW components are outside this result |
 | Plugin executable bytes or Mach-O identity | Not available from the inspected plugin directories; comparison blocked |
 | Code signature validity | Not tested |
 | Runtime plug-in load or IOKit attachment | Not tested |
@@ -181,14 +181,15 @@ The donor `CFBundleExecutable` declaration and `CodeResources` manifest
 have now been inspected. The declared executable name is `MultitouchHID`,
 but no matching file or symlink was found in either searched donor mount
 root. The printed `files` and `files2` resource-entry maps are empty; this
-is not a signature verdict. The target plugin directory still contains only
-its `Info.plist`, and the additional home-directory search output did not
-preserve enough command detail to prove a complete target-root search. The
-next bounded host-side task is to establish a precise inventory of the
-remaining relevant mounted IPSW component roots and report each searched
-root explicitly. Only if actual executable files are located should their
-Mach-O metadata be inspected. Do not infer signature validity from the
-existence or contents of `CodeResources` alone.
+is not a signature verdict. The full read-only 19H422 filesystem DMG (`098-68844-067.dmg`) has
+now also been searched for regular files and symlinks matching
+`MultitouchHID*`; no paths were returned. The mount was
+`$HOME/19H422-full-fs-mount`, and its extension directory was confirmed
+under `root/System/Library/Extensions`. This result does not cover separate
+IPSW components or unmounted images. The next bounded host-side task is to
+inventory the 19H422 dyld shared-cache files and inspect their image-path list
+for a matching plugin image or related entry. Do not infer signature
+validity from the existence or contents of `CodeResources` alone.
 
 Any executable comparison remains descriptive. It must not be used as a
 basis for copying donor binaries to the iPhone 7 or claiming runtime
