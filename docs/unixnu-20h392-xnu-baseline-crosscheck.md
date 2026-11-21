@@ -71,7 +71,7 @@ The external iOS profile includes four patches under
 | `xnu-8796.141.3-security-init.patch` | Adds a profile-specific early security-initializer hook to the native-prelink path |
 | `xnu-8796.141.3-sparse-index.patch` | Extends the kalloc type-view parser to consume the profile's sparse prelink component index |
 | `xnu-8796.141.3-typed-delete-and-uio-alignment.patch` | Adjusts typed-pointer compatibility and explicit alignment of UIO stack buffers |
-| `xnu-8796.141.3-vfs-getvfs-with-vfsops.patch` | Adds and exports a VFS lookup helper; the external device record says its APFS-root path needs this symbol |
+| `xnu-8796.141.3-vfs-getvfs-with-vfsops.patch` | Backports `vfs_getvfs_with_vfsops` from public XNU 10063.141.1 and adds the symbol to `BSDKernel.exports`; this is a downstream root-stack adaptation, not proof that public XNU 8796 has an Apple-side missing-symbol defect |
 
 These are adaptations for that project's source, toolchain, prelink, and root
 integration. Their presence is not proof that Apple omitted the same logic
