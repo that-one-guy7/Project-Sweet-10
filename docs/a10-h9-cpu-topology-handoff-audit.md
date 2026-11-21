@@ -161,6 +161,59 @@ alone is diagnostic; do not treat it as a hardware capability check.
 | Is the historical H9 HID5 startup workaround retained? | No matching block in reviewed 8796 `start.s`. | **Unresolved CPU initialization difference** |
 | Is CPU startup working on iPhone9,1? | No runtime evidence. | **Not established** |
 
+## 7. IOPMGR preserves a legacy core-enable fallback in both XNU revisions
+
+A follow-up inspection of `iokit/IOKit/IOPMGR.h` and
+`iokit/Kernel/IOPMGR.cpp` in both `xnu-7195.121.3` and
+`xnu-8796.141.3` changes the interpretation of the reset-vector argument
+difference above.
+
+Both revisions expose two virtual overloads:
+
+- `enableCPUCore(unsigned int cpu_id, uint64_t entry_pa)`
+- the older `enableCPUCore(unsigned int cpu_id)`
+
+In both revisions, the base implementation of the two-argument overload
+calls the one-argument overload. The one-argument base implementation
+panics if no subclass implements it. Because the call is virtual, a PMGR
+subclass that implements only the legacy one-argument method can still
+receive the core-enable request when the newer XNU caller invokes the
+two-argument method. The two-argument base method does not use
+`entry_pa` when taking this fallback.
+
+The public header also documents that the reset-vector argument is not
+honored by every platform and that Apple Silicon can have its reset vector
+programmed by iBoot. That documentation is consistent with a platform
+where firmware/PMGR owns the reset-vector setup, but it does **not** prove
+how the iPhone 7's T8010 PMGR or iBoot handles it.
+
+Sources:
+- [XNU 7195 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/iokit/IOKit/IOPMGR.h)
+- [XNU 7195 IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/iokit/Kernel/IOPMGR.cpp)
+- [XNU 8796 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOPMGR.h)
+- [XNU 8796 IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOPMGR.cpp)
+
+### Revised interpretation
+
+The earlier observation that XNU 8796 passes zero on physical builds remains
+correct, but treating that alone as a changed T8010 reset-vector contract
+was too strong. The public IOPMGR compatibility shim shows that a legacy
+PMGR subclass may continue to receive the old one-argument call. Therefore:
+
+- **Resolved at the generic XNU API layer:** the two-argument API retains a
+  backward-compatibility route to the legacy one-argument override.
+- **Still unresolved for T8010:** whether the relevant target PMGR subclass
+  implements the legacy override, whether it is present/loaded in the
+  candidate environment, and how the iPhone 7 firmware establishes the
+  secondary-core reset vector.
+- **Not established:** secondary-core startup, interrupt delivery to the
+  secondary CPU, CPU online status, or runtime stability.
+
+This downgrades the reset-vector API difference from a presumed hard
+incompatibility to a narrower platform-implementation and firmware question.
+It is a positive source-compatibility finding, not proof of hardware
+compatibility.
+
 ## Next read-only CPU research
 
 1. Trace the exact XNU 8796 compile-time guards around the legacy topology
