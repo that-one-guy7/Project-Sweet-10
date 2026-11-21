@@ -217,3 +217,44 @@ This bounded collection is complete when:
 This plan advances M6 target-side userland evidence only. It does not close
 readiness gate G9, establish an iOS 16 launchd configuration, or show that
 SpringBoard can start. M6 remains in progress; M7 has not started.
+
+
+## Troubleshooting: confirmed host permission failure (2026-11-20)
+
+The supplied combined report resolves the earlier unknown error. All four
+queries exited with status 1 and printed the same error:
+
+`open /home/hey/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64: permission denied`
+
+This is a host filesystem access failure while opening the shared-cache file.
+It is not a loader result and does not show that any requested framework is
+missing. No target dependency rows were collected. The repeated identical
+error across all four requests points to the shared input path, before
+framework-specific lookup.
+
+### Next read-only diagnosis
+
+Do not rerun the four queries yet. In Ubuntu, run:
+
+```sh
+TARGET_CACHE="$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
+printf '%s\\n' '--- path permissions ---'
+namei -l "$TARGET_CACHE"
+printf '%s\\n' '--- cache file metadata ---'
+stat "$TARGET_CACHE"
+printf '%s\\n' '--- current-user readability ---'
+if test -r "$TARGET_CACHE"; then
+  echo "readable by current user"
+else
+  echo "NOT readable by current user"
+fi
+```
+
+Share the complete output. These commands only inspect path and file
+metadata; they do not change permissions, remount the image, or access the
+phone. Use the output to identify which directory or file denies access
+before choosing any correction. Do not apply recursive permission changes
+or change ownership as a guess.
+
+The target loader audit remains blocked. M6 remains in progress; M7 has not
+started. The physical iPhone 7 remains on iOS 12.1.4.
