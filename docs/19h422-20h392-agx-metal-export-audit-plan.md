@@ -181,13 +181,13 @@ set +e
 "$IPSW" dyld macho "$TARGET_CACHE" "$TARGET_AGX" --loads --json \
   > "$OUT/19H422-AGXMetalA10-loads.json" \
   2> "$OUT/19H422-AGXMetalA10-loads.err"
-printf '19H422 AGXMetalA10 load-command exit status: %s\\n' "$?" \
+printf '19H422 AGXMetalA10 load-command exit status: %s\n' "$?" \
   > "$OUT/19H422-AGXMetalA10-loads.status"
 
 "$IPSW" dyld macho "$DONOR_CACHE" "$DONOR_AGX" --loads --json \
   > "$OUT/20H392-AGXMetalA11-loads.json" \
   2> "$OUT/20H392-AGXMetalA11-loads.err"
-printf '20H392 AGXMetalA11 load-command exit status: %s\\n' "$?" \
+printf '20H392 AGXMetalA11 load-command exit status: %s\n' "$?" \
   > "$OUT/20H392-AGXMetalA11-loads.status"
 set -e
 ```
