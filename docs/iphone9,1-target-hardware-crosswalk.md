@@ -176,11 +176,14 @@ and custom kernel handoff requirements remain separate blockers. See the
 ## Next host-side evidence
 
 The target and donor plugin Info.plists have now been compared. The
-next bounded static check is their plugin executable Mach-O metadata, if
-both binaries are available in the corresponding mounted filesystems.
-Compare architecture, install name, linked libraries, build-version
-load command, UUID, and code-signature presence without treating these
-metadata as proof of successful loading.
+subsequent donor filename search returned no `MultitouchHID*` file or
+symlink in either searched mounted donor root, and the target plugin
+directory listing contained only `Info.plist`. The next bounded host-side
+check is to inspect the donor `CFBundleExecutable` field and
+`CodeResources` manifest, then search the complete target mounted
+filesystem for its declared executable. Defer Mach-O comparison until
+actual executable files are located. Even matching Mach-O metadata would
+not prove successful loading.
 
 The donor KernelCache reports XNU
 `8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public

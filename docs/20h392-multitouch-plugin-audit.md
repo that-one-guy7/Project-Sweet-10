@@ -110,6 +110,33 @@ No claim is made that the donor plugin should be copied onto the target, that
 the 20H392 parent driver can bind to the target controller, or that the
 target will expose the same HID descriptors or runtime service graph.
 
+## Executable-file availability check
+
+On 2026-11-20, the user searched both mounted donor filesystem trees:
+
+- `$HOME/20H392/mnt/root/root`
+- `$HOME/20H392/systemos-mnt/root/root`
+
+The recursive search included regular files and symlinks and looked for names
+matching `MultitouchHID*`. It returned no paths in either tree. A direct
+listing of the donor plugin directory then showed only:
+
+- `Info.plist` (1,126 bytes).
+- `_CodeSignature/CodeResources` (2,467 bytes).
+
+The earlier target plugin directory listing showed only `Info.plist`
+(1,117 bytes). This target result is limited to the inspected plugin
+directory; a recursive search of the entire target mounted filesystem has
+not been recorded.
+
+Therefore, neither plugin executable is currently available for a Mach-O
+comparison from the inspected bundle directories. The donor search covers
+the two stated mounted trees, not every possible IPSW component or an
+unmounted/shared-cache representation. The target finding is narrower and
+must not be generalized to its entire filesystem. The presence of
+`CodeResources` is not proof of a valid code signature and does not supply
+the executable bytes.
+
 ## Evidence classification
 
 | Claim | Status |
@@ -120,7 +147,10 @@ target will expose the same HID descriptors or runtime service graph.
 | Donor type UUID/factory UUID/factory function | Confirmed from printed plist fields |
 | Donor and target plugin type UUIDs match | Exact string equality confirmed |
 | Donor and target factory UUIDs/functions match | Exact string equality confirmed |
-| Plugin executable bytes or Mach-O identity | Not inspected in this task |
+| Donor `MultitouchHID*` file/symlink in the two searched mounted roots | Not found by the user's recursive search on 2026-11-20 |
+| Donor plugin directory contents | Only `Info.plist` and `_CodeSignature/CodeResources` listed |
+| Target plugin directory contents | Only `Info.plist` listed; no whole-target-root search recorded |
+| Plugin executable bytes or Mach-O identity | Not available from the inspected plugin directories; comparison blocked |
 | Code signature validity | Not tested |
 | Runtime plug-in load or IOKit attachment | Not tested |
 | Touch-event delivery on iPhone9,1 | Not tested |
@@ -128,14 +158,16 @@ target will expose the same HID descriptors or runtime service graph.
 
 ## Next bounded host-side research
 
-The plugin plist comparison is complete. A useful next static task is to
-inspect the donor plugin executable's Mach-O metadata and, separately, the
-target plugin executable's metadata if those files are available from the
-corresponding mounted filesystems. Compare architecture, install name,
-linked libraries, build-version load command, UUID, and code-signature
-presence. Do not infer signature validity from the existence of
-`_CodeSignature/CodeResources`; that file alone is not a cryptographic
-verification result.
+The plugin plist comparison is complete, but the expected executable was
+not found in either searched donor mount tree, and the target plugin directory
+listing also did not contain it. The next bounded host-side check is to read
+the donor plist's `CFBundleExecutable` value and inspect the
+`_CodeSignature/CodeResources` manifest to determine which bundle resources
+it records. Separately, perform a filename-only recursive search of the
+complete target mounted filesystem for the target's declared executable.
+Only if actual executable files are located should their Mach-O metadata be
+compared. Do not infer signature validity from the existence of
+`CodeResources`; it is not a cryptographic verification result.
 
 Any executable comparison remains descriptive. It must not be used as a
 basis for copying donor binaries to the iPhone 7 or claiming runtime
