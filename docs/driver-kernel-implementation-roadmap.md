@@ -91,8 +91,15 @@ and personality records against the 20H392 iPhone X donor KernelCache.
 That comparison must preserve release boundaries and must not treat a
 matching personality as binary/KPI compatibility.
 
-In parallel, review and finish the open
-[full-tree T8010/H9 source-consumer audit PR #82](https://github.com/that-one-guy7/Project-Sweet-10/pull/82).
+The full-tree T8010/H9 source-consumer audit has now been ported onto
+current `main` and merged as
+[PR #137](https://github.com/that-one-guy7/Project-Sweet-10/pull/137)
+(merge commit `7bd0177a7b565855c1d4aa568cc4d09cb01ccfee`). Both checks on
+the merged head passed: the H9 macro-consumer audit and pinned XNU/PongoOS
+source verification. This closes the integration task for the textual
+inventory, not K2 itself: manual conditional, build-input, dependency, and
+per-feature migration review remains open.
+
 Then close the remaining kernel gates: exact source/build provenance,
 a reproducible unmodified baseline build, target CPU/memory/platform facts,
 the complete DeviceTree and XNU handoff contracts, and host-side validation.

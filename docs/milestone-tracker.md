@@ -1217,5 +1217,5 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   compilation, private/generated build inputs, hardware features, ABI, or
   compatibility. The original pinned workflow passed on run 44864823137;
   current-main CI is rerunning the scanner and tests. K2 remains open pending
-  manual per-feature migration review. See PR #137 when opened; no device or
+  manual per-feature migration review. See merged PR #137 (both merged-head checks passed); no device or
   firmware state was accessed or changed.
