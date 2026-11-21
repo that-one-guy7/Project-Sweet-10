@@ -44,6 +44,8 @@ References:
 - The target identity is iPhone9,1 / D10AP / A10-T8010.
 - The 19H422 target-reference DeviceTree has been parsed and its board/SoC and selected display/touch nodes inventoried.
 - Target-native 19H422 KernelCache metadata contains candidate display, MIPI-DSI, LCD, SPI/HID, and backlight KEXT personalities.
+- A target-native `com.apple.driver.AppleInterruptController` KEXT (1.0.0d1) has an `IONameMatch = aic,1` personality with provider `AppleARMIODevice`, exactly matching the static `/arm-io/aic` DeviceTree compatible string; its runtime attachment and IRQ/timer behavior are not verified.
+- Target-native T8010 KEXT metadata includes `AppleT8010`, PMGR, CLPC, SOCTuner, PCIe, SmartIO and PMP firmware services with the recorded IOKit personality matches summarized in `docs/iphone91-19h422-aic-t8010-kext-crosswalk.md`.
 - Six target DeviceTree compatible strings have static `IONameMatch` overlaps in target-native KEXT metadata: `disp0,t8010`, `mipi-dsim-1,synopsys`, `lcd,pinot`, `spi-1,samsung`, `hid-transport,k1`, and `backlight,lm3539`.
 - The 19H422 / 20H392 BackBoard loader audit is complete. The target and donor records have been compared; the two HID framework records differ by one donor-only `StudyLog` edge each.
 - These findings are static metadata only. They do not prove driver source availability, KPI/ABI compatibility, runtime attachment, event delivery, display operation, or SpringBoard.
@@ -74,9 +76,9 @@ References:
 
 ## Best next work now
 
-The highest-value next preparation task is the **T8010/H9 transitive source-closure audit**: map every H9 macro, board-selection path, conditional consumer, required type/header, and removed interface into its XNU 8796 counterpart. The current macro consumer note is a useful first pass but is explicitly not exhaustive. In parallel, keep collecting source-backed D10AP platform facts without turning unknown DeviceTree fields into constants.
+Two preparation streams now have clear next artifacts. First, complete the **T8010/H9 transitive source-closure audit**: map every H9 macro, board-selection path, conditional consumer, required type/header, and removed interface into its XNU 8796 counterpart. The direct macro consumer scan is a first pass; PR #82 records the full-tree scan and its remaining include-resolution gaps. Second, perform a **single-KEXT ABI inventory** of the target `AppleInterruptController`: capture Mach-O build metadata, UUID, linked libraries, and resolved imported-symbol names, then compare the symbol/API surface with the pinned XNU 8796 interfaces.
 
-The next driver to implement cannot responsibly be selected until the target interrupt-controller and timer contracts are resolved. The current evidence only proves selected static personality matches; it does not identify the live controller implementation or all required register/IRQ data.
+The new target KEXT metadata resolves the exact `aic,1` personality match, but not runtime attachment, routing, EOI, or timer semantics. A driver implementation still cannot responsibly begin until the kernel source/build gates and those hardware contracts are supported by evidence.
 
 ## Explicit non-goals for this preparation phase
 

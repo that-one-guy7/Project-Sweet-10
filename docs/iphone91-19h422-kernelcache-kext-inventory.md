@@ -67,6 +67,32 @@ Additional target-platform KEXTs in the same inventory include:
 | `com.apple.AGXG9P` | 190.23 | GPU family bundle present; detailed device/provider matching not inspected |
 | `com.apple.iokit.IOGPUFamily` | 35.29 | GPU framework-family bundle present |
 
+### AIC and T8010 personality metadata
+
+A later read-only filter of the same target `kexts.json` output confirms
+the target-native `AppleInterruptController` bundle and its exact
+`aic,1` personality match. It also captures additional T8010-family
+personality relationships. See the [AIC/T8010 KEXT crosswalk](iphone91-19h422-aic-t8010-kext-crosswalk.md)
+for the complete sanitized table, JSON locations, dependency notes, and
+evidence boundaries.
+
+The most important newly established record is
+`com.apple.driver.AppleInterruptController` (version `1.0.0d1`), whose
+personality has `IONameMatch = aic,1` and
+`IOProviderClass = AppleARMIODevice`. This exactly matches the target
+DeviceTree compatible string for `/arm-io/aic`. It is a static metadata
+crosswalk only; runtime attachment and interrupt/timer behavior remain
+unverified.
+
+Additional target KEXT metadata includes `AppleT8010PCIe` with
+`apcie,t8010`, `AppleT8010PMGR` with `pmgr1,t8010`,
+`AppleT8010CLPC` with `clpc,t8010`, `AppleT8010SOCTuner` with
+`soc-tuner,t8010`, and three personalities on `AppleT8010`
+(`arm-io,t8010`, `mcc,t8010`, and `error-handler,t8010`).
+`AppleT8010PMPFirmware` declares an RTBuddy firmware-service personality.
+No driver source, runtime provider attachment, or compatibility with XNU
+8796 is established by these fields.
+
 The full ordered KEXT listing is retained in the user's local analysis output, not copied into the repository wholesale. No KernelCache or extracted KEXT binary is committed.
 
 ## Cross-reference to parsed target DeviceTree
