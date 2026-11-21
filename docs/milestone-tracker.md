@@ -1037,3 +1037,19 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   and nine synthetic tests. M6 remains in progress; M7/SpringBoard has not
   started. The physical iPhone 7 remains on iOS 12.1.4; no device, firmware,
   partition, security, or boot state was accessed or changed.
+
+
+- 2026-11-21: Added a bounded host-side checker for the nine selected
+  GUI/platform LaunchDaemon Program paths in the 19H422 target and 20H392
+  donor inventories. The checker validates the launchd JSON schema, tests
+  exact paths under each supplied mounted root and explicit root-wrapper
+  depths 0 through 2, records symlinks without following them, and never
+  opens or executes program files. Ten synthetic tests passed locally.
+  The two saved launchd inventories each contain all nine selected labels.
+  Actual filesystem presence remains pending because those roots are mounted
+  only in the user's Ubuntu VM. This check will report only regular-file,
+  symlink, missing-within-scanned-roots, and filesystem metadata states;
+  it cannot prove Mach-O structure, signature, ABI, loadability, daemon
+  startup, or SpringBoard. M6 remains in progress; M7 has not started.
+  The physical iPhone 7 remains on iOS 12.1.4; no device or firmware state
+  was accessed or changed.
