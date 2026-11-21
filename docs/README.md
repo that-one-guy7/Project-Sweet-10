@@ -25,6 +25,7 @@
 - [iPhone9,1 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md)
 - [KernelCache versus nested plugin metadata boundary](ipsw-kernelcache-plugin-metadata-boundary.md)
 - [iPhone9,1 19H422 IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md)
+- [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
 - [iOS 16.7.16 (20H392) userland reference](userland-reference-20H392.md)
 - [20H392 restore identity audit](20h392-restore-identity-audit.md)
 - [Uploaded 20H392 BuildManifest audit](uploaded-20h392-buildmanifest-audit.md)
@@ -53,5 +54,7 @@
 - [ios-alioth per-board status review](ios-alioth-status.md)
 - [UniXNU architecture and profile reference](unixnu-reference.md)
 - [iOS 16 device compatibility and 20H392 identity matrix](ios16-device-identity-matrix.md)
+
+- [Linux IPSW filesystem-DMG mount fallback diagnostic](ipsw-linux-dmg-mount-fallback-audit.md)
 
 All target-specific values remain unverified until backed by a reliable iPhone9,1 source.

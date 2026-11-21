@@ -59,9 +59,9 @@ and [property inventory](../device-tree/PROPERTY_INVENTORY.md).
 |---|---|---|---|
 | Board / SoC identity | Donor is iPhone X, D22AP, A11/T8015 | Root identifies iPhone9,1 / D10AP; `/arm-io` identifies T8010 | **Target-confirmed identity**; donor is a different board and SoC |
 | Display subsystem | Donor cache/loader records include IOMobileFramebuffer, CoreGraphics, Metal, and IOSurface | `/arm-io/disp0` is `disp0,t8010`; `AppleMobileDispH9P` personality matches `disp0,t8010` through `AppleARMIODevice` | **Exact static name match confirmed**; runtime attachment and display operation unverified |
-| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `AppleSamsungSPI` matches `spi-1,samsung`; `AppleHIDTransportSPI` matches `hid-transport,k1`; `AppleMultitouchDriver` advertises `IOHIDInterface` personalities and references the `AppleMultitouchSPI` plugin | **Exact static name matches for SPI and K1 transport**; multitouch service chain and runtime touch remain unverified |
+| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `AppleSamsungSPI` matches `spi-1,samsung`; `AppleHIDTransportSPI` matches `hid-transport,k1`; `AppleMultitouchDriver` has `IOHIDInterface` personalities whose plugin-type UUID matches the extracted `MultitouchHID.plugin` `CFPlugInTypes` UUID | **Exact static SPI/K1 name match and plugin type-UUID linkage**; runtime provider attachment, plugin loading, and touch delivery remain unverified |
 | Backlight | Donor GUI/graphics inventory does not identify a target backlight provider | `AppleLMBacklight` personality matches `backlight,lm3539` through `AppleARMIICDevice` | **Exact static name match confirmed**; runtime attachment and backlight operation unverified |
-| IOKit provider matching | Donor contains the IOKit framework and framework dependencies | Target 19H422 JSON personality data has exact `IONameMatch` overlaps for display, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight | **Static personality/compatible overlap confirmed**; runtime service matching and attachment unverified |
+| IOKit provider matching | Donor contains the IOKit framework and framework dependencies | Target 19H422 JSON personality data has exact `IONameMatch` overlaps for display, Synopsys MIPI-DSI, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight | **Six static personality/compatible overlaps confirmed**; runtime service matching and attachment unverified |
 | BackBoard / RunningBoard services | Donor contains BackBoardServices, RunningBoardServices, RunningBoard, and SpringBoard images | No target-native provider or service equivalence follows from the DeviceTree node names | **Donor-only service evidence**; target service compatibility is unverified |
 | CPU / memory / early platform | Donor is A11/T8015; its cache does not supply D10AP platform values | 19H422 static tree identifies two CPU nodes and T8010; static CPU clock values are zero, memory/PRAM/VRAM ranges are zero, and panic-log size is absent | **Target-confirmed static identity/structure**; runtime clock, memory, and panic handoff values remain unknown |
 | XNU machine configuration | Candidate XNU 8796 is relevant to the iOS 16 generation | Reviewed XNU 8796 ARM64 machine allowlist and board header omit T8010; historical T8010/H9 source exists in older XNU 7195, not as a ready 8796 profile | **Known source/build blocker**; historical profile presence does not prove a compatible backport |
@@ -77,11 +77,13 @@ resource.
 
 ## Target IOKit personality crosswalk
 
-The user inspected the target 19H422 KernelCache's JSON KEXT metadata. Five
+The user inspected the target 19H422 KernelCache's JSON KEXT metadata. Six
 target DeviceTree compatible strings have exact `IONameMatch` overlaps in
 target-native personalities:
 
 - `disp0,t8010` — `AppleMobileDispH9P`, provider class
+  `AppleARMIODevice`.
+- `mipi-dsim-1,synopsys` — `AppleSynopsysMIPIDSI`, provider class
   `AppleARMIODevice`.
 - `lcd,pinot` — `ApplePinotLCD`, provider class
   `AppleARMMIPIDSIDevice`.
@@ -92,14 +94,18 @@ target-native personalities:
 - `backlight,lm3539` — `AppleLMBacklight`, provider class
   `AppleARMIICDevice`.
 
-The `AppleMultitouchDriver` personalities match `IOHIDInterface`
-usage pairs and reference the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin`
-path. The `AppleMultitouchSPI` JSON entry did not contain its own
-`io_kit_personalities` field. The MIPI-DSI controller personality expects
-`mipi-dsim-1,synopsys`, but the checked-in allowlist summary does not include
-the parent node's compatible value. The display personality's
-`BacklightMatching` dictionary requires `backlight-control = true`, a
-target property not yet verified from the allowlist summary.
+The `AppleMultitouchDriver` personalities match `IOHIDInterface` usage pairs
+and reference the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin` path.
+The extracted target plugin `Info.plist` declares type UUID
+`0516B563-B15B-11DA-96EB-0014519758EF`, exactly matching the key in the
+parent personality's `IOCFPlugInTypes` map; the plugin maps that type to its
+`IOHIDPlugInFactory` factory UUID. The `AppleMultitouchSPI` JSON entry still
+does not contain its own `io_kit_personalities` field, which must not be read
+as proof that the plugin is absent. The updated target DeviceTree inspection
+also confirmed `/arm-io/mipi-dsim` compatible `mipi-dsim-1,synopsys`, matching
+`AppleSynopsysMIPIDSI`. The display personality's separate
+`BacklightMatching` dictionary requires `backlight-control = true`, which was
+not reported for `/arm-io/disp0` in the allowlist-only output.
 
 See the [full target IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md).
 These are static metadata matches, not proof of runtime IOKit attachment or
@@ -120,9 +126,11 @@ Its `RELEASE_ARM64_T8010` build string does not establish that the separate
 XNU 8796.141.3 donor kernel has a compatible T8010 machine profile.
 
 The crosswalk now has exact static personality/compatible-string overlap for
-five relevant target nodes. It does not prove that any KEXT attaches to a live
-IOKit provider. No display, touch, or backlight operation has been validated
-on the target.
+six relevant target nodes. It also records the separate plugin type-UUID link
+between the target `AppleMultitouchDriver` personality and extracted plugin
+metadata. None of this proves that a KEXT attaches to a live IOKit provider or
+that the plugin loads. No display, touch, or backlight operation has been
+validated on the target.
 
 The XNU 8796 T8010 machine-profile gap, static DeviceTree runtime-value gaps,
 and custom kernel handoff requirements remain separate blockers. See the
@@ -130,24 +138,30 @@ and custom kernel handoff requirements remain separate blockers. See the
 
 ## Next host-side evidence
 
-The next bounded task is to resolve the two metadata gaps identified in the
-personality audit, then keep runtime/provider claims explicitly separate. The
-remaining work is to:
+The next bounded M6 task is to compare the target-native 19H422 multitouch
+metadata with the actual iOS 16.7.16 (20H392) donor KernelCache, while keeping
+the two hardware identities separate.
 
-1. Use the existing 19H422 IPSW on the analysis computer; do not connect,
-   restore, update, or alter the phone.
-2. Confirm the `/arm-io/mipi-dsim` parent compatible value and the target
-   display node's `backlight-control` property using allowlist-only output.
-3. Inspect the nested `MultitouchHID.plugin` metadata if the host-side parser
-   exposes it as a separate object.
-4. Keep any live provider attachment, working display/touch/backlight, and
-   20H392 userland compatibility claims **unverified**.
-5. Commit only sanitized names, bundle identifiers, hashes, and conclusions;
-   do not add firmware binaries, device-specific identifiers, or raw DeviceTree
-   data to the repository.
+1. The uploaded 20H392 BuildManifest audit records the donor KernelCache
+   component name as `kernelcache.release.iphone10b` and its manifest digest.
+   The supplied standalone BuildManifest does not include the KernelCache
+   bytes, so the actual donor component's version string and KEXT records are
+   not yet verified in this repository.
+2. If the matching 20H392 IPSW is already available on the analysis computer,
+   inspect that component as a host-side file and compare the donor versions
+   and personality metadata for `AppleHIDTransport`,
+   `AppleHIDTransportSPI`, `AppleMultitouchSPI`, and
+   `AppleMultitouchDriver` against the 19H422 target report.
+3. Record differences as donor/target metadata only. The 20H392 donor is
+   iPhone X / D22AP / A11-T8015; the 19H422 target reference is
+   iPhone 7 / D10AP / A10-T8010. Similar bundle names or matching UUIDs do not
+   establish cross-board compatibility or justify copying drivers.
+4. Keep all device, firmware, and boot state unchanged. Do not install the
+   donor IPSW on the iPhone 7; this step requires only local file inspection.
 
-The `ipsw` CLI documents JSON KEXT output with each bundle's IOKit personality
-metadata. This is offline file analysis; it is not a device operation.
+The next comparison is blocked only on access to the actual 20H392
+KernelCache artifact or its verified extracted path. The uploaded manifest
+alone is not enough to validate its contents.
 
 ## Status
 

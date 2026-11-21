@@ -50,10 +50,10 @@ The user-supplied complete ipsw listing reported 230 KEXT entries. The following
 | LCD panel | `com.apple.driver.ApplePinotLCD` | 1.0.0 | MIPI-DSI child panel is `lcd,pinot` | Strong name-level correspondence; IOKit match unverified |
 | MIPI-DSI | `com.apple.driver.AppleSynopsysMIPIDSI` | 1.0.0 | `/arm-io/mipi-dsim` is `mipi-dsim-1,synopsys` | Exact static `IONameMatch` overlap confirmed; runtime provider attach untested |
 | SPI controller | `com.apple.driver.AppleSamsungSPI` | 1 | `/arm-io/spi2` reports Samsung SPI | Strong name-level correspondence; personality match unverified |
-| Touch transport | `com.apple.driver.AppleHIDTransport` | 5100.32 | Touch node uses `hid-transport,k1` | KEXT presence; provider chain unverified |
-| SPI HID transport | `com.apple.driver.AppleHIDTransportSPI` | 5100.32 | Touch node is below the SPI controller | KEXT presence; provider chain unverified |
-| SPI multitouch | `com.apple.driver.AppleMultitouchSPI` | 5100.27 | `/arm-io/spi2/multi-touch` is `hid-transport,k1` | Strong subsystem correspondence; IOKit match unverified |
-| Multitouch framework driver | `com.apple.driver.AppleMultitouchDriver` | 5100.27 | Target DeviceTree identifies the K1 multitouch transport | KEXT presence; binding and event path unverified |
+| Touch transport | `com.apple.driver.AppleHIDTransport` | 5100.32 | General HID transport layer | KEXT present; target-specific runtime role unverified |
+| SPI HID transport | `com.apple.driver.AppleHIDTransportSPI` | 5100.32 | `/arm-io/spi2/multi-touch` is `hid-transport,k1` | Exact static `IONameMatch` overlap; provider attachment untested |
+| SPI multitouch | `com.apple.driver.AppleMultitouchSPI` | 5100.27 | Nested `MultitouchHID.plugin` metadata extracted | KEXT present; no personality object in this JSON record; plugin/runtime loading untested |
+| Multitouch framework driver | `com.apple.driver.AppleMultitouchDriver` | 5100.27 | `IOHIDInterface` personalities reference the nested plugin path | Static type-UUID linkage verified; runtime binding/event path untested |
 | Backlight | `com.apple.driver.AppleLMBacklight` | 1 | `/arm-io/i2c0/lm3539` reports `backlight,lm3539` | Candidate only; do not infer an LM3539 match from the bundle name |
 
 Additional target-platform KEXTs in the same inventory include:
@@ -82,6 +82,31 @@ The separate 19H422 DeviceTree audit records:
 - Backlight node: `/arm-io/i2c0/lm3539`, compatible with `backlight,lm3539`.
 
 The KEXT inventory and personality metadata now establish six exact static IONameMatch overlaps: display (`disp0,t8010`), Synopsys MIPI-DSI (`mipi-dsim-1,synopsys`), LCD (`lcd,pinot`), Samsung SPI (`spi-1,samsung`), K1 SPI HID transport (`hid-transport,k1`), and backlight (`backlight,lm3539`). The separate `AppleMobileDispH9P` BacklightMatching condition requiring `backlight-control = true` is not confirmed: the allowlist-filtered target output did not report that property on `/arm-io/disp0`. Other relationships and runtime attachment remain separate questions.
+
+## Target multitouch plugin metadata
+
+The standalone Linux ipsw 3.1.749 binary mounted the target 19H422 filesystem
+DMG and extracted the nested `MultitouchHID.plugin/Info.plist` and
+`_CodeSignature/CodeResources`. The plugin metadata identifies bundle
+`com.apple.iokit.plugin.MultitouchHID`, version `5100.27`, platform
+`iPhoneOS`, and minimum OS `15.8`.
+
+The plugin declares type UUID
+`0516B563-B15B-11DA-96EB-0014519758EF` and maps it to factory UUID
+`0CB0FBB9-15EA-11DB-A93C-001451D47183` / `IOHIDPlugInFactory`.
+The target `AppleMultitouchDriver` personality's `IOCFPlugInTypes` map
+references the same type UUID and the nested plugin path. Separately,
+`AppleHIDTransportSPI` names the target DeviceTree compatible
+`hid-transport,k1`.
+
+The detailed field inventory, extraction record, and evidence limitations are
+in the [dedicated 19H422 multitouch plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md).
+The parent KEXT metadata in this report comes from the KernelCache JSON. The
+absence of an optional `io_kit_personalities` field from the
+`AppleMultitouchSPI` JSON record does not establish that the plugin is absent.
+
+This is static metadata only. It does not prove that a provider attaches, the
+plugin executable loads, or touch events reach userland.
 
 ## Evidence levels and limits
 
@@ -115,11 +140,37 @@ No KEXT binary or KernelCache is committed to the repository.
 
 **Completed:** the user supplied the KernelCache file identity, SHA-256, exact Darwin/XNU version, T8010 release target string, ipsw version, and 230-entry KEXT inventory. Candidate target hardware KEXTs are now cross-referenced against the sanitized 19H422 DeviceTree.
 
-**Still open:** runtime IOKit provider attachment, the display/backlight association, nested `MultitouchHID.plugin` filesystem metadata, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
+**Still open:** runtime IOKit provider attachment and event delivery, the display/backlight association, plugin executable extraction/loading, XNU 8796 T8010 platform implementation, and 20H392 userland service compatibility.
 
 M6 remains in progress. M7 (SpringBoard on iPhone9,1) has not started.
 
 
 ## `ipsw` metadata boundary
 
-The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The separate `MultitouchHID.plugin` path must be verified from the matching 19H422 filesystem bundle, not inferred from the KernelCache KEXT JSON. The source-level basis and next evidence needed are recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
+The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The user has now extracted the nested `MultitouchHID.plugin/Info.plist` from the matching 19H422 filesystem. Its bundle identity, version, minimum OS, plug-in type UUID, and factory mapping are recorded in the [multitouch plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md). The plugin executable and cryptographic signature remain unverified. The source-level serialization boundary is recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
+
+
+## Linux filesystem extraction status
+
+The initial Snap-packaged `ipsw` run could not see the host executable at
+`/usr/local/bin/apfs-fuse`, even though the host shell confirmed that path
+existed and was executable. The Snap connection listing showed `home`
+connected and `fuse-support` disconnected. The confined Snap reported the
+explicit `IPSW_APFS_FUSE_PATH` as a non-existent file.
+
+The user then downloaded and extracted the official standalone Linux archive
+for ipsw `3.1.749`. With that standalone binary and the same 19H422 IPSW, the
+filesystem DMG `098-68844-067.dmg` mounted successfully through the APFS-FUSE
+path, and ipsw extracted the nested `MultitouchHID.plugin/Info.plist`.
+A broader driver-name query also extracted `_CodeSignature/CodeResources`.
+
+This establishes that the standalone binary can mount and inspect this image
+in the user's host environment. It does not fully diagnose the Snap sandbox
+failure or identify the installed APFS-FUSE build/version. The parent KEXT
+metadata used by this report is read from the KernelCache JSON, not inferred
+from the filesystem query's lack of parent-bundle plist matches.
+
+See the [Linux DMG mount fallback audit](ipsw-linux-dmg-mount-fallback-audit.md)
+for the source-level explanation and the observed Snap-versus-standalone
+difference. No full filesystem image, KernelCache, KEXT executable, or plugin
+executable is committed to the repository.
