@@ -29,6 +29,7 @@
 - [19H422 / 20H392 AGX and Metal export audit plan](19h422-20h392-agx-metal-export-audit-plan.md)
 - [19H422 / 20H392 AGX and Metal export comparison results](19h422-20h392-agx-metal-export-results.md)
 - [19H422 / 20H392 AGXMetal plugin load-command and import results](19h422-20h392-agx-plugin-load-command-results.md)
+- [19H422 / 20H392 AGXMetal plugin provider import/export comparison](19h422-20h392-agx-plugin-provider-import-export-results.md)
 - [20H392 service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
 - [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)
