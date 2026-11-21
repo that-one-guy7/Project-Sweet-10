@@ -10,9 +10,11 @@ four frameworks directly named by the iPhone X 20H392 `backboardd` loader:
 - `BackBoardServices`
 - `IOMobileFramebuffer`
 
-The next bounded M6 step is to collect the same four records from the
-already-inventoried iPhone 7 / D10AP / iOS 15.8.8 (19H422) target-reference
-shared cache. The donor baseline and its dependency rows are documented in
+The planned collection of the same four records from the iPhone 7 / D10AP /
+iOS 15.8.8 (19H422) target-reference shared cache has now been completed.
+The target records and exact donor comparison are documented in
+[the target BackBoard loader results](iphone91-19h422-backboard-loader-results.md)
+and the donor baseline in
 [the 20H392 BackBoard results](20h392-backboard-framework-dependency-results.md).
 
 This target reference is iOS 15.8.8, not the intended iOS 16 userland.
@@ -34,11 +36,11 @@ BackBoardServices has 12 regular rows plus one re-export;
 IOMobileFramebuffer has 4 regular rows. No weak-link rows appeared in those
 four donor blocks.
 
-The target 19H422 cache image inventory already lists BackBoardServices,
-BackBoardHIDEventFoundation, and BackBoardHIDEventProcessors. The target
-image-list record for IOMobileFramebuffer has not yet been recorded in this
-specific crosswalk. The loader query must report a missing/unresolved path
-as-is; do not silently substitute a different image or a donor record.
+All four requested target install names returned loader records in the
+19H422 cache. The records and their dependency rows have been compared to
+the corresponding 20H392 donor records. The resulting differences are
+limited to a donor-only StudyLog dependency edge in each of the two HID
+frameworks; see the result document for exact rows and status caveats.
 
 ## Input cache
 
@@ -284,3 +286,33 @@ status and stderr. Exclude the known implausible decoded Sections values;
 do not treat PrebuiltLoader reference indexes as cache image-list indexes.
 M6 remains in progress; M7/SpringBoard has not started. The physical iPhone
 7 remains on iOS 12.1.4.
+
+
+## Completed target collection and donor comparison (2026-11-20)
+
+The four requested 19H422 loader records have now been collected with the
+standalone Linux IPSW 3.1.749 executable and compared against the existing
+20H392 donor records. Three supplied command results explicitly show exit
+status 0 and empty stderr; the BackBoardHIDEventFoundation output includes
+a valid loader record and an empty stderr section, but its explicit status
+line was not present in the excerpt supplied for documentation. No status
+is invented for that one record.
+
+Target totals: 33 regular dependency rows, one re-export, and zero
+weak-link rows. Donor totals: 35 regular rows, one re-export, and zero
+weak-link rows. Both sides have the same 12 regular plus one re-export
+BackBoardServices record and the same four IOMobileFramebuffer regular
+dependencies. The target HID framework records each omit the donor's
+StudyLog dependency. There are no target-only dependency rows in this
+four-image comparison. The difference is not attributed to hardware,
+because the target and donor use different iOS releases and device models.
+
+The Snap package's permission-denied error is now historical troubleshooting
+context only: the standalone executable successfully opened and parsed the
+same target cache. There is no need to repeat Snap access diagnostics.
+
+This bounded four-image collection and comparison is complete. The broader
+M6 audit remains in progress; M7/SpringBoard has not started. Static loader
+metadata does not demonstrate runtime framework loading, API ABI
+compatibility, IOKit attachment, HID event delivery, display operation, or
+iPhone9,1 compatibility. The phone remains on iOS 12.1.4.
