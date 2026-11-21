@@ -182,13 +182,18 @@ empty printed `files` and `files2` entries. No `MultitouchHID*` file or
 symlink was found in either searched mounted donor root. The complete
 read-only target filesystem DMG `098-68844-067.dmg` was also mounted at
 `$HOME/19H422-full-fs-mount` and searched for regular files and symlinks
-matching that name prefix; no paths were returned. The matching target
-Info.plist remains metadata-only evidence. The next static check is to
-inventory the 19H422 dyld shared-cache files and inspect their image-path
-list for a possible cache-backed plugin image. Defer Mach-O comparison until
-actual executable bytes are located. The `CodeResources` output is not
-signature verification, and even matching Mach-O metadata would not prove
-successful loading.
+matching that name prefix; no paths were returned. The 19H422 dyld shared-cache image inventory now lists the compiled
+`MultitouchHID.plugin/MultitouchHID` image at index 1948, version
+`5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`. Related target cache entries
+include `MultitouchSupport`, `MultitouchSessionFilterSupport`,
+`AppleHIDTransportSupport`, BackBoard HID event frameworks, and SpringBoard.
+These are image-list records, not runtime provider or event-delivery evidence.
+The next check is a corresponding 20H392 donor cache query. Defer any
+binary comparison until cache image bytes are separately obtained and
+statically inspected. The `CodeResources` output is not signature
+verification, and even matching image metadata would not prove successful
+loading.
 
 The donor KernelCache reports XNU
 `8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public
@@ -203,3 +208,5 @@ expanded and the target static DeviceTree, target-native 19H422 KEXT inventory, 
 IOKit personality crosswalk are recorded. Runtime provider attachment and
 20H392 userland service compatibility are not established. M7 (SpringBoard on
 iPhone9,1) has **not started**.
+
+See [the 19H422 dyld shared-cache multitouch image audit](iphone91-19h422-dyld-cache-multitouch-audit.md) for indexed paths, versions, and UUIDs.
