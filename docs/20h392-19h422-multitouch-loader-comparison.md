@@ -57,7 +57,7 @@ The donor record reports 14 (11 regular and 3 weak-link).
 | `MultitouchSupport.framework/MultitouchSupport` | regular | regular |
 | IOKit framework | regular — `/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit` | regular — `/System/Library/Frameworks/IOKit.framework/IOKit` |
 | `ProtocolBuffer.framework/ProtocolBuffer` | weak-link | weak-link |
-| `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter` | **Not listed** | regular |
+| `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter` | Not listed as a direct edge; target cache image exists at index `1455` | regular |
 | `libMobileGestalt.dylib` | weak-link | weak-link |
 | `libIOReport.dylib` | regular | regular |
 | `libc++.1.dylib` | regular | regular |
@@ -71,10 +71,16 @@ except that the donor has one additional printed row:
 The IOKit paths differ in their printed form. No symlink resolution or
 path normalization is claimed here.
 
-The absence of the SymptomDiagnosticReporter row from this target's
-PrebuiltLoaderSet output is not proof that the framework is absent from
-the target filesystem or from every target cache. It means only that the
-user-supplied target loader record did not list it as a dependency.
+The target PrebuiltLoaderSet output does not list
+`SymptomDiagnosticReporter` as a direct dependency, but the separate target
+JSON image inventory does contain it at index `1455`, version
+`174.140.2.0.0`, UUID
+`ED77A600-C0BE-3240-9693-BF5238095816`. This is a donor-only direct
+dependency edge in the two compared loader records, not a framework-absence
+finding. The image-list entry does not prove runtime dependency resolution
+or a standalone file in the mounted root filesystem. See the [target
+dependency image inventory](iphone91-19h422-multitouch-dependency-image-inventory.md)
+for the seven queried target image records.
 
 ## Region metadata
 
@@ -126,8 +132,9 @@ matching set of 13 dependency families. They also have concrete record
 differences:
 
 - The target record lists 13 dependencies; the donor lists 14.
-- The donor additionally lists regular
-  `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter`.
+- The donor additionally lists a regular direct dependency edge to
+  `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter`; the
+  target cache image list nevertheless contains that framework (index 1455).
 - The IOKit framework path is printed differently.
 - The loader and info flags differ.
 - VM size and cache-region offsets/sizes differ.
@@ -138,13 +145,14 @@ or demonstrate compatibility or incompatibility on T8010.
 
 ## Next bounded check
 
-Search the existing read-only target JSON image inventory
-`$HOME/19H422-dyld-images.json` for the listed dependency image names,
-especially `SymptomDiagnosticReporter`, and record any matching target
-paths, versions, and UUIDs. This will establish whether the donor-only
-dependency name is represented elsewhere in the target cache image list.
-It will not establish runtime loading or filesystem presence outside the
-cache inventory.
+The selected target dependency-name lookup is complete. Its seven
+relevant cache image records, including target
+`SymptomDiagnosticReporter`, are recorded in the [target dependency image
+inventory](iphone91-19h422-multitouch-dependency-image-inventory.md).
+The next bounded check is the equivalent read-only lookup against the
+already-generated donor JSON inventory `$HOME/20H392-dyld-images.json`, so
+the target and donor framework versions/UUIDs can be compared. Cache image
+presence does not establish runtime dependency resolution.
 
 No binary, cache, filesystem image, or firmware file is added to the
 repository. No device, partition, activation, security, boot, or restore
