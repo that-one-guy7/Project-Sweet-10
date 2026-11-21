@@ -33,6 +33,7 @@
 - [T8010 supporting KEXT inventory plan](20h392-19h422-t8010-supporting-kext-inventory-plan.md)
 - [AppleHurricaneErrorHandler donor metadata follow-up](20h392-19h422-hurricane-error-handler-search-plan.md)
 - [19H422 / 20H392 T8010 cross-generation KEXT personality findings](20h392-19h422-t8010-cross-generation-personality-findings.md)
+- [Complete KEXT record metadata comparator](kext-record-detail-comparator.md)
 - [KernelCache versus nested plugin metadata boundary](ipsw-kernelcache-plugin-metadata-boundary.md)
 - [iPhone9,1 19H422 IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md)
 - [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
