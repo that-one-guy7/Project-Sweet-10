@@ -122,16 +122,26 @@ for regular files and symlinks whose case-insensitive names match
 search for that filename pattern within the mounted 19H422 filesystem DMG;
 it does not cover other IPSW components or unmounted/shared-cache images.
 
-Consequently, the target's compiled plugin image is now confirmed as an
-entry in the 19H422 dyld shared-cache inventory (index 1948, version
-`5100.27.0.0.0`, UUID
-`304953E6-6B67-3CF1-B7CA-E011978210DE`), despite no standalone
-`MultitouchHID*` file being returned by the complete filesystem search.
-The donor standalone executable remains unlocated in the two searched donor
-filesystem roots. The actual Mach-O bytes have not been separately extracted
-or compared. The dyld image entry is stronger than plist-only metadata but
-is not signature validation or runtime proof. The mere presence of
-`CodeResources` does not verify a code signature.
+Consequently, both compiled plugin images are confirmed as
+entries in their respective dyld shared-cache inventories, despite no
+standalone `MultitouchHID*` file being returned by the searched filesystem
+mounts:
+
+| Field | 19H422 target | 20H392 donor |
+|---|---|---|
+| Image-list index | 1948 | 2557 |
+| Source version | `5100.27.0.0.0` | `6140.3.0.0.0` |
+| Mach-O UUID | `304953E6-6B67-3CF1-B7CA-E011978210DE` | `78E1FB55-113A-3500-9D2D-1D8E282BED45` |
+| Load address | `7982772224` | `8757542912` |
+
+The donor UUID record came from the user's successful
+`ipsw dyld info --dylibs --json` query. The preceding
+`ipsw dyld image -V` command returned a PrebuiltLoaderSet record rather
+than the image UUID. The different UUIDs establish different Mach-O build
+identifiers, not a compatibility verdict. The actual Mach-O bytes have not
+been separately extracted or compared. A dyld image entry is stronger
+than plist-only metadata but is not signature validation or runtime proof.
+The mere presence of `CodeResources` does not verify a code signature.
 
 ## Interpretation
 
@@ -170,9 +180,12 @@ donor root. The 19H422 dyld image inventory now contains
 `/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID`
 at index 1948, version `5100.27.0.0.0`, UUID
 `304953E6-6B67-3CF1-B7CA-E011978210DE`. The next bounded static task is
-to query the separate 20H392 donor SystemOS dyld cache for the corresponding
-image path, version, and UUID. A binary comparison remains deferred until
-actual cache image bytes are separately obtained and statically inspected.
+to obtain the donor UUID. That UUID is now recorded as
+`78E1FB55-113A-3500-9D2D-1D8E282BED45` (image-list index 2557, version
+`6140.3.0.0.0`). The target UUID is
+`304953E6-6B67-3CF1-B7CA-E011978210DE` (index 1948, version
+`5100.27.0.0.0`). Their build identifiers differ; raw cache image bytes
+have not been extracted or compared.
 The `CodeResources` output is not signature verification. Keep donor and
 target artifacts separate; metadata does not prove runtime compatibility.
 
