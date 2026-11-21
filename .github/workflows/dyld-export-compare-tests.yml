@@ -4,14 +4,18 @@ on:
   pull_request:
     paths:
       - "tools/compare_dyld_exports.py"
+      - "tools/compare_dyld_imports.py"
       - "tests/test_compare_dyld_exports.py"
+      - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
   push:
     branches:
       - main
     paths:
       - "tools/compare_dyld_exports.py"
+      - "tools/compare_dyld_imports.py"
       - "tests/test_compare_dyld_exports.py"
+      - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
 
 permissions:
@@ -32,5 +36,8 @@ jobs:
       - name: Run host-side synthetic tests
         run: python3 -m unittest discover -s tests -v
 
-      - name: Check comparator CLI
+      - name: Check export comparator CLI
         run: python3 tools/compare_dyld_exports.py --help
+
+      - name: Check import comparator CLI
+        run: python3 tools/compare_dyld_imports.py --help
