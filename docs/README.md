@@ -55,6 +55,7 @@
 - [iPhone9,1 19H422 parsed DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
 - [iPhone9,1 19H422 DeviceTree survey methodology review](iphone91-19h422-survey-methodology-review.md)
 - [Public XNU T8010 source transition](t8010-public-source-transition.md)
+- [Public XNU source versus shipped KernelCache identities](xnu-public-source-vs-shipped-kernel.md)
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [Historical T8010 XNU profile CI verification](xnu-machine-history-ci.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)

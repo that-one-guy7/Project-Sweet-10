@@ -4,7 +4,7 @@
 |---|---|---|---|
 | M0 | Repository scaffold | Initial docs and target metadata | Prepared |
 | M1 | Hardware/source audit | Evidence-backed iPhone9,1 inventory | In progress: xnu-7195.121.3 contains T8010/H9 and lists T8010 for normal ARM64 builds; xnu-8019.80.24 and xnu-8796.141.3 omit it from the normal ARM64 machine allowlist; static 19H422 DeviceTree is hash-verified and parsed (227 nodes); selected ARM-IO/AIC/timer values are cross-checked against XNU 8796, while zero-filled runtime clock/memory/panic fields remain unresolved; the pinned PongoOS revision has a registered T8010 HAL backend with USB resources and T8010 AES/Recfg paths, but target runtime is untested; T8010 is still absent from the XNU 8796 machine allowlist |
-| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); Apple source-to-kernelcache mapping and reproducible iPhoneOS ARM64 baseline build remain open; xnu-8796.141.3 normal ARM64 machine allowlist omits T8010 |
+| M2 | XNU baseline | Exact revision and reproducible host build | Candidate `xnu-8796.141.3` is pinned; 20H392 donor KernelCache reports XNU `8796.142.1.703.8~1` / `RELEASE_ARM64_T8015`, but the public candidate omits both T8015 and T8010 machine profiles; uploaded 20H392 manifest is iPhone X A11/T8015 (not iPhone9,1); exact source-to-kernelcache mapping, product-specific build inputs, and reproducible iPhoneOS ARM64 baseline build remain open |
 | M3 | Boot contract | Reviewed A10 handoff specification | XNU 8796 ARM64 `boot_args` structure identified; PongoOS iOS13 layout matches its key offsets/608-byte command line at source level; PongoOS has a source-level T8010 HAL/USB backend, AES/Recfg paths, and audited `bootr`/`loadx` extension points, but no target runtime validation or complete custom loader. Runtime clock/memory/panic fields, live boot_args values, entry state, and a complete Sweet-10 loader remain unverified |
 | M4 | Early-kernel test | Deterministic diagnostics in safe test environment | Not started |
 | M5 | Display/input research | Independent subsystem plans | Static tree identifies T8010 display subsystem, Pinot LCD node, Samsung SPI controller, K1 multi-touch HID transport, and LM3539 backlight; target-native 19H422 KernelCache (XNU 8020.241.44~1, `RELEASE_ARM64_T8010`) includes candidate display/touch/backlight KEXTs; target IOKit personalities show exact `IONameMatch` overlaps for `disp0,t8010`, `mipi-dsim-1,synopsys`, `lcd,pinot`, `spi-1,samsung`, `hid-transport,k1`, and `backlight,lm3539`; extracted `MultitouchHID.plugin/Info.plist` has type UUID `0516B563-B15B-11DA-96EB-0014519758EF`, which exactly matches the `AppleMultitouchDriver` `IOCFPlugInTypes` key; runtime provider attachment, plugin loading, and hardware operation remain unverified |
@@ -580,3 +580,20 @@
   resolution, plugin loading, IOKit attachment, touch delivery, and
   SpringBoard stability remain unverified. The physical iPhone 7 remains
   on iOS 12.1.4. No device or firmware state was accessed or changed.
+
+
+- 2026-11-20: Cross-checked the public XNU machine-configuration history
+  against the already-inspected target and donor KernelCache identities.
+  Public `xnu-7195.121.3` lists T8010 in its normal ARM64 machine allowlist
+  and includes the matching H9 board/CPU profile. Public
+  `xnu-8019.80.24` and `xnu-8796.141.3` omit T8010; public 8796 also omits
+  T8015 from its normal ARM64 list and board configuration. The 20H392
+  donor KernelCache nevertheless reports XNU `8796.142.1.703.8~1` and
+  `RELEASE_ARM64_T8015`, while the pinned public candidate is
+  `xnu-8796.141.3`. This demonstrates that the public candidate alone
+  does not reproduce all machine-selection inputs reflected by the shipped
+  donor binary; it does not prove that private/product-specific source
+  lacks T8015 or that a later XNU build cannot support T8010. Added
+  `docs/xnu-public-source-vs-shipped-kernel.md`; exact source-to-binary
+  provenance and target-specific configuration remain open. No kernel,
+  firmware, boot, partition, or device state was changed.
