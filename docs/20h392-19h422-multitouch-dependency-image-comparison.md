@@ -79,11 +79,17 @@ No binary, shared-cache file, filesystem image, or firmware file is added
 to the repository. No device, partition, activation, security, boot, or
 restore state was accessed or changed.
 
-## Next bounded host-side research
+## Follow-up: MultitouchSupport loader records
 
-The inventory-level comparison is complete. A useful next static step is
-to inspect the exact dependency metadata for the target and donor
-`MultitouchSupport` images, then compare the corresponding
-`AppleMultitouchSPI` and `AppleHIDTransportSPI` KernelCache records
-already inventoried. Keep image-list membership, loader dependency edges,
-KEXT metadata, and runtime behavior as separate evidence categories.
+The target and donor `MultitouchSupport` loader records have now been
+inspected. Their five-region permission patterns match, and both list six
+shared regular dependent-loader rows. The donor additionally lists
+`/usr/lib/libc++.1.dylib`; the target record does not. Full loader fields,
+region tables, and dependency rows are recorded in the
+[MultitouchSupport loader comparison](20h392-19h422-multitouchsupport-loader-comparison.md).
+
+The next bounded host-side check is to search both existing read-only dyld
+image inventories for the exact `/usr/lib/libc++.1.dylib` image record.
+This will distinguish a donor-only loader edge from target cache-image-list
+absence. Keep image-list membership, loader edges, KEXT metadata, and
+runtime behavior as separate evidence categories.

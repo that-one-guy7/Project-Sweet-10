@@ -480,3 +480,25 @@
   tracker. Next bounded host-side check: inspect MultitouchSupport loader
   metadata and compare it with the already inventoried AppleMultitouchSPI
   and AppleHIDTransportSPI KernelCache records. No device state changed.
+
+
+- 2026-11-20: Completed read-only target 19H422 and donor 20H392
+  `MultitouchSupport` PrebuiltLoaderSet inspection for the same full
+  framework path. Target reports VM Size `0x3d3f0000`, loader ref 1248,
+  `regions=5`, and six regular dependent-loader rows. Donor reports VM
+  Size `0x354c8000`, loader ref 1647, `overridable|regions=5`, and
+  seven regular rows; the only printed row difference is donor-side
+  `/usr/lib/libc++.1.dylib`. Both records have five regions with the
+  same permission sequence (r-x, rw-, rw-, rw-, r--), while their region
+  mappings and loader flags differ. Their separate cache image-list records
+  are target index 1249/version 5100.27.0.0.0/UUID
+  0EAF98B3-8D31-3A90-A578-1787797B9467 and donor index
+  1648/version 6140.3.0.0.0/UUID
+  1B6ABB86-B8A9-3941-A66A-EC9715F6B034. Loader-ref indexes are kept
+  distinct from image-list indexes. Implausible Sections output is excluded.
+  Added docs/20h392-19h422-multitouchsupport-loader-comparison.md and
+  updated target/donor cache audits, dependency comparison, and docs index.
+  The next bounded read-only check is to look up the exact
+  `/usr/lib/libc++.1.dylib` image record in both dyld inventories, since
+  absence from the target loader row does not prove cache-image absence.
+  Runtime resolution, plugin loading, and touch behavior remain unverified.
