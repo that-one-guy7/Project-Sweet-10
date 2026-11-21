@@ -36,6 +36,7 @@
 - [19H422 / 20H392 selected KEXT metadata-field comparison](20h392-19h422-selected-kext-metadata-field-comparison.md)
 - [Complete KEXT record metadata comparator](kext-record-detail-comparator.md)
 - [AppleA7IOP / AppleEmbeddedTempSensor recursive metadata diff](20h392-19h422-a7iop-tempsensor-recursive-diff.md)
+- [19H422 / 20H392 seven-pair recursive KEXT metadata results](20h392-19h422-seven-pair-kext-recursive-results.md)
 - [KernelCache versus nested plugin metadata boundary](ipsw-kernelcache-plugin-metadata-boundary.md)
 - [iPhone9,1 19H422 IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md)
 - [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
