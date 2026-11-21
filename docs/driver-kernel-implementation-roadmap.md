@@ -202,14 +202,18 @@ previously noted 8796 zero argument is therefore not, by itself, evidence of
 a T8010 incompatibility. The target PMGR subclass and iBoot reset-vector
 setup remain unverified; see the revised CPU audit section 7.
 
-A major unresolved difference is the physical secondary-core release
-contract: XNU 7195's `AppleARMSMP::PE_cpu_start` passes the physical
+The physical secondary-core release call differs at the caller:
+XNU 7195's `AppleARMSMP::PE_cpu_start` passes the physical
 `LowResetVectorBase` address to `IOPMGR::enableCPUCore`; XNU 8796 passes
 zero for physical builds and passes the reset-vector address only for
-`APPLEVIRTUALPLATFORM`. The relevant PMGR implementation is not established
-by the public source comparison. The historical H9 HID5 EDB snoop-reservation
-workaround in 7195 `start.s` is also absent from the reviewed 8796 startup
-assembly.
+`APPLEVIRTUALPLATFORM`. However, both revisions' generic IOPMGR base
+implementation preserves a fallback from the two-argument overload to the
+legacy one-argument virtual method. This means the caller argument change
+alone is not a proven T8010 incompatibility. The concrete target PMGR
+subclass and iBoot reset-vector setup remain unknown. The historical H9
+HID5 EDB snoop-reservation workaround in 7195 `start.s` is also absent
+from the reviewed 8796 startup assembly and remains a separate CPU-init
+question.
 
 See [the A10/H9 CPU topology and handoff audit](a10-h9-cpu-topology-handoff-audit.md)
 for exact source links, evidence boundaries, and the next static research
