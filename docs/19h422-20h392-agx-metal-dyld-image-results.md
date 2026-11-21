@@ -55,7 +55,7 @@ These are image-list observations only. A cache image's presence does not establ
 | `/System/Library/PrivateFrameworks/MetalTools.framework/MetalTools` | `261.13.4.0.0` | `306.6.6.0.0` |
 | `/System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/IOSurfaceAccelerator` | `115.2.4.1.0` | `140.3.6.0.0` |
 | `/System/Library/Frameworks/MetalPerformanceShaders.framework/MetalPerformanceShaders` | `125.5.0.1.0` | `126.4.1.0.0` |
-| `/System/Library/Frameworks/MetalPerformanceShaders.framework/MetalPerformanceShadersGraph.framework/MetalPerformanceShadersGraph` | `2.4.8.0.0` | `3.4.3.0.0` |
+| `/System/Library/Frameworks/MetalPerformanceShadersGraph.framework/MetalPerformanceShadersGraph` | `2.4.8.0.0` | `3.4.3.0.0` |
 | `/System/Library/Frameworks/MetalPerformanceShaders.framework/Frameworks/MPSCore.framework/MPSCore` | `125.5.0.1.0` | `126.4.1.0.0` |
 | `/System/Library/Frameworks/MetalPerformanceShaders.framework/Frameworks/MPSFunctions.framework/MPSFunctions` | `125.5.0.1.0` | `126.4.1.0.0` |
 | `/System/Library/Frameworks/MetalPerformanceShaders.framework/Frameworks/MPSImage.framework/MPSImage` | `125.5.0.1.0` | `126.4.1.0.0` |
