@@ -67,7 +67,7 @@ Upload `launchd-program-path-presence.json` for review. The actual target/donor 
 
 ## Validation
 
-Ten synthetic tests cover direct files, bounded root wrappers, final and intermediate symlinks, missing paths, non-directory components, invalid Program paths, duplicate job labels, schema validation, status aggregation, and wrapper-depth bounds. CI runs the full host-side test suite.
+Eleven synthetic tests cover direct files, bounded root wrappers, final and intermediate symlinks, missing paths, non-directory components, invalid Program paths, duplicate job labels, schema validation, status aggregation, and wrapper-depth bounds. CI runs the full host-side test suite.
 
 ## Evidence boundary
 
