@@ -14,7 +14,7 @@ The standalone IPSW version file identifies:
 
 The physical iPhone 7 remains on iOS 12.1.4. These are host-side cache metadata observations only; no device state was accessed or changed.
 
-The supplied `status.tsv` was empty. The three corresponding text reports contain loader records, but the numeric exit status of each individual query cannot be independently confirmed from the supplied files. This report therefore records the returned data without marking the commands as status-0 successes.
+The first supplied `status.tsv` copy was empty. The user subsequently located the completed status listing and supplied these exact rows: all three requested image queries exited with status `0`. The successful statuses are therefore confirmed for SpringBoard.framework, RunningBoard, and RunningBoardServices.
 
 ## Loader summary
 
@@ -33,6 +33,14 @@ SpringBoard's loader record additionally prints `Info: initializers|regions=5` a
 The following counts are from the supplied Dependents blocks and preserve regular and weak-link rows as separate types.
 
 No `BindTargets` block appears in the supplied three outputs. This report does not infer that any of the three records has an empty BindTargets set.
+
+The recovered `status.tsv` confirms exit status `0` for all three requested images:
+
+```text
+/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard\t0
+/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard\t0
+/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices\t0
+```
 
 | Requested image | Regular rows | Weak-link rows | Total rows |
 |---|---:|---:|---:|
@@ -143,7 +151,7 @@ Established from the supplied 19H422 cache output:
 
 Not established:
 
-- That the numeric query exit statuses were zero; the supplied `status.tsv` was empty.
+- The query exit statuses; the subsequently located `status.tsv` confirms all three are `0`.
 - That the suspicious `Sections` offsets and sizes are decoded correctly.
 - That each dependency is resolvable for a particular process or recursively available.
 - That any framework or executable launches successfully.
@@ -155,9 +163,8 @@ The target reference is stock iOS 15.8.8 build 19H422, not the intended iOS 16 u
 
 ## Next bounded host-side work
 
-1. Resolve the empty `status.tsv` with an exit-status-only recapture or a verified status listing; do not infer success from the existence of stdout.
-2. Cross-reference the complete dependent-path sets against the target 19H422 cache image inventory and the mounted filesystem, keeping cache membership separate from filesystem presence.
-3. Collect matching 20H392 PrebuiltLoader records for SpringBoard.framework, RunningBoard, and RunningBoardServices before making a donor comparison.
-4. Validate the malformed section output with an independent parser before relying on section metadata.
+1. Cross-reference the complete dependent-path sets against the target 19H422 cache image inventory and mounted filesystem, keeping cache membership separate from filesystem presence.
+2. Collect matching 20H392 PrebuiltLoader records for SpringBoard.framework, RunningBoard, and RunningBoardServices before making a donor comparison.
+3. Validate the malformed section output with an independent parser before relying on section metadata.
 
 All next steps remain host-side static inspection. No device boot, restore, partition write, or firmware change is part of this audit.
