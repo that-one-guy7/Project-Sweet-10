@@ -760,11 +760,20 @@ with the distinct target 19H422 AIC and AIC-timebase DeviceTree windows.
 Detailed boundary and exact public source links are in
 `docs/aic-controller-source-availability-audit.md`.
 
-**Next required evidence:** filter the target 19H422 KernelCache KEXT JSON for
-`AppleInterruptController`, `AppleARMPlatform`, and the `AppleT8010*`
-platform bundles; preserve their bundle/version/personality/provider/
-IONameMatch fields only. Determine whether the AIC component is a
-target-native KEXT before proposing any driver implementation. No AIC
-driver constants or register programming should be inferred from the
-generic header. The physical iPhone 7 remains on iOS 12.1.4; no device or
-firmware state was accessed or changed.
+**New evidence from the supplied target KEXT JSON:** the 19H422 KernelCache
+contains `com.apple.driver.AppleInterruptController` version `1.0.0d1`;
+its personality matches `aic,1` and declares provider
+`AppleARMIODevice`, exactly matching the static `/arm-io/aic` DeviceTree
+compatible string. The same filtered output records target-native
+`AppleT8010`, PMGR, CLPC, SOCTuner, PCIe, SmartIO, and PMP firmware
+bundles/personality metadata. See
+`docs/iphone91-19h422-aic-t8010-kext-crosswalk.md`.
+
+This resolves AIC KEXT presence and static personality matching, not runtime
+attachment, IRQ routing, acknowledge/EOI, timer behavior, or cross-generation
+KPI/ABI compatibility. The next bounded host-side artifact is a single-KEXT
+Mach-O/imported-symbol inventory for `AppleInterruptController`, followed by
+comparison with pinned XNU 8796 APIs; the full T8010/H9 source-closure work in
+PR #82 remains a separate source-provenance stream. Do not infer driver
+constants or register programming from a generic header. The physical iPhone 7
+remains on iOS 12.1.4; no device or firmware state was accessed or changed.
