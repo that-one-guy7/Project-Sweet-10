@@ -26,22 +26,22 @@ identities separate when recording query output.
 
 **Use this exact standalone executable only:**
 
-\`/home/hey/ipsw-standalone/ipsw\`
+`/home/hey/ipsw-standalone/ipsw`
 
-Do not call \`ipsw\` by its short name and do not use the Snap package.
-The script below invokes the absolute path directly, so \`PATH\` cannot
+Do not call `ipsw` by its short name and do not use the Snap package.
+The script below invokes the absolute path directly, so `PATH` cannot
 select a different executable. The physical phone is not involved.
 
 The target cache is:
 
-\`$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64\`
+`$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64`
 
 Run this from Ubuntu. It checks that the standalone executable and target
 cache are accessible, verifies that the output directory is writable, records
 the exact executable version, saves each query's stdout and stderr, and
 prints each exit status to the terminal.
 
-\`\`\`bash
+```bash
 set -uo pipefail
 
 IPSW="/home/hey/ipsw-standalone/ipsw"
@@ -97,7 +97,7 @@ IMAGES=(
   "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices"
 )
 
-for IMAGE in "\${IMAGES[@]}"; do
+for IMAGE in "${IMAGES[@]}"; do
   NAME="$(basename "$IMAGE")"
   echo
   echo "===== $NAME ====="
@@ -124,7 +124,7 @@ echo
 echo "===== Saved results ====="
 cat "$OUT/status.tsv"
 echo "Reports are in: $OUT"
-\`\`\`
+```
 
 Do not execute or extract these images. This queries cache metadata only and
 writes text reports under your home directory. The standalone executable is
