@@ -182,6 +182,29 @@ def print_map_difference(
         print("    shared names with differing values: (none)")
 
 
+
+def print_single_side_details(label: str, record: dict[str, Any]) -> None:
+    """Print available personality and dependency data when only one side exists."""
+    personality_map = personalities(record)
+    print(f"  {label} IOKit personalities:")
+    if not personality_map:
+        print("    (no selected personality fields found)")
+    for name in sorted(personality_map):
+        fields = personality_map[name]
+        print(f"    {name}:")
+        if not fields:
+            print("      (no fields in the comparator's selected field set)")
+        for key in sorted(fields):
+            print(f"      {key}: {shown(fields[key])}")
+
+    dependency_map = libraries(record)
+    print(f"  {label} os_bundle_libraries ({len(dependency_map)} entries):")
+    if not dependency_map:
+        print("    (none in this JSON record)")
+    for name in sorted(dependency_map):
+        print(f"    {name}: {shown(dependency_map[name])}")
+
+
 def compare(
     target: dict[str, dict[str, Any]],
     donor: dict[str, dict[str, Any]],
@@ -265,10 +288,15 @@ def compare(
                     libraries(d_record),
                 )
             else:
-                print(
-                    "  Personality/dependency comparison: unavailable because "
-                    "one side has no matching top-level bundle record"
-                )
+                print("  Side-specific details:")
+                if t_record is not None:
+                    print_single_side_details("TARGET 19H422", t_record)
+                else:
+                    print("  TARGET 19H422: unavailable (no selected top-level record)")
+                if d_record is not None:
+                    print_single_side_details("DONOR 20H392", d_record)
+                else:
+                    print("  DONOR 20H392: unavailable (no selected top-level record)")
             print()
 
         print("=== SUMMARY ===")
