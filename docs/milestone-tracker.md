@@ -855,3 +855,16 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   filesystem-wide absence, missing functionality, binary incompatibility,
   runtime load failure, or bootability. No device or firmware state was
   accessed or changed; the physical iPhone 7 remains on iOS 12.1.4.
+
+
+- 2026-11-21: Prepared a read-only metadata keyword search for the one
+  supporting dependency absent as a selected top-level record in the 20H392
+  JSON inventory: `com.apple.driver.AppleHurricaneErrorHandler`. The new
+  helper searches string keys and values across all parsed KEXT records,
+  distinguishing top-level identity, IOKit personality, dependency-reference,
+  and other metadata matches. A public 2017 BridgeOS 2.0 T8010 KernelCache
+  inspection independently lists this bundle, but it is historical context,
+  not evidence about the 20H392 donor. Donor search results have not yet been
+  collected; this work makes no equivalence or compatibility claim. M1
+  remains in progress, M7/SpringBoard has not started, and the iPhone 7
+  remains on iOS 12.1.4. No device or firmware state was accessed or changed.
