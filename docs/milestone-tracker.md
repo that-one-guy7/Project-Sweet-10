@@ -635,3 +635,18 @@ and source plist hashes are in
 `docs/iphone91-19h422-launchd-inventory-results.md`. M6 remains in
 progress; M7/SpringBoard has not started. The physical iPhone 7 remains on
 iOS 12.1.4; no device or firmware state was changed.
+
+
+## M6 target BackBoard loader follow-up plan (2026-11-20)
+
+The next bounded target-side evidence task is to query the iPhone9,1 / D10AP /
+19H422 shared cache for the same four BackBoard-related framework loaders
+already inventoried in the iPhone10,3 / D22AP / 20H392 donor:
+BackBoardHIDEventFoundation, BackBoardHIDEventProcessors,
+BackBoardServices, and IOMobileFramebuffer. Added
+`docs/iphone91-19h422-backboard-loader-audit-plan.md` with the exact
+read-only ipsw 3.1.749 command, the previously recorded target cache path,
+per-query output/error capture, comparison fields, and parser caveats.
+This is a collection plan only; no target loader results are claimed yet.
+M6 remains in progress and M7/SpringBoard has not started. The physical
+iPhone 7 remains on iOS 12.1.4.
