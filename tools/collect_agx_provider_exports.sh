@@ -46,11 +46,11 @@ AggregateDictionary|/System/Library/PrivateFrameworks/AggregateDictionary.framew
 CoreAnalytics|/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics
 Foundation|/System/Library/Frameworks/Foundation.framework/Foundation
 GPURawCounter|/System/Library/PrivateFrameworks/GPURawCounter.framework/GPURawCounter
-libMobileGestalt|/usr/lib/libMobileGestalt.dylib
-libSystem|/usr/lib/libSystem.B.dylib
-libcxx|/usr/lib/libc++.1.dylib
+libMobileGestalt.dylib|/usr/lib/libMobileGestalt.dylib
+libSystem.B.dylib|/usr/lib/libSystem.B.dylib
+libc++.1.dylib|/usr/lib/libc++.1.dylib
 CoreFoundation|/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
-libobjc|/usr/lib/libobjc.A.dylib
+libobjc.A.dylib|/usr/lib/libobjc.A.dylib
 PROVIDERS
 
 if ! tar -czf "$ARCHIVE" -C "$OUT" .; then
