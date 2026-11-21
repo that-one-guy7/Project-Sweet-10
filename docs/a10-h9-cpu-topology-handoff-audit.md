@@ -101,11 +101,12 @@ The implementation is not identical:
 
 The 8796 `cpu_start()` caller still invokes the hook
 ([source line 946](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/cpu.c#L946)).
-This shows that the generic CPU framework remains, but the physical
-reset-vector contract expected by the platform manager changed. The
-`IOPMGR` implementation that would explain how T8010 handles the zero
-argument is not established by these public XNU files. Do not assume the
-older T8010 PMGR accepts the newer call semantics.
+The physical caller passes zero where 7195 passed the reset-vector address,
+but the generic IOPMGR base class retains a compatibility fallback to the
+legacy one-argument virtual method in both revisions. See section 7 below:
+the generic API difference is not by itself evidence of a T8010 break.
+What remains unknown is the concrete target PMGR subclass and the firmware's
+secondary-core reset-vector setup.
 
 ## 4. H9-specific early CPU workaround is absent from the reviewed 8796 startup assembly
 
