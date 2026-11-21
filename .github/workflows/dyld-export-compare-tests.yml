@@ -15,6 +15,7 @@ on:
     paths:
       - "tools/compare_dyld_exports.py"
       - "tools/compare_dyld_imports.py"
+      - "tools/collect_agx_provider_exports.sh"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
