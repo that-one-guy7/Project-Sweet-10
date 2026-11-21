@@ -739,3 +739,25 @@ transitive T8010/H9 source dependency closure. The first hardware driver cannot
 be selected until the actual D10AP interrupt-controller and timer contracts
 are resolved. M6 remains in progress; M7/SpringBoard has not started. The
 physical iPhone 7 remains on iOS 12.1.4; no device or firmware state changed.
+
+
+## M2 H9 full-tree source audit prepared (2026-11-20)
+
+Added a read-only scanner, synthetic tests, and a full-source GitHub Actions
+workflow for the historical XNU 7195 H9 feature macros versus the selected
+XNU 8796 candidate. It records every identifier-token match in selected
+source/build files, line context, H13 macro definitions, and locally
+resolvable includes from H9.h. The scanner deliberately does not evaluate
+preprocessor branches, macro expansion, SDK/generated headers, or private
+build inputs. The workflow uploads its JSON result as an artifact; the
+full-tree scan is pending that workflow run.
+
+Also corrected the interrupt/timer evidence boundary: the static 19H422
+DeviceTree already identifies an AIC master and AIC-timebase node and the
+first register windows consumed by XNU's generic mapper. Complete IRQ
+specifier/routing, per-core delivery, EOI, runtime timebase frequency,
+counter behavior, and compatible driver implementation remain unknown.
+Do not describe the nodes as undiscovered or start a speculative driver.
+
+M6 remains in progress; M7/SpringBoard has not started. The physical iPhone 7
+remains on iOS 12.1.4. No device or firmware state was accessed or changed.
