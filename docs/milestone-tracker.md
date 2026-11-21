@@ -1139,3 +1139,33 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   remains in progress and M7 has not started. The physical iPhone 7 remains
   on iOS 12.1.4; no device, firmware, partition, security, or boot state was
   accessed or changed.
+
+
+- 2026-11-21: Reviewed the completed recursive 19H422 GUI framework filename
+  scan. It traversed 104,017 directories and 382,833 entries under the single
+  supplied target OS root with zero walk or stat errors. The only matching
+  entry was the `ExtensionFoundation.framework` directory under
+  PrivateFrameworks; the executable basename `ExtensionFoundation` was not
+  found. Sixteen other selected donor GUI framework bundle/executable names
+  had no match within that tree. The prior tool's generic `match-found`
+  status conflated a bundle-directory hit with an executable hit, so its
+  output classification is being tightened in v2 and the reviewed result
+  explicitly records `bundle-directory-only`. This is filesystem-name
+  evidence only; it does not rule out cache-only images, other volumes,
+  Cryptexes, snapshots or runtime paths.
+
+- 2026-11-21: Added a source-version strategy note for T8010. The pinned
+  XNU 8796 public tree still lacks the T8010 machine profile in the audited
+  paths, but current public XNU main has an ARM64 T8010 machine allowlist
+  entry and `ARM64_BOARD_CONFIG_T8010` / H9 block. This demonstrates the
+  gap is revision-specific, not a permanent XNU limitation. A later public
+  tree is not thereby ABI-compatible with the iOS 16.7.16 20H392 userland.
+  The Qualcomm ios-sweet comparison confirms that its Redmi Note 10 Pro port
+  uses a custom SWEET machine/platform implementation, generated ADT and
+  hardware-specific timer/PSCI adaptations; the README still lists major
+  missing hardware services and GPU support. Recommendation: retain 20H392
+  as the project userland goal for now, and compare T8010-specific source
+  across 7195, 8796 and current public main before considering a bounded
+  forward-port. M6 remains in progress; M7 has not started. The physical
+  iPhone 7 remains on iOS 12.1.4; no device, firmware, partition, security,
+  or boot state was accessed or changed.
