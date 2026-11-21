@@ -21,6 +21,7 @@
 - [iPhone9,1 19H422 target BackBoard loader audit plan](iphone91-19h422-backboard-loader-audit-plan.md)
 - [iPhone9,1 19H422 target BackBoard loader results](iphone91-19h422-backboard-loader-results.md)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
+- [iPhone9,1 AGXG9P and Metal userland audit plan](19h422-20h392-agx-metal-userland-audit-plan.md)
 - [20H392 service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
 - [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)
