@@ -1,0 +1,286 @@
+{
+  "schema": "project-sweet-10.gui-framework-loader-comparison.v1",
+  "target": {
+    "device": "iPhone9,1",
+    "board": "D10AP",
+    "build": "19H422",
+    "ios": "15.8.8"
+  },
+  "donor": {
+    "device": "iPhone10,3",
+    "board": "D22AP",
+    "build": "20H392",
+    "ios": "16.7.16"
+  },
+  "collector": {
+    "version": "3.1.749",
+    "commit": "a7dfadbcaca8375b424c12a68dae40767e5e07c1",
+    "executable": "/home/hey/ipsw-standalone/ipsw"
+  },
+  "donor_statuses": [
+    {
+      "path": "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard",
+      "status": 0
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard",
+      "status": 0
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+      "status": 0
+    }
+  ],
+  "target_image_inventory": {
+    "source": "log.txt",
+    "sha256": "d2cb1fb9e75f1d2c477c1cb7c0561cd4ec2b220b19ba96d6828ee267a9a83f3b",
+    "records": 2407,
+    "unique_indexes": 2407,
+    "unique_install_names": 2407
+  },
+  "images": {
+    "springboard_framework": {
+      "path": "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard",
+      "target": {
+        "cache_version": "4251.53.0.0.0",
+        "image_list_index": 454,
+        "loader_ref": 453,
+        "vm_size": "0x5923c000",
+        "regions": 5,
+        "regular": 198,
+        "weak": 10,
+        "flags": "prebuilt|in-cache-dylib|objc|+load|never-unload",
+        "info": "initializers|regions=5"
+      },
+      "donor": {
+        "cache_version": "4344.149.1.2",
+        "loader_ref": 637,
+        "vm_size": "0x6561c000",
+        "regions": 5,
+        "regular": 198,
+        "weak": 10,
+        "flags": "prebuilt|in-cache-dylib|objc|+load|never-unload|ro-objc|pre-2022",
+        "info": "initializers|overridable|regions=5"
+      },
+      "weak_paths_match": true,
+      "weak_paths": [
+        "/usr/lib/liblockdown.dylib",
+        "/usr/lib/libAccessibility.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/Contacts.framework/Contacts",
+        "/System/Library/Frameworks/ContactsUI.framework/ContactsUI",
+        "/System/Library/Frameworks/CoreMedia.framework/CoreMedia",
+        "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+        "/usr/lib/libutil.dylib",
+        "/System/Library/PrivateFrameworks/SiriUI.framework/SiriUI",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "regular_set_diff": "not claimed; committed 19H422 report does not preserve all 198 ordered regular rows"
+    },
+    "runningboard": {
+      "path": "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard",
+      "target": {
+        "cache_version": "618.100.42.0.0",
+        "image_list_index": 553,
+        "loader_ref": 552,
+        "vm_size": "0x52358000",
+        "regions": 5,
+        "regular": 15,
+        "weak": 5
+      },
+      "donor": {
+        "cache_version": "803.120.4",
+        "loader_ref": 1673,
+        "vm_size": "0x34f6c000",
+        "regions": 5,
+        "regular": 15,
+        "weak": 7,
+        "flags": "prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022",
+        "info": "overridable|regions=5"
+      },
+      "shared_names": 20,
+      "target_only": [],
+      "donor_only": [
+        {
+          "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "kind": "regular"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+          "kind": "weak-link"
+        }
+      ],
+      "kind_changes": [
+        {
+          "path": "/System/Library/PrivateFrameworks/PowerLog.framework/PowerLog",
+          "target": "regular",
+          "donor": "weak-link"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/UserManagement.framework/UserManagement",
+          "target": "regular",
+          "donor": "weak-link"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PlugInKit.framework/PlugInKit",
+          "target": "weak-link",
+          "donor": "regular"
+        }
+      ]
+    },
+    "runningboard_services": {
+      "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+      "target": {
+        "cache_version": "618.100.42.0.0",
+        "image_list_index": 62,
+        "loader_ref": 61,
+        "vm_size": "0x7fbac000",
+        "regions": 5,
+        "regular": 7,
+        "weak": 1
+      },
+      "donor": {
+        "cache_version": "803.120.4",
+        "loader_ref": 84,
+        "vm_size": "0x97678000",
+        "regions": 5,
+        "regular": 7,
+        "weak": 1,
+        "flags": "prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022",
+        "info": "overridable|regions=5"
+      },
+      "shared_names": 8,
+      "target_only": [],
+      "donor_only": [],
+      "kind_changes": [
+        {
+          "path": "/System/Library/Frameworks/Security.framework/Security",
+          "target": "weak-link",
+          "donor": "regular"
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+          "target": "regular",
+          "donor": "weak-link"
+        }
+      ]
+    }
+  },
+  "target_image_list_crossrefs": [
+    {
+      "donor_path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "status": "same_basename_alternate_path",
+      "target_path": "/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "index": 1093,
+      "version": "51.6.0.0.0",
+      "uuid": "2440EEE5-9988-368C-A583-90353581845C"
+    },
+    {
+      "donor_path": "/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "SystemAperture",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "ActivityKit",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "ActivityUIServices",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "PosterBoardUI",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "BacklightServices",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "BacklightServicesHost",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "PosterBoardServices",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "PosterKit",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "CoverSheetKit",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "SessionAssertion",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "BiomeLibrary",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "PointerUISystemServices",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "PaperBoardUI",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "SystemStatusUI",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "SystemApertureUI",
+      "status": "no_same_basename_image_list_record"
+    },
+    {
+      "donor_basename": "MediaExperience",
+      "status": "present",
+      "index": 194,
+      "version": "2951.1.1.1.0",
+      "uuid": "E74234E2-8F69-3B9F-84EC-B341779A2297"
+    },
+    {
+      "donor_basename": "ProactiveSuggestionClientModel",
+      "status": "present",
+      "index": 137,
+      "version": "468.23.1.0.0",
+      "uuid": "70AE19B4-D42B-3ADF-A1C2-116EFFE5A6A0"
+    },
+    {
+      "donor_basename": "ZoomServices",
+      "status": "present",
+      "index": 1548,
+      "version": "2933.45.3.0.0",
+      "uuid": "09021A27-66B8-303D-ADEF-C074069921BC"
+    },
+    {
+      "donor_basename": "Recap",
+      "status": "present",
+      "index": 2274,
+      "version": "33.20.0.0.0",
+      "uuid": "D68C9AAF-B2FD-3E09-8FD5-772C9260363F"
+    },
+    {
+      "donor_basename": "AccessibilityUtilities",
+      "status": "present",
+      "index": 120,
+      "version": "2933.45.3.0.0",
+      "uuid": "003C06DF-5450-3A49-BBEA-B6D3BCF2B7CE"
+    }
+  ],
+  "caveats": [
+    "All three donor and all three target records contain implausible Sections offsets/sizes; these fields are excluded.",
+    "No BindTargets block was supplied; absent output is not treated as an empty set.",
+    "PrebuiltLoader reference indexes are distinct from cache image-list indexes.",
+    "Cache image-list membership or non-membership does not prove filesystem presence or absence or runtime resolution.",
+    "The target 19H422 and donor 20H392 differ in both device model and OS build; no compatibility or SpringBoard-readiness conclusion follows."
+  ],
+  "device_preservation": "The physical iPhone 7 remains on iOS 12.1.4; no device or firmware state was accessed or changed."
+}
