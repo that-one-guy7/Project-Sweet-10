@@ -112,3 +112,48 @@ interpret its possible output paths:
 - [dyld image command](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/cmd/ipsw/cmd/dyld/dyld_image.go)
 - [PrebuiltLoaderSet parser](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/prebuilt.go)
 - [legacy cache-image record formatter](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/pkg/dyld/closure.go)
+
+
+## Observed target result (user-supplied)
+
+The user ran the documented command against the read-only 19H422 target
+cache. It exited with status `0` and returned a PrebuiltLoaderSet record
+for the exact image path. The record is captured in
+[the target/donor loader comparison](20h392-19h422-multitouch-loader-comparison.md).
+
+Important target-side values:
+
+- VM Size: `0x2e9f4000`.
+- Loader flags: `prebuilt|in-cache-dylib|objc|never-unload`.
+- Loader reference: `index: 1947` (not the image-list index `1948`).
+- Info flags: `initializers|regions=5`.
+- Exports trie: offset `0x025fee90`, size `0xf0d0`.
+- Five regions with `r-x`, `rw-`, and `r--` permissions.
+- Thirteen reported dependencies: ten regular and three weak-link.
+
+The target PrebuiltLoaderSet output does not print a Mach-O UUID or source
+version. The previously inspected target image inventory supplies those
+separately: version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`, image-list index `1948`.
+
+The target's printed `Sections` block contains implausibly large decoded
+offsets/sizes, as also occurred in the donor query. Those section rows are
+excluded from interpretation. This is a parser-output limitation, not
+evidence that the cached image is corrupt.
+
+The direct dependency comparison shows that 13 of the donor's 14 reported
+dependency names also appear in the target record. The donor-only row is
+`SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter`.
+The IOKit framework appears in both records but the printed install path
+differs: the target includes `Versions/A/IOKit`, while the donor output
+does not. See the comparison document for all paths and edge labels.
+
+## Next bounded inventory lookup
+
+The target loader result does not establish whether the donor-only
+`SymptomDiagnosticReporter` image is represented elsewhere in the target
+cache, or which exact target image records satisfy the 13 reported
+dependencies. The next read-only host-side check is to search the already
+generated `$HOME/19H422-dyld-images.json` inventory for the dependency
+names and report image paths, versions, and UUIDs where present. It does not
+execute or load any image.

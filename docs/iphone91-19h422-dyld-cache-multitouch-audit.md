@@ -135,3 +135,30 @@ format-dependent output interpretation are documented in
 No executable is to be copied to the device. No device, firmware, partition,
 activation, security, or boot state was accessed or changed. No proprietary
 binary, shared-cache file, or filesystem image is committed to this repository.
+
+
+## Target-native PrebuiltLoaderSet metadata
+
+The user ran `ipsw dyld image` for the exact
+`MultitouchHID.plugin/MultitouchHID` path against the mounted 19H422
+target cache. The command exited with status `0` and returned a
+PrebuiltLoaderSet record with VM Size `0x2e9f4000`, loader reference
+`index: 1947`, flags
+`prebuilt|in-cache-dylib|objc|never-unload`, Info flags
+`initializers|regions=5`, and exports trie offset `0x025fee90`,
+size `0xf0d0`. It reported five regions and 13 dependencies (ten regular,
+three weak-link). The loader reference index is distinct from the target
+cache image-list index `1948`.
+
+The target loader record has no printed UUID or source version. Those values
+remain grounded in the target JSON cache image inventory already recorded
+above: image-list index `1948`, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`.
+
+The target's loader dependency list is compared line by line with the
+20H392 donor in
+[the target/donor loader comparison](20h392-19h422-multitouch-loader-comparison.md).
+The comparison is static metadata only. It does not verify dependency
+resolution at runtime, plugin loading, IOKit attachment, or touch input.
+The displayed section-offset rows from the command are excluded because
+they contain implausibly large decoded values.
