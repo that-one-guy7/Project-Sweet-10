@@ -684,3 +684,30 @@ has not started. Static loader metadata does not prove runtime loading,
 IOKit attachment, HID event delivery, display operation, or iPhone9,1
 compatibility. The physical iPhone 7 remains on iOS 12.1.4; no device or
 firmware state was accessed or changed.
+
+
+## M6 target BackBoard loader comparison completed (2026-11-20)
+
+The four planned iPhone9,1 / D10AP / iOS 15.8.8 (19H422) target-reference
+loader queries returned all four requested framework records using the
+standalone IPSW 3.1.749 executable. Three supplied command results explicitly
+show exit status 0 and empty stderr; the BackBoardHIDEventFoundation output
+contains a valid record and empty stderr, but its explicit exit-status line
+was absent from the supplied excerpt and is not asserted.
+
+The target records contain 33 regular dependency rows, one re-export, and
+zero weak-link rows. The corresponding iPhone10,3 / D22AP / iOS 16.7.16
+(20H392) donor records contain 35 regular rows, one re-export, and zero
+weak-link rows. BackBoardServices matches exactly (12 regular plus one
+AssertionServices re-export); IOMobileFramebuffer matches exactly (four
+regular); each target HID framework has one fewer regular dependency because
+the donor lists StudyLog and the target output does not. No target-only
+dependency rows were found. This difference is not attributed to hardware:
+the source records are from different iOS releases and different devices.
+
+The exact records and row-level comparison are in
+`docs/iphone91-19h422-backboard-loader-results.md`. This completes the
+bounded four-framework target BackBoard audit only. M6 remains in progress
+for the broader userland investigation; M7/SpringBoard has not started.
+The physical iPhone 7 remains on iOS 12.1.4. No device or firmware state
+was accessed or changed.
