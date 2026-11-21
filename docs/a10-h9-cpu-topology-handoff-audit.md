@@ -123,7 +123,33 @@ rationale and relevance to the exact 20H392 product build remain unknown.
 This should stay a separate CPU-startup question, not be silently discarded
 because the legacy topology branch remains.
 
-## 5. Evidence classification
+## 5. Hurricane-specific CPU code still exists in XNU 8796
+
+The full-tree audit's three XNU 8796 `APPLEHURRICANE` occurrences are not
+all diagnostic leftovers:
+
+- `osfmk/arm64/proc_reg.h:168` retains Hurricane-specific instruction- and
+  data-cache line-size definitions (`MMU_I_CLINE=6` and `MMU_CLINE=6`,
+  i.e. 64-byte lines).
+- `osfmk/arm64/monotonic_arm64.c:174` sets the EL3 PMU counter-enable
+  contribution to zero for `APPLEHURRICANE`, matching the H9 profile's
+  `NO_MONITOR=1` declaration.
+- `osfmk/arm64/sleh.c:232` retains the `Hurricane` CPU-name string used
+  in exception diagnostics.
+
+Sources: [proc_reg.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/proc_reg.h#L164-L170),
+[monotonic_arm64.c](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/monotonic_arm64.c#L170-L180),
+and [sleh.c](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/sleh.c#L228-L240).
+
+The cache-line and PMU conditionals are meaningful retained CPU-family
+behavior, not just string matches. Together with the legacy topology branch,
+they show that XNU 8796 still has several pieces of H9-era architecture
+knowledge. But the H9 board profile itself is absent, and the source scan
+does not prove that Apple's 20H392 product build defines `APPLEHURRICANE`
+or selects these branches for any supported product. The CPU-name string
+alone is diagnostic; do not treat it as a hardware capability check.
+
+## 6. Evidence classification
 
 | Question | Finding | Status |
 |---|---|---|
