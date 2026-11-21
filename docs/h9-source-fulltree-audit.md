@@ -138,3 +138,123 @@ and [parsed target DeviceTree audit](iphone91-19h422-parsed-devicetree-audit.md)
 
 M6 remains in progress and M7/SpringBoard has not started. The physical
 iPhone 7 remains on iOS 12.1.4.
+
+
+## Full-tree scan result (2026-11-20)
+
+The pinned GitHub Actions full-source run completed successfully:
+[H9 source-closure workflow run 44864823137](https://github.com/that-one-guy7/Project-Sweet-10/actions/runs/44864823137).
+The synthetic test suite, both complete source checkouts, scanner, and JSON
+artifact upload all passed. The artifact is named
+`h9-source-closure-a379060efdcb2fbc62b600c025d39f4ca7b22ec8`; its ZIP
+SHA-256 is
+`67f292f3c983a1ee2133d39ee879a862b1f4f39484fbd3edd5778017ee78a69e`.
+
+The scanner read **3,508** candidate source/build files in XNU 7195 and
+**3,961** in XNU 8796. It extracted **12** H9 feature macros and scanned
+their identifier-token occurrences. Counts below are textual occurrences
+and unique containing paths; a source line can be a preprocessor condition,
+definition, comment, closing directive, or other plain text. They are not
+counts of compiled/active code paths.
+
+| H9 macro | XNU 7195 occurrences / files | XNU 8796 occurrences / files | Defined by XNU 8796 H13? |
+|---|---:|---:|---:|
+| `APPLEHURRICANE` | 4 / 4 | 3 / 3 | No |
+| `NO_MONITOR` | 9 / 6 | 5 / 5 | Yes |
+| `HAS_MIGSTS` | 2 / 1 | 0 / 0 | No |
+| `HAS_KTRR` | 1 / 1 | 1 / 1 | No |
+| `HAS_CPMU_L2C_EVENTS` | 2 / 2 | 0 / 0 | No |
+| `CORE_NCTRS` | 12 / 7 | 9 / 4 | Yes |
+| `CPMU_AIC_PMI` | 16 / 5 | 17 / 4 | No |
+| `__ARM_16K_PG__` | 39 / 8 | 44 / 9 | Yes |
+| `__ARM_KERNEL_PROTECT__` | 116 / 17 | 130 / 18 | No |
+| `__ARM_GLOBAL_SLEEP_BIT__` | 8 / 5 | 7 / 4 | Yes |
+| `__ARM_PAN_AVAILABLE__` | 27 / 12 | 24 / 10 | Yes |
+| `SINGLE_STEP_RETIRE_ERRATA` | 2 / 1 | 0 / 0 | No |
+
+### Interpretation of the full-tree results
+
+- **Hurricane conditionals persist, but not the T8010 profile.** The three
+  XNU 8796 occurrences of `APPLEHURRICANE` are conditionals in
+  `monotonic_arm64.c:174`, `proc_reg.h:168`, and `sleh.c:232`.
+  The historical `start.s` occurrence is not present in the candidate
+  scan, consistent with the earlier observation that the old startup
+  HID5 workaround is absent at the corresponding path.
+- **Some shared architecture features persist.** `__ARM_16K_PG__`,
+  `__ARM_GLOBAL_SLEEP_BIT__`, and `__ARM_PAN_AVAILABLE__` are defined by
+  H13 and still have generic source consumers. That is evidence that
+  generic 16K-page, global-sleep-bit, and PAN code paths remain in the
+  newer tree. It does not establish that the T8010 board uses them with
+  the H9 settings or that the corresponding A10 hardware behavior matches.
+- **The KTRR source hook remains, but H13 is a different profile.**
+  XNU 8796 still has one `HAS_KTRR` conditional in
+  `apple_arm64_common.h:51`, but H13 declares `HAS_CTRR`, not
+  `HAS_KTRR`. KTRR and CTRR must not be treated as equivalent hardware
+  features.
+- **PMU code remains conditional and has evolved.**
+  `CPMU_AIC_PMI` occurs 17 times in four XNU 8796 files, including the
+  additional `perfmon_arm64.c` path. H13 does not define this macro.
+  The textual inventory does not determine whether a product build sets
+  it or whether the A10 PMU interrupt wiring matches the newer path.
+- **The counter-count interface remains, but values are profile-specific.**
+  The H13 header defines `CORE_NCTRS=10`, while other definitions in the
+  candidate `board_config.h` include placeholder values for other
+  machine profiles. Shared code uses the macro, but the H13 value cannot
+  be adopted as an H9/T8010 configuration value by analogy.
+- **The legacy kernel-protection flag has many remaining consumers.**
+  `__ARM_KERNEL_PROTECT__` occurs 130 times in 18 candidate files,
+  including startup, CPU, VM, pmap, TLB, task, and machine-dependent code.
+  H13 does not define it. The presence of generic guarded code is not
+  permission to enable the old H9 flag: the newer tree also has separate
+  `XNU_MONITOR`, CTRR, and parameterized-pmap mechanisms, and source
+  comments describe combinations that are constrained or mutually
+  exclusive.
+- **Three H9 feature names have no textual matches in the candidate tree:**
+  `HAS_MIGSTS`, `HAS_CPMU_L2C_EVENTS`, and
+  `SINGLE_STEP_RETIRE_ERRATA`. This establishes only that the scanner
+  found no matching tokens in the selected source/build file types. It
+  does not establish that the hardware capability is absent, that Apple
+  removed support from its shipped kernels, or that no private/generated
+  replacement exists.
+- **`NO_MONITOR` is a generic selector, not a unique A10 marker.**
+  Candidate occurrences include H13, BCM2837 and VMAPPLE profile
+  definitions, a generic CPU condition, and an LLDB macro string. It
+  cannot identify a T8010 machine configuration.
+
+### Include closure and limitations
+
+The local include resolver followed **23** source/header files reachable
+from historical `H9.h`. The direct include is
+`apple_arm64_common.h`; the locally resolved chain also includes
+`apple_arm64_regs.h`, `AIC.h`, `S3cUART.h`, and
+`dockchannel.h`, plus architecture/type headers. Two includes from
+`bsd/sys/cdefs.h` remained unresolved by this limited local resolver:
+`sys/_symbol_aliasing.h` and `sys/_posix_availability.h`. They are
+reported as resolver gaps, not claimed absent from every SDK or build
+environment.
+
+The scanner does not evaluate conditional compilation, resolve macro
+expansion, reproduce compiler include flags, inspect private/generated
+build inputs, or establish a complete link dependency graph. A zero
+textual-reference result is not proof of unsupported hardware. The report
+is a repeatable source inventory that tells us where to focus manual
+review; it does not authorize copying H9 into XNU 8796 or enabling any
+feature macro.
+
+## Updated recommendation
+
+The full H9 macro search is now complete for the pinned public 7195 and
+8796 trees. The next code-level preparation remains a **manual, per-feature
+migration assessment** for the high-impact areas: Apple CPU startup/errata,
+KTRR-versus-CTRR integrity setup, PMU/AIC interrupt coupling, 16K-page and
+pmap protections, and CPU power/sleep handling. Each needs a specific
+source-level replacement or an explicit unresolved blocker; no feature
+macro should be carried forward just because its name still appears.
+
+Separately, the AIC/timebase DeviceTree nodes and first register windows
+are already known from the 19H422 static tree. The next hardware research
+must focus on interrupt specifier decoding, routing/per-core delivery,
+EOI, timer counter semantics and runtime frequency, and whether public
+XNU 8796 contains the needed AIC controller implementation or only
+generic mapping/header support. No driver implementation is justified
+until those contracts are understood.
