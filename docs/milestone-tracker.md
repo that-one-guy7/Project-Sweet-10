@@ -739,3 +739,32 @@ transitive T8010/H9 source dependency closure. The first hardware driver cannot
 be selected until the actual D10AP interrupt-controller and timer contracts
 are resolved. M6 remains in progress; M7/SpringBoard has not started. The
 physical iPhone 7 remains on iOS 12.1.4; no device or firmware state changed.
+
+
+## M1/M8 AIC controller source boundary audited (2026-11-20)
+
+The pinned public XNU 8796.141.3 tree contains an ARM64 AIC helper header
+with 32-bit read/write helpers and main-time counter offsets, and a separate
+older ARM AIC header with a broader register-name set. The ARM64
+platform-expert path maps the target DeviceTree's master interrupt-controller
+and timer register windows, but its `__arm64__` timer setup chooses empty
+callback operations and zero EOI inputs. The generic `IOInterruptController`
+framework is abstract and does not provide the SoC-specific AIC implementation.
+
+Public XNU also references `com.apple.driver.AppleInterruptController`
+in its ARM DTrace blacklist and has LLDB diagnostics that cast an object to
+`AppleInterruptController *`; these are diagnostic references, not driver
+source or proof that the bundle is present on the target 19H422 kernel.
+The ARM64 header's `AIC_BASE + 0x1000` timer comment has not been reconciled
+with the distinct target 19H422 AIC and AIC-timebase DeviceTree windows.
+Detailed boundary and exact public source links are in
+`docs/aic-controller-source-availability-audit.md`.
+
+**Next required evidence:** filter the target 19H422 KernelCache KEXT JSON for
+`AppleInterruptController`, `AppleARMPlatform`, and the `AppleT8010*`
+platform bundles; preserve their bundle/version/personality/provider/
+IONameMatch fields only. Determine whether the AIC component is a
+target-native KEXT before proposing any driver implementation. No AIC
+driver constants or register programming should be inferred from the
+generic header. The physical iPhone 7 remains on iOS 12.1.4; no device or
+firmware state was accessed or changed.
