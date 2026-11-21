@@ -55,7 +55,7 @@ The user supplied the relevant records from `ipsw kernel kexts --json`.
 |---|---|---:|---|
 | `AppleHIDTransportSPI` | `/System/Library/Extensions/AppleHIDTransport.kext/PlugIns/AppleHIDTransportSPI.kext` | 5100.32 | Personality `AppleHIDTransportDeviceSPI`; provider `AppleARMSPIDevice`; exact `IONameMatch` values include `hid-transport,k1` and `hid-transport,spi` |
 | `AppleMultitouchSPI` | `/System/Library/Extensions/AppleMultitouchSPI.kext` | 5100.27 | KEXT is present; its serialized KernelCache JSON record did not include an `io_kit_personalities` field |
-| `AppleMultitouchDriver` | `/System/Library/Extensions/AppleMultitouchDriver.kext` | 5100.27 | Several `IOHIDInterface` personalities; usage pairs include Generic Desktop/Touch Screen and Digitizers/Touch Pad identifiers; selected personalities reference the nested plugin through `IOCFPlugInTypes` |
+| `AppleMultitouchDriver` | `/System/Library/Extensions/AppleMultitouchDriver.kext` | 5100.27 | Several `IOHIDInterface` personalities; raw usage-pair identifiers include `0x0D/0x04`, `0x0D/0x20`, and `0xFF60/0x1002`; selected personalities reference the nested plugin through `IOCFPlugInTypes` |
 
 ### AppleHIDTransportSPI
 
@@ -76,11 +76,14 @@ runtime provider attachment.
 ### AppleMultitouchDriver
 
 The reported `AppleMultitouchDriver` personalities use
-`IOProviderClass = IOHIDInterface`. Their usage-pair records include:
+`IOProviderClass = IOHIDInterface`. The user-supplied raw metadata includes
+these usage-page / usage pairs:
 
-- Usage page `0x0D`, usage `0x04`.
-- Usage page `0x0D`, usage `0x20`.
-- Vendor-defined usage page `0xFF60`, usage `0x1002`.
+- `0x0D / 0x04`.
+- `0x0D / 0x20`.
+- Vendor-defined `0xFF60 / 0x1002`.
+
+This audit preserves the raw identifiers rather than adding usage labels.
 
 The supplied records for these multitouch services include
 `HIDServiceSupport = true` and an `IOCFPlugInTypes` entry referring to:
