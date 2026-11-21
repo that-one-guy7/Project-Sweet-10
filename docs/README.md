@@ -54,6 +54,7 @@
 - [ARM64 platform-interface comparison](arm64-platform-interface-comparison.md)
 - [ARM64 interrupt and timer interface audit](interrupt-timer-interface-audit.md)
 - [AIC interrupt-controller source availability audit](aic-controller-source-availability-audit.md)
+- [iPhone9,1 19H422 AIC and T8010 KEXT personality crosswalk](iphone91-19h422-aic-t8010-kext-crosswalk.md)
 - [Public iPhone9,1 stock DeviceTree artifact evidence](iphone91-stock-firmware-device-tree-evidence.md)
 - [iPhone9,1 19H422 DeviceTree structure audit](iphone91-19h422-device-tree-structure-audit.md)
 - [iPhone9,1 19H422 artifact verification](iphone91-19h422-artifact-verification.md)
