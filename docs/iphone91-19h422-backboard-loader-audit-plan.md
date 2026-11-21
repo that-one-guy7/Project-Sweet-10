@@ -111,6 +111,42 @@ Keep the installed version with the report. The project previously used
 ipsw 3.1.749; do not mix results from different versions without recording
 the difference.
 
+
+## Troubleshooting: first query attempt returned only stderr
+
+The first user-reported run produced the following file sizes:
+
+- Each of the four framework `.txt` stdout files: **0 bytes**.
+- Each of the four framework `.err` stderr files: **128 bytes**.
+- `combined-loader-report.txt`: approximately **1.2 KiB**.
+
+This is **not a successful loader inventory**. Empty stdout means no loader
+record was captured; the stderr files indicate that ipsw reported an error.
+The file sizes alone do not identify the cause, so do not change the cache
+path, substitute another image, or assume the target lacks these frameworks.
+
+The next step is to display the exact combined report already created by the
+collection command. Run this one command in Ubuntu:
+
+```sh
+cat "$HOME/19H422-backboard-loader-results/combined-loader-report.txt"
+```
+
+Paste the complete output into the Project Sweet-10 issue/chat or attach the
+`combined-loader-report.txt` file. It should contain each requested image
+path, exit status, stdout section, and exact stderr text. Use that evidence
+to diagnose the failure before rerunning any image query.
+
+If the file is not found, report the exact output of:
+
+```sh
+ls -lh "$HOME/19H422-backboard-loader-results"
+```
+
+Do not treat zero-byte stdout files as evidence that the frameworks are
+missing from the target cache. The command may have failed before image
+lookup, and the exact stderr text is required to distinguish the cases.
+
 ## What to preserve
 
 For every image that returns a loader record, record:
