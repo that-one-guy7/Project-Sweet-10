@@ -124,3 +124,13 @@ iPhone9,1.
 
 The physical iPhone 7 remains on iOS 12.1.4. No device or boot operation is
 part of this plan.
+
+
+## Results collected (2026-11-21)
+
+The user supplied successful target-side output for all three planned
+executables. See
+[the target GUI-chain Mach-O dependency results](iphone91-19h422-gui-macho-dependency-results.md)
+for the full direct install-name lists and donor comparison. The original
+capture plan above remains the reproduction procedure; no target executable
+was run.
