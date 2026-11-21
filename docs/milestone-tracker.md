@@ -36,9 +36,7 @@
   PrivateFrameworks alternate. The checker uses component-wise lstat,
   checks wrapper depths 0–2, stops at symlinks, and never opens or executes
   framework files. Fourteen synthetic tests cover path, wrapper, symlink,
-  schema, and status behavior. Actual target filesystem results remain
-  pending from the user's Ubuntu mount; cache-image-list membership is kept
-  separate from filesystem presence. M6 remains in progress; M7 has not
+  schema, and status behavior. The subsequent user-run scan checked all 18 selected exact GUI-framework paths under one target root at wrapper depths 0–2; all 18 returned not-found-under-scanned-roots, including both ExtensionFoundation path variants. This result is limited to those exact paths and scanned roots, is not a global absence claim, and does not replace the separate cache-image-list evidence. M6 remains in progress; M7 has not
   started. The physical iPhone 7 remains on iOS 12.1.4.
 
 
@@ -1079,3 +1077,16 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   startup, or SpringBoard. M6 remains in progress; M7 has not started.
   The physical iPhone 7 remains on iOS 12.1.4; no device or firmware state
   was accessed or changed.
+
+
+- 2026-11-21: Recorded the user-run 19H422 GUI-framework filesystem path scan.
+  All 18 selected exact paths returned `not-found-under-scanned-roots` under
+  the single supplied target root at wrapper depths 0–2. Both the donor
+  ExtensionFoundation Frameworks path and the target cache-inventory
+  PrivateFrameworks alternate were not found as standalone files at those
+  checked paths. This is not a global absence statement: the scan did not
+  recurse by basename or inspect other volumes/Cryptexes, and cache-image-list
+  membership remains separate from filesystem path presence. Added the raw
+  structured result and interpretation document. M6 remains in progress;
+  M7 has not started. The physical iPhone 7 remains on iOS 12.1.4; no device,
+  firmware, partition, or boot state was accessed or changed.
