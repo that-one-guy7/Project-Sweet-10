@@ -23,15 +23,15 @@ partition, boot, or restore state was accessed or changed.
 
 ## Observed export surface
 
-The supplied output contains a target block followed by an explicitly
-labelled `DONOR EXPORTS` block. The target block's own heading and the
-two parser exit-code lines were not included in the pasted excerpt. The
-target/donor interpretation below follows the order of the documented
-command, which prints the target first and donor second.
+The exact-set parser was run against the saved target and donor logs.
+The supplied result shows the parser's set-difference and metadata summary.
+The output pasted into the conversation begins at the `Target-only names`
+section, so its earlier row-count, unique-name, and duplicate-name summary
+lines are not available here.
 
-A line-by-line comparison of the supplied symbol names shows substantial
-overlap. The seven additional names visible in the donor 20H392 list, and
-not present in the supplied target 19H422 list, are:
+The parser printed an empty `Target-only names` section. It printed the
+following seven `Donor-only names`, confirming the preliminary list from
+the earlier pasted exports:
 
 | Donor-only export name | Printed kind |
 |---|---|
@@ -43,16 +43,16 @@ not present in the supplied target 19H422 list, are:
 | `_OBJC_CLASS_$_MTAHTSupport` | `regular` |
 | `_OBJC_METACLASS_$_MTAHTSupport` | `regular` |
 
-All rows shown in both pasted blocks are marked `(regular)`. No weak or
-re-export rows were visible in the supplied sections. I did not identify
-a target-only name in the pasted comparison.
+All seven donor-only rows are printed as `regular`. The parser printed
+no entries under `Names with differing printed kinds`, so it reported no
+kind-set differences for the common names. It also printed
+`Common names with different first printed addresses: 277`. These are
+cache-specific address differences, not a symbol compatibility result.
 
-**Count qualification:** exact total counts, unique-name set differences,
-duplicate rows, and parser exit statuses have not yet been independently
-verified from the two saved complete log files. The seven donor-only
-names above are preliminary observations from the user-pasted output.
-Run the automated comparison in the audit plan before treating the
-counts or the absence of target-only names as final.
+**Count qualification:** the pasted parser output does not include its
+earlier row-count, unique-name, and duplicate-name summary lines, so those
+totals are not recorded here. The set-difference result itself is explicit:
+no target-only names and seven donor-only names.
 
 ## Address interpretation
 
@@ -67,10 +67,12 @@ compatible with the other.
 
 The target 19H422 `MultitouchSupport` image exposes a broad set of
 multitouch-device, contact, path, callback, recording/playback, actuator,
-and Zephyr-related symbol names that substantially overlaps the donor
-20H392 list. The donor additionally exports the five listed
-`_MTDevice...` names and an Objective-C class/metaclass pair for
-`MTAHTSupport`.
+and Zephyr-related symbol names that overlaps the donor 20H392 list. The
+exact-set parser confirms that the target has no target-only export names
+relative to this donor comparison, while the donor has the seven listed
+additional names: five `_MTDevice...` names and an Objective-C
+class/metaclass pair for `MTAHTSupport`. The parser reported no differing
+printed kinds among common names.
 
 The extra donor exports identify a difference in the two images'
 visible exported-name surfaces. Their names alone do not establish
@@ -85,13 +87,14 @@ compatibility, code-signature validity, runtime dependency resolution,
 plugin loading, IOKit provider attachment, touch-event delivery, or
 SpringBoard stability.
 
-## Next verification
+## Remaining record detail
 
-Use the saved logs `$HOME/19H422-MultitouchSupport-exports.txt` and
-`$HOME/20H392-MultitouchSupport-exports.txt` with the exact-set parser
-in the [export audit plan](20h392-19h422-multitouchsupport-export-audit-plan.md).
-That will verify exact counts, common names, donor-only names, target-only
-names, duplicate records, and per-name export-kind differences.
+The output excerpt supplied for this update starts after the script's
+row-count, unique-name, and duplicate-name summary. Those numeric totals
+remain unrecorded. The complete command output can be retained with the
+project notes if those totals are needed for a later quantitative report.
+The set differences and common-name kind comparison are already recorded
+above.
 
 No cache file, binary, filesystem image, firmware file, or device state
 is modified or committed by this report.
