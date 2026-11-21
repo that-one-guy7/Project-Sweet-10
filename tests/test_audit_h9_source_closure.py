@@ -98,6 +98,11 @@ class H9SourceClosureTests(unittest.TestCase):
                 x["context"] == "comment"
                 for x in macros["APPLEHURRICANE"]["new_occurrences"]
             ))
+            from audit_h9_source_closure import classify_line
+            self.assertEqual(
+                "preprocessor-control",
+                classify_line("#endif /* APPLEHURRICANE */"),
+            )
             self.assertTrue(
                 any(x["include"] == "mach/machine.h"
                     for x in result["old_h9_include_closure"]["unresolved_includes"])
