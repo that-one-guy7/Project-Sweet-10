@@ -59,7 +59,7 @@ and [property inventory](../device-tree/PROPERTY_INVENTORY.md).
 |---|---|---|---|
 | Board / SoC identity | Donor is iPhone X, D22AP, A11/T8015 | Root identifies iPhone9,1 / D10AP; `/arm-io` identifies T8010 | **Target-confirmed identity**; donor is a different board and SoC |
 | Display subsystem | Donor cache/loader records include IOMobileFramebuffer, CoreGraphics, Metal, and IOSurface | `/arm-io/disp0` is `disp0,t8010`; `AppleMobileDispH9P` personality matches `disp0,t8010` through `AppleARMIODevice` | **Exact static name match confirmed**; runtime attachment and display operation unverified |
-| Touch / HID | Donor cache includes BackBoardHIDEventFoundation and BackBoardHIDEventProcessors | `AppleSamsungSPI` matches `spi-1,samsung`; `AppleHIDTransportSPI` matches `hid-transport,k1`; `AppleMultitouchDriver` has `IOHIDInterface` personalities whose plugin-type UUID matches the extracted `MultitouchHID.plugin` `CFPlugInTypes` UUID | **Exact static SPI/K1 name match and plugin type-UUID linkage**; runtime provider attachment, plugin loading, and touch delivery remain unverified |
+| Touch / HID | The 20H392 iPhone10,3 KernelCache includes `AppleHIDTransportSPI`, `AppleMultitouchSPI` (version `6140.3`), and `AppleMultitouchDriver`; its SPI personality matches `hid-transport,k1`, and its multitouch personality references plugin type UUID `0516B563-B15B-11DA-96EB-0014519758EF` | The 19H422 iPhone9,1 KernelCache includes the same named KEXT families; `AppleMultitouchSPI` is `5100.27`, and the extracted target plugin Info.plist declares the same type UUID | **Same static SPI name-match and plugin type-UUID linkage; KEXT version/personality differences are recorded**; this does not prove donor-to-target compatibility or runtime touch |
 | Backlight | Donor GUI/graphics inventory does not identify a target backlight provider | `AppleLMBacklight` personality matches `backlight,lm3539` through `AppleARMIICDevice` | **Exact static name match confirmed**; runtime attachment and backlight operation unverified |
 | IOKit provider matching | Donor contains the IOKit framework and framework dependencies | Target 19H422 JSON personality data has exact `IONameMatch` overlaps for display, Synopsys MIPI-DSI, Pinot LCD, Samsung SPI, K1 SPI HID transport, and LM3539 backlight | **Six static personality/compatible overlaps confirmed**; runtime service matching and attachment unverified |
 | BackBoard / RunningBoard services | Donor contains BackBoardServices, RunningBoardServices, RunningBoard, and SpringBoard images | No target-native provider or service equivalence follows from the DeviceTree node names | **Donor-only service evidence**; target service compatibility is unverified |
@@ -74,6 +74,24 @@ property. Its parent advertises `#address-cells = 1` and
 64-bit address/size pair or use a fixed-width register-summary heuristic.
 The parsed audit records this as a format caveat, not as a decoded hardware
 resource.
+
+## 20H392 donor KernelCache comparison
+
+The user's extracted iPhone10,3 donor KernelCache reports Darwin 22.6.0,
+`xnu-8796.142.1.703.8~1/RELEASE_ARM64_T8015`, SHA-256
+`2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221`.
+Its `AppleHIDTransportSPI` personality retains the `hid-transport,k1`
+and `hid-transport,spi` IONameMatch strings. The donor
+`AppleMultitouchDriver` personality references the same plugin type UUID
+found in the extracted 19H422 target plugin Info.plist. The donor
+`AppleMultitouchSPI` reports version `6140.3`, compared with `5100.27`
+in the target record; selected personality properties also differ.
+
+The detailed row-by-row comparison is in the
+[20H392-versus-19H422 multitouch KernelCache report](20h392-19h422-multitouch-kernelcache-comparison.md).
+This is static metadata correlation only. The donor kernel is A11/T8015,
+the target is A10/T8010, and no runtime attachment or cross-board
+compatibility has been established.
 
 ## Target IOKit personality crosswalk
 
@@ -138,30 +156,19 @@ and custom kernel handoff requirements remain separate blockers. See the
 
 ## Next host-side evidence
 
-The next bounded M6 task is to compare the target-native 19H422 multitouch
-metadata with the actual iOS 16.7.16 (20H392) donor KernelCache, while keeping
-the two hardware identities separate.
+The donor KernelCache has now been extracted and inspected. The next bounded
+host-side comparison is the donor's own
+`AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist` against
+the already inspected 19H422 target plugin. Compare the donor plugin's bundle
+ID, version, minimum OS, supported platform, type UUID, and factory UUID.
+Keep donor and target artifacts separate; a matching UUID alone does not
+establish cross-board compatibility.
 
-1. The uploaded 20H392 BuildManifest audit records the donor KernelCache
-   component name as `kernelcache.release.iphone10b` and its manifest digest.
-   The supplied standalone BuildManifest does not include the KernelCache
-   bytes, so the actual donor component's version string and KEXT records are
-   not yet verified in this repository.
-2. If the matching 20H392 IPSW is already available on the analysis computer,
-   inspect that component as a host-side file and compare the donor versions
-   and personality metadata for `AppleHIDTransport`,
-   `AppleHIDTransportSPI`, `AppleMultitouchSPI`, and
-   `AppleMultitouchDriver` against the 19H422 target report.
-3. Record differences as donor/target metadata only. The 20H392 donor is
-   iPhone X / D22AP / A11-T8015; the 19H422 target reference is
-   iPhone 7 / D10AP / A10-T8010. Similar bundle names or matching UUIDs do not
-   establish cross-board compatibility or justify copying drivers.
-4. Keep all device, firmware, and boot state unchanged. Do not install the
-   donor IPSW on the iPhone 7; this step requires only local file inspection.
-
-The next comparison is blocked only on access to the actual 20H392
-KernelCache artifact or its verified extracted path. The uploaded manifest
-alone is not enough to validate its contents.
+The donor KernelCache reports XNU
+`8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public
+candidate is `xnu-8796.141.3`; exact source-to-binary mapping is not yet
+established. The T8010 platform gap in the reviewed XNU 8796 machine
+configuration remains a separate blocker.
 
 ## Status
 
