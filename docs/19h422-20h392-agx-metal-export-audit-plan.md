@@ -98,9 +98,12 @@ IPSW="$HOME/ipsw-standalone/ipsw"
 TARGET_CACHE="$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
 DONOR_CACHE="$HOME/20H392/systemos-mnt/root/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
 OUT="$HOME/agx-metal-static-audit/export-symbols"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+COMPARATOR="$REPO_ROOT/tools/compare_dyld_exports.py"
 
 mkdir -p "$OUT"
 test -x "$IPSW" || { echo "Standalone ipsw executable not found"; exit 1; }
+test -f "$COMPARATOR" || { echo "Project comparator not found: $COMPARATOR"; exit 1; }
 test -r "$TARGET_CACHE" || { echo "Target cache is not readable"; exit 1; }
 test -r "$DONOR_CACHE" || { echo "Donor cache is not readable"; exit 1; }
 
@@ -144,7 +147,7 @@ echo "=== parser query status ==="
 cat "$OUT/query-status.tsv"
 
 for KEY in Metal CoreGraphics IOSurface IOMobileFramebuffer IOGPU IOKit IOAccelerator AGXCompilerCore MetalKit AGXPlugin AppleMetalGLRenderer; do
-  if python3 tools/compare_dyld_exports.py \
+  if python3 "$COMPARATOR" \
       --target "$OUT/19H422-$KEY.txt" \
       --donor "$OUT/20H392-$KEY.txt" \
       > "$OUT/$KEY-comparison.txt" 2> "$OUT/$KEY-comparison.err"; then
@@ -161,6 +164,39 @@ ls -lh "$HOME/agx-metal-export-logs.tar.gz"
 The command writes text logs, stderr, and query statuses only. The final
 archive is saved outside the output directory so it does not include itself.
 No shared-cache file or device is modified.
+
+### AGX plugin load-command follow-up
+
+The first export-log archive showed no `Dyld Exports` heading for the target
+AGXMetalA10 plugin and an empty `Dyld Exports` section for donor AGXMetalA11.
+To distinguish load-command presence from parser export-row output, run this
+additional read-only host-side query. It prints parsed Mach-O load-command
+metadata as JSON; it does not extract either image:
+
+```bash
+TARGET_AGX="/System/Library/Extensions/AGXMetalA10.bundle/AGXMetalA10"
+DONOR_AGX="/System/Library/Extensions/AGXMetalA11.bundle/AGXMetalA11"
+
+set +e
+"$IPSW" dyld macho "$TARGET_CACHE" "$TARGET_AGX" --loads --json \
+  > "$OUT/19H422-AGXMetalA10-loads.json" \
+  2> "$OUT/19H422-AGXMetalA10-loads.err"
+printf '19H422 AGXMetalA10 load-command exit status: %s\\n' "$?" \
+  > "$OUT/19H422-AGXMetalA10-loads.status"
+
+"$IPSW" dyld macho "$DONOR_CACHE" "$DONOR_AGX" --loads --json \
+  > "$OUT/20H392-AGXMetalA11-loads.json" \
+  2> "$OUT/20H392-AGXMetalA11-loads.err"
+printf '20H392 AGXMetalA11 load-command exit status: %s\\n' "$?" \
+  > "$OUT/20H392-AGXMetalA11-loads.status"
+set -e
+```
+
+Record whether `LC_DYLD_EXPORTS_TRIE` or legacy export-related load-command
+metadata is present, including the parser-reported data offset and size. Do
+not infer an empty export set from a missing field, and do not interpret a
+present load command as proof of usable symbols or runtime compatibility.
+Preserve the JSON and status/stderr text with the follow-up archive.
 
 ## Local comparison tool
 
