@@ -66,6 +66,7 @@
 - [Historical T8010 XNU profile CI verification](xnu-machine-history-ci.md)
 - [XNU baseline build inputs](xnu-build-inputs.md)
 - [Kernel implementation readiness gate](kernel-implementation-readiness.md)
+- [Kernel and driver implementation roadmap](driver-kernel-implementation-roadmap.md)
 - [ios-sweet patch triage](ios-sweet-patch-triage.md)
 - [ios-sunstone cross-project comparison](ios-sunstone-comparison.md)
 - [ios-qemu 20H392 compatibility reference](ios-qemu-reference.md)
