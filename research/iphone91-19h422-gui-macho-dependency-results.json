@@ -1,0 +1,156 @@
+{
+  "schema": "project-sweet-10.gui-chain-macho-dependencies.v1",
+  "inspected_at": "2026-11-21",
+  "source": "User-supplied Ubuntu terminal output",
+  "toolchain": {
+    "llvm_objdump": "Ubuntu LLVM version 18.1.3",
+    "commands": [
+      "file",
+      "llvm-objdump --macho --dylibs-used",
+      "llvm-objdump --macho --rpaths"
+    ]
+  },
+  "common_file_identification": {
+    "format": "Mach-O 64-bit arm64 executable",
+    "flags": [
+      "NOUNDEFS",
+      "DYLDLINK",
+      "TWOLEVEL",
+      "PIE"
+    ],
+    "note": "This is file-format and CPU-architecture metadata only; it does not establish ABI, platform minimum, signature validity, loadability, or runtime compatibility."
+  },
+  "executables": {
+    "backboardd": {
+      "path": "root/usr/libexec/backboardd",
+      "dependency_count": 43,
+      "regular_dependency_count": 42,
+      "weak_dependencies": [
+        {
+          "path": "/usr/appleinternal/lib/liblinkguard.dylib",
+          "kind": "weak",
+          "compatibility_version": "1.0.0",
+          "current_version": "16.0.0"
+        }
+      ],
+      "regular_dependencies": [
+        "/System/Library/PrivateFrameworks/StudyLog.framework/StudyLog",
+        "/System/Library/PrivateFrameworks/ButtonResolver.framework/ButtonResolver",
+        "/System/Library/PrivateFrameworks/Haptics.framework/Haptics",
+        "/System/Library/PrivateFrameworks/BiometricKit.framework/BiometricKit",
+        "/usr/lib/libsp.dylib",
+        "/System/Library/PrivateFrameworks/CrashReporterSupport.framework/CrashReporterSupport",
+        "/usr/lib/liblockdown.dylib",
+        "/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer",
+        "/System/Library/PrivateFrameworks/HangTracer.framework/HangTracer",
+        "/System/Library/PrivateFrameworks/WatchdogClient.framework/WatchdogClient",
+        "/System/Library/PrivateFrameworks/CoreAccessories.framework/CoreAccessories",
+        "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+        "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+        "/System/Library/PrivateFrameworks/BackBoardHIDEventFoundation.framework/BackBoardHIDEventFoundation",
+        "/System/Library/PrivateFrameworks/BackBoardHIDEventProcessors.framework/BackBoardHIDEventProcessors",
+        "/System/Library/PrivateFrameworks/BoardServices.framework/BoardServices",
+        "/System/Library/Frameworks/Metal.framework/Metal",
+        "/System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary",
+        "/System/Library/Frameworks/AVFoundation.framework/AVFoundation",
+        "/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices",
+        "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+        "/System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness",
+        "/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics",
+        "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+        "/System/Library/Frameworks/CoreMotion.framework/CoreMotion",
+        "/System/Library/Frameworks/CoreText.framework/CoreText",
+        "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+        "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+        "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+        "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+        "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+        "/System/Library/Frameworks/IOSurface.framework/IOSurface",
+        "/usr/lib/libAccessibility.dylib",
+        "/usr/lib/libMobileGestalt.dylib",
+        "/System/Library/PrivateFrameworks/ProgressUI.framework/ProgressUI",
+        "/System/Library/Frameworks/Security.framework/Security",
+        "/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration",
+        "/usr/lib/libobjc.A.dylib",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation"
+      ],
+      "rpaths": []
+    },
+    "runningboardd": {
+      "path": "root/usr/libexec/runningboardd",
+      "dependency_count": 6,
+      "regular_dependency_count": 6,
+      "weak_dependencies": [],
+      "regular_dependencies": [
+        "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard",
+        "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+        "/usr/lib/libobjc.A.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation"
+      ],
+      "rpaths": []
+    },
+    "SpringBoard": {
+      "path": "root/System/Library/CoreServices/SpringBoard.app/SpringBoard",
+      "dependency_count": 4,
+      "regular_dependency_count": 4,
+      "weak_dependencies": [],
+      "regular_dependencies": [
+        "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard",
+        "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "/usr/lib/libobjc.A.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "rpaths": [
+        "@executable_path/Frameworks"
+      ]
+    }
+  },
+  "comparison_to_20H392_donor": {
+    "backboardd": {
+      "target_regular_count": 42,
+      "donor_regular_count": 45,
+      "exact_shared_regular_install_names": 42,
+      "donor_only_regular_install_names": [
+        "/System/Library/PrivateFrameworks/CarKit.framework/CarKit",
+        "/System/Library/PrivateFrameworks/SystemWake.framework/SystemWake",
+        "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking"
+      ],
+      "target_only_regular_install_names": [],
+      "named_weak_install_name_shared_by_direct_macho_inventory": "/usr/appleinternal/lib/liblinkguard.dylib",
+      "donor_prebuilt_loader_note": "The separate 20H392 ipsw PrebuiltLoaderSet report contains an unnamed weak-link marker at index 32767. Its install name is unresolved in that report and is not assumed to be the named liblinkguard path."
+    },
+    "runningboardd": {
+      "target_regular_count": 6,
+      "donor_regular_count": 6,
+      "exact_shared_regular_install_names": 6,
+      "same_install_name_set": true,
+      "target_rpaths": [],
+      "donor_rpaths": []
+    },
+    "SpringBoard": {
+      "target_regular_count": 4,
+      "donor_regular_count": 4,
+      "exact_shared_regular_install_names": 4,
+      "same_install_name_set": true,
+      "target_rpaths": [
+        "@executable_path/Frameworks"
+      ],
+      "donor_rpaths": [
+        "@executable_path/Frameworks"
+      ]
+    }
+  },
+  "evidence_limits": [
+    "These are direct Mach-O load-command install names, not recursive dependency closure.",
+    "file identification does not report or establish LC_BUILD_VERSION, minimum OS, signing, entitlements, or runtime loadability.",
+    "Install-name presence in a load command does not prove that the dependency exists in the target filesystem or shared cache.",
+    "An rpath is a loader search-path declaration, not proof that the directory exists or is used.",
+    "19H422 is the stock iPhone9,1 iOS 15.8.8 reference; 20H392 is the iPhone10,3 iOS 16.7.16 donor reference.",
+    "These static comparisons do not establish iOS 16 compatibility or SpringBoard readiness on iPhone9,1."
+  ]
+}
