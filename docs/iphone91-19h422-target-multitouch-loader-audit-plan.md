@@ -182,8 +182,15 @@ The complete side-by-side comparison is recorded in
 
 This closes the selected image-list inventory check only. It does not
 establish binary compatibility, dependency resolution, plugin loading,
-or hardware behavior. The next bounded host-side research task is to inspect
-the loader metadata for the target and donor `MultitouchSupport` images
-and compare it with the existing target/donor `AppleMultitouchSPI` and
-`AppleHIDTransportSPI` KernelCache records. Keep cache image-list
-membership, loader edges, KEXT metadata, and runtime behavior separate.
+or hardware behavior. The target/donor `MultitouchSupport` loader records
+are now also captured in
+[the MultitouchSupport loader comparison](20h392-19h422-multitouchsupport-loader-comparison.md).
+The donor lists one additional regular dependent-loader row,
+`/usr/lib/libc++.1.dylib`, which is not listed in the target record.
+
+The next bounded host-side check is to search both existing read-only
+dyld image inventories for the exact `/usr/lib/libc++.1.dylib` image
+record and compare its index, version, and UUID where present. This will
+distinguish an additional donor loader edge from target cache-image-list
+absence. Keep cache image-list membership, loader edges, KEXT metadata,
+and runtime behavior separate.
