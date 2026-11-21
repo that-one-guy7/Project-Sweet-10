@@ -25,9 +25,24 @@ The reference userland has iPhone X identity and interaction assumptions. ios-sw
 
 This is a research inventory, not an implementation or a claim that these services can be made compatible.
 
+## Extracted donor KernelCache identity
+
+The user subsequently extracted the iPhone10,3 KernelCache from the complete
+20H392 IPSW and inspected it with ipsw 3.1.749. The observed identity is:
+
+- Darwin 22.6.0.
+- XNU `8796.142.1.703.8~1`.
+- Kernel target `RELEASE_ARM64_T8015`.
+- SHA-256:
+  `2ec297bac95bcba01046fd0148e97e7e5885c05a6c18827f39f534ba375c1221`.
+
+This is an observed iPhone X donor binary identity. The repository's pinned
+public XNU candidate `xnu-8796.141.3` is not claimed to be the exact source
+revision for this KernelCache; source-to-binary correspondence remains open.
+
 ## Source-derived versus unverified
 Source-derived: ios-sweet identifies its userland as iPhone X 16.7.16 (20H392), and its device as iPhone X (iPhone10,3 / D22AP).
 
-Not yet verified: the exact Darwin kernel version embedded in the 20H392 iPhone X image, the exact XNU source commit corresponding to that kernel, and whether the selected public XNU source baseline is build-compatible with that userland.
+Still not verified: the exact public XNU source commit corresponding to the extracted 20H392 kernel, and whether the selected public XNU source baseline is build-compatible with that userland.
 
 Do not treat a matching major XNU family number as proof of an exact kernel/userland match.
