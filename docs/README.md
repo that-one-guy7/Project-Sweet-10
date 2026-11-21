@@ -29,6 +29,7 @@
 - [iPhone9,1 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md)
 - [iPhone9,1 19H422 AIC and T8010 KEXT metadata](iphone91-19h422-aic-kext-inventory.md)
 - [19H422 / 20H392 AIC and T8010 KEXT comparison plan](20h392-19h422-aic-t8010-kext-comparison.md)
+- [19H422 / 20H392 AIC and T8010 KEXT comparison results](20h392-19h422-aic-t8010-kext-comparison-results.md)
 - [KernelCache versus nested plugin metadata boundary](ipsw-kernelcache-plugin-metadata-boundary.md)
 - [iPhone9,1 19H422 IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md)
 - [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
