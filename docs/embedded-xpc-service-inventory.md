@@ -16,9 +16,11 @@ directories. By default it discovers directory names ending in \`.xpc\` or
 inventory \`.app\` bundles themselves unless explicitly requested with
 \`--suffix .app\`.
 
-No target or donor embedded-bundle result is recorded in this plan yet. The
-next step is to run the tool against the already-mounted host-side roots and
-review the resulting sanitized JSON before drawing any comparison.
+The 19H422 and 20H392 inventories have now been collected and compared. The
+recorded aggregate findings, input hashes, duplicate-identifier handling,
+metadata differences, MachServices declarations, and evidence limitations
+are documented in [the comparison results](embedded-xpc-service-comparison-results.md).
+The reusable JSON comparator is `tools/compare_embedded_services.py`.
 
 ## Input roots
 
