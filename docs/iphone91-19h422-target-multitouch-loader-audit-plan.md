@@ -148,12 +148,32 @@ The IOKit framework appears in both records but the printed install path
 differs: the target includes `Versions/A/IOKit`, while the donor output
 does not. See the comparison document for all paths and edge labels.
 
-## Next bounded inventory lookup
+## Completed target dependency image inventory lookup
 
-The target loader result does not establish whether the donor-only
-`SymptomDiagnosticReporter` image is represented elsewhere in the target
-cache, or which exact target image records satisfy the 13 reported
-dependencies. The next read-only host-side check is to search the already
-generated `$HOME/19H422-dyld-images.json` inventory for the dependency
-names and report image paths, versions, and UUIDs where present. It does not
-execute or load any image.
+The user searched the existing read-only
+`$HOME/19H422-dyld-images.json` inventory for the selected dependency names.
+Seven relevant image records were returned: SymptomDiagnosticReporter,
+WirelessDiagnostics, CoreAccessories, CoreAnalytics, MultitouchSupport,
+IOKit, and ProtocolBuffer. The most important result is that target
+SymptomDiagnosticReporter exists in the cache image list at index 1455,
+version `174.140.2.0.0`, UUID
+`ED77A600-C0BE-3240-9693-BF5238095816`, even though the target
+MultitouchHID PrebuiltLoaderSet record does not list it as a direct
+dependency.
+
+The other six selected image records, their full paths, versions, and
+UUIDs, are recorded in the
+[target dependency image inventory](iphone91-19h422-multitouch-dependency-image-inventory.md).
+A broad `IOKit.framework` substring search also returned CoreAudioKit;
+that is a separate framework and not a second IOKit result.
+
+This confirms cache image-list representation only. It does not prove
+standalone filesystem presence, runtime dependency resolution, successful
+loading, or transitive dependency closure.
+
+## Next bounded inventory comparison
+
+Run the equivalent selected-name lookup against the existing read-only
+donor inventory `$HOME/20H392-dyld-images.json`. Compare the target and
+donor paths, versions, and UUIDs for the seven image records. This remains
+static cache metadata research, not a compatibility or runtime verdict.
