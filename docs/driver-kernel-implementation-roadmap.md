@@ -158,7 +158,12 @@ H9 settings. Three legacy macro names had no textual matches in the scanned
 8796 candidate files; that is not proof of hardware absence or complete
 removal. See [the full-tree H9 audit](h9-source-fulltree-audit.md).
 
-The next work is manual per-feature migration review: classify the source
-replacement or unresolved blocker for CPU startup/errata, KTRR-versus-CTRR,
-PMU/AIC coupling, page/pmap protection, and sleep/power paths. Do not copy
-H9.h or enable old flags based on text matches. K2 remains open.
+A first manual classification is now recorded in
+[h9-t8010-migration-risk-classification.md](h9-t8010-migration-risk-classification.md).
+It identifies CPU startup/topology and KTRR-versus-CTRR as critical unresolved
+contracts; PMU/AIC, page/pmap protection, sleep/timebase, and historical
+errata as high-risk; and the L2 PMU-event macro as unresolved. The review
+confirms that H13's T8101 profile is a contrast case, not an H9 replacement.
+This is source-level classification only; it does not close the transitive
+preprocessor/build-input review or establish iPhone9,1 runtime behavior.
+Do not copy H9.h or enable old flags based on text matches. K2 remains open.
