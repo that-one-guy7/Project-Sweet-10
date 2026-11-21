@@ -220,7 +220,7 @@ It does not list `libc++.1.dylib`.
 
 The separate target cache image inventory identifies MultitouchSupport
 at image-list index 1249, version `5100.27.0.0.0`, UUID
-`0EAF98B3-8D31-3A90-A578-1787797B9467` [NOTE: verify UUID exact].
+`0EAF98B3-8D31-3A90-A578-1787797B9467`.
 
 The side-by-side target/donor loader fields, exact region rows, dependency
 lists, and parser caveat are recorded in
