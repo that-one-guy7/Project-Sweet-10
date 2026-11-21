@@ -38,16 +38,28 @@ This only asks `file` and `llvm-objdump` to read the three mounted files'
 Mach-O metadata. It does not execute the files or change the mounted image.
 
 ```bash
-set -euo pipefail
+set -uo pipefail
 
 ROOT="$HOME/19H422-full-fs-mount"
 OUT="$HOME/sweet10-19H422-gui-macho-dependencies.txt"
 
-command -v file
-command -v llvm-objdump
-llvm-objdump --version
+run_reported() {
+  printf '\n$'
+  printf ' %q' "$@"
+  printf '\n'
+  if "$@"; then
+    STATUS=0
+  else
+    STATUS=$?
+  fi
+  printf '[exit status: %s]\n' "$STATUS"
+}
 
 {
+  run_reported command -v file
+  run_reported command -v llvm-objdump
+  run_reported llvm-objdump --version
+
   for REL in \
     "root/usr/libexec/backboardd" \
     "root/usr/libexec/runningboardd" \
@@ -61,9 +73,9 @@ llvm-objdump --version
       continue
     fi
 
-    file "$PATH_TO_FILE"
-    llvm-objdump --macho --dylibs-used "$PATH_TO_FILE"
-    llvm-objdump --macho --rpaths "$PATH_TO_FILE"
+    run_reported file "$PATH_TO_FILE"
+    run_reported llvm-objdump --macho --dylibs-used "$PATH_TO_FILE"
+    run_reported llvm-objdump --macho --rpaths "$PATH_TO_FILE"
   done
 } > "$OUT" 2>&1
 
