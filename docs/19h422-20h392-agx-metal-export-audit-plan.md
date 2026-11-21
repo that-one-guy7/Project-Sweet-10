@@ -5,17 +5,17 @@
 This plan defines the next bounded, read-only comparison after the graphics
 PrebuiltLoader work:
 
-- Target reference: iPhone 7 \`iPhone9,1\` / D10AP / A10-T8010,
-  iOS 15.8.8 build \`19H422\`.
-- Donor reference: iPhone X \`iPhone10,3\` / D22AP / A11-T8015,
-  iOS 16.7.16 build \`20H392\`.
+- Target reference: iPhone 7 `iPhone9,1` / D10AP / A10-T8010,
+  iOS 15.8.8 build `19H422`.
+- Donor reference: iPhone X `iPhone10,3` / D22AP / A11-T8015,
+  iOS 16.7.16 build `20H392`.
 - Physical iPhone 7: remains on iOS 12.1.4.
 
 The procedure reads the existing dyld shared caches on the Ubuntu host and
 saves parser text output. It does not extract a Mach-O image, run an iOS
 binary, load a KEXT, connect to the phone, or change firmware, partitions,
 security state, or boot state. The helper in
-\`tools/compare_dyld_exports.py\` reads only the saved text logs.
+`tools/compare_dyld_exports.py` reads only the saved text logs.
 
 This work asks whether selected target and donor images expose the same
 printed export names and kinds. It does not claim that matching export names
@@ -25,10 +25,10 @@ have matching implementations or ABI.
 
 The previous M5 graphics investigation recorded:
 
-- Target \`AGXG9P\` / \`gpu,t8010\` metadata and its
-  \`AGXMetalA10\` plugin image.
-- Donor \`AGXG10P\` / \`gpu,t8015\` metadata and its
-  \`AGXMetalA11\` plugin image.
+- Target `AGXG9P` / `gpu,t8010` metadata and its
+  `AGXMetalA10` plugin image.
+- Donor `AGXG10P` / `gpu,t8015` metadata and its
+  `AGXMetalA11` plugin image.
 - Eleven paired graphics loader records, including the generation-specific
   A10/A11 plugin pair.
 - Four donor-only typed dependency edges in the donor Metal/CoreGraphics
@@ -36,25 +36,25 @@ The previous M5 graphics investigation recorded:
   present in both caches.
 
 Loader dependency names are not a substitute for exported-symbol metadata.
-The next narrow comparison therefore inspects the \`Dyld Exports\` section
+The next narrow comparison therefore inspects the `Dyld Exports` section
 for the exact cached images already identified in the two full image lists.
 
 ## Parser behavior and pin
 
-The repository's recorded standalone \`ipsw\` version is 3.1.749, build
-commit \`a7dfadbcaca8375b424c12a68dae40767e5e07c1\`.
+The repository's recorded standalone `ipsw` version is 3.1.749, build
+commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1`.
 
-At that pinned \`ipsw\` source revision:
+At that pinned `ipsw` source revision:
 
-- Command form: \`ipsw dyld macho <DSC> <DYLIB>\`.
-- \`--symbols\` requests symbol output.
-- Global \`-V\` enables verbose output.
-- The command prints \`Dyld Exports\` when the cached Mach-O has a non-empty
-  \`LC_DYLD_EXPORTS_TRIE\` and verbose mode is enabled.
-- It calls \`m.DyldExports()\` and prints each parsed export entry.
-- Do not pass \`--extract\`; this audit needs only parser output.
+- Command form: `ipsw dyld macho <DSC> <DYLIB>`.
+- `--symbols` requests symbol output.
+- Global `-V` enables verbose output.
+- The command prints `Dyld Exports` when the cached Mach-O has a non-empty
+  `LC_DYLD_EXPORTS_TRIE` and verbose mode is enabled.
+- It calls `m.DyldExports()` and prints each parsed export entry.
+- Do not pass `--extract`; this audit needs only parser output.
 
-The pinned \`go-macho\` dependency is v1.1.296. Its \`TrieExport.String()\`
+The pinned `go-macho` dependency is v1.1.296. Its `TrieExport.String()`
 method prints an address, the parser's type/re-export description in
 parentheses, and the symbol name. The comparison helper preserves that
 parenthesized text verbatim as the row's kind field.
@@ -73,17 +73,17 @@ install paths.
 
 | Key | Target 19H422 image | Donor 20H392 image |
 |---|---|---|
-| Metal | \`/System/Library/Frameworks/Metal.framework/Metal\` | Same install path |
-| CoreGraphics | \`/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics\` | Same install path |
-| IOSurface | \`/System/Library/Frameworks/IOSurface.framework/IOSurface\` | Same install path |
-| IOMobileFramebuffer | \`/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer\` | Same install path |
-| IOGPU | \`/System/Library/PrivateFrameworks/IOGPU.framework/IOGPU\` | Same install path |
-| IOKit | \`/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit\` | Same install path |
-| IOAccelerator | \`/System/Library/PrivateFrameworks/IOAccelerator.framework/IOAccelerator\` | Same install path |
-| AGXCompilerCore | \`/System/Library/PrivateFrameworks/AGXCompilerCore.framework/AGXCompilerCore\` | Same install path |
-| MetalKit | \`/System/Library/Frameworks/MetalKit.framework/MetalKit\` | Same install path |
-| AGXPlugin | \`/System/Library/Extensions/AGXMetalA10.bundle/AGXMetalA10\` | \`/System/Library/Extensions/AGXMetalA11.bundle/AGXMetalA11\` |
-| AppleMetalGLRenderer | \`/System/Library/Extensions/AppleMetalGLRenderer.bundle/AppleMetalGLRenderer\` | Same install path |
+| Metal | `/System/Library/Frameworks/Metal.framework/Metal` | Same install path |
+| CoreGraphics | `/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics` | Same install path |
+| IOSurface | `/System/Library/Frameworks/IOSurface.framework/IOSurface` | Same install path |
+| IOMobileFramebuffer | `/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer` | Same install path |
+| IOGPU | `/System/Library/PrivateFrameworks/IOGPU.framework/IOGPU` | Same install path |
+| IOKit | `/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit` | Same install path |
+| IOAccelerator | `/System/Library/PrivateFrameworks/IOAccelerator.framework/IOAccelerator` | Same install path |
+| AGXCompilerCore | `/System/Library/PrivateFrameworks/AGXCompilerCore.framework/AGXCompilerCore` | Same install path |
+| MetalKit | `/System/Library/Frameworks/MetalKit.framework/MetalKit` | Same install path |
+| AGXPlugin | `/System/Library/Extensions/AGXMetalA10.bundle/AGXMetalA10` | `/System/Library/Extensions/AGXMetalA11.bundle/AGXMetalA11` |
+| AppleMetalGLRenderer | `/System/Library/Extensions/AppleMetalGLRenderer.bundle/AppleMetalGLRenderer` | Same install path |
 
 If any command reports that an image is not in its cache, preserve the
 error and status. Do not replace the path with a guessed image name.
@@ -93,7 +93,7 @@ error and status. Do not replace the path with a guessed image name.
 Run this from the repository root after confirming the two already-mounted
 cache paths are readable:
 
-\`\`\`bash
+```bash
 IPSW="$HOME/ipsw-standalone/ipsw"
 TARGET_CACHE="$HOME/19H422-full-fs-mount/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
 DONOR_CACHE="$HOME/20H392/systemos-mnt/root/root/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
@@ -156,7 +156,7 @@ done
 
 tar -czf "$HOME/agx-metal-export-logs.tar.gz" -C "$OUT" .
 ls -lh "$HOME/agx-metal-export-logs.tar.gz"
-\`\`\`
+```
 
 The command writes text logs, stderr, and query statuses only. The final
 archive is saved outside the output directory so it does not include itself.
@@ -167,11 +167,11 @@ No shared-cache file or device is modified.
 After the parser logs have been generated, the helper can also be run for a
 single pair:
 
-\`\`\`bash
+```bash
 python3 tools/compare_dyld_exports.py \
   --target "$HOME/agx-metal-static-audit/export-symbols/19H422-Metal.txt" \
   --donor "$HOME/agx-metal-static-audit/export-symbols/20H392-Metal.txt"
-\`\`\`
+```
 
 The tool reports:
 
@@ -181,7 +181,7 @@ The tool reports:
 - Common names whose parser-printed kind multisets differ.
 - Common names whose first printed addresses differ.
 
-A missing \`Dyld Exports\` section or a section with no parsed rows is a
+A missing `Dyld Exports` section or a section with no parsed rows is a
 non-zero parser/evidence error. It is not silently converted into an empty
 export set. Query exit statuses must also be reviewed separately.
 
@@ -205,9 +205,9 @@ export set. Query exit statuses must also be reviewed separately.
 
 ## Expected handoff
 
-Upload \`agx-metal-export-logs.tar.gz\` from the Ubuntu host. The archive should
+Upload `agx-metal-export-logs.tar.gz` from the Ubuntu host. The archive should
 contain only text logs, stderr files, comparison summaries, and
-\`query-status.tsv\`; it must not contain firmware images, cache binaries,
+`query-status.tsv`; it must not contain firmware images, cache binaries,
 device identifiers, or personal backups.
 
 The next report will compare the observed target/donor export names and kinds
