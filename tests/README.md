@@ -70,3 +70,8 @@ executes bundle binaries. Synthetic tests cover bundle discovery, multiple
 roots, service/provider indexing, extension metadata, malformed/missing
 plists, unsafe executable names, symlinks, and source-file preservation. This
 is static bundle metadata, not evidence of runtime service registration.
+
+
+The first supplied 19H422 target and 20H392 donor inventory run is summarized
+in `docs/embedded-xpc-service-results.md`. These are actual sanitized plist
+reports, separate from the synthetic fixtures used by the unit tests.

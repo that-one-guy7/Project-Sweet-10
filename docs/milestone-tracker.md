@@ -971,8 +971,34 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   hashes, and indexes explicitly declared MachServices. It records missing,
   invalid, unreadable, and symlinked plist cases instead of treating them as
   empty metadata. Twelve synthetic tests passed locally; CI will run the full
-  host-side suite. No real 19H422 or 20H392 embedded-bundle results are claimed
-  yet. This is static plist metadata only, not proof of service launch,
-  registration, clients, runtime compatibility, or SpringBoard. The physical
-  iPhone 7 remains on iOS 12.1.4; no device or firmware state was accessed
-  or changed.
+  host-side suite. At the time this inventory tool was added, no actual
+  19H422 or 20H392 embedded-bundle results had been recorded; the later
+  collection and comparison are documented in the entry below. This is
+  static plist metadata only, not proof of service launch, registration,
+  clients, runtime compatibility, or SpringBoard. The physical iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was accessed or changed.
+
+
+- 2026-11-21: Recorded and independently checked the uploaded embedded-bundle
+  inventories for target iPhone9,1 / D10AP iOS 15.8.8 build 19H422 and donor
+  iPhone10,3 / D22AP iOS 16.7.16 build 20H392. The target report contains 719
+  candidates (527 .appex, 192 .xpc; 715 parsed, four missing Info.plists,
+  zero scan errors). The donor report contains 855 candidates (629 .appex,
+  226 .xpc; 851 parsed, four missing Info.plists, zero scan errors), including
+  847 records in root_0 and eight .xpc records in root_1. For path comparison,
+  repeated leading root/ wrapper components were stripped from relative bundle
+  paths while retaining suffixes; this yielded 659 unambiguous common paths,
+  60 target-only paths, and 196 donor-only paths. Of the common paths, 656
+  MinimumOSVersion values change from 15.8 to 16.7; one package type changes
+  (XPC! to BNDL), one extension point identifier changes, two principal-class
+  values change, and the donor CAReportingService.xpc declares two
+  MachServices names not present in the target report. No common-path change
+  was found for bundle identifier, executable filename/presence state, or
+  supported platforms. Bundle identifiers are not unique keys here: 82 target
+  and 106 donor identifiers appear twice, mostly due to AppPlaceholders and
+  installed-app copies. The result archive contains the two uploaded JSON
+  files byte-for-byte. This is allowlisted Info.plist metadata only; it does
+  not prove service launch/registration, client relationships, binary
+  loadability, runtime compatibility, kernel boot, or SpringBoard. M6 remains
+  in progress and M7/SpringBoard has not started; the physical iPhone 7
+  remains on iOS 12.1.4.
