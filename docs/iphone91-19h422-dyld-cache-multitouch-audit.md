@@ -162,3 +162,39 @@ The comparison is static metadata only. It does not verify dependency
 resolution at runtime, plugin loading, IOKit attachment, or touch input.
 The displayed section-offset rows from the command are excluded because
 they contain implausibly large decoded values.
+
+
+## Selected MultitouchHID dependency image records
+
+A follow-up read-only search of the target JSON image inventory
+`$HOME/19H422-dyld-images.json` found the selected loader dependency
+images at these image-list records:
+
+| Image | Index | Version | UUID |
+|---|---:|---|---|
+| SymptomDiagnosticReporter | 1455 | `174.140.2.0.0` | `ED77A600-C0BE-3240-9693-BF5238095816` |
+| WirelessDiagnostics | 6 | `954.1.0.0.0` | `0811A81D-68D5-3FFF-AC31-635D0FE0D732` |
+| CoreAccessories | 343 | `672.140.4.0.0` | `7C035F3B-B050-3B16-99B8-1E75BBEFA7DF` |
+| CoreAnalytics | 262 | `155.140.4.0.0` | `742D05D9-7082-307B-A1AE-8D72120856CA` |
+| MultitouchSupport | 1249 | `5100.27.0.0.0` | `0EAF98B3-8D31-3A90-A578-1787797B9467` |
+| IOKit | 71 | `1955.140.2.0.0` | `4AA27953-BAC7-3BCC-A036-2E0CA754907F` |
+| ProtocolBuffer | 186 | `288.32.9.15.1` | `A1947EB8-542F-3676-B3CC-EDD3B628B96F` |
+
+The full paths and evidence interpretation are recorded in the
+[target dependency image inventory](iphone91-19h422-multitouch-dependency-image-inventory.md).
+
+This specifically resolves the earlier ambiguity around
+SymptomDiagnosticReporter: it is **not listed as a direct dependency** by
+the target MultitouchHID PrebuiltLoaderSet record, but it **is present as
+an image-list entry** in the target dyld cache. The donor-only difference
+is therefore a loader-edge difference, not evidence that the target cache
+lacks the framework.
+
+The query for `IOKit.framework` also returned a CoreAudioKit substring
+match at index 732. CoreAudioKit is separate; the relevant IOKit image is
+the exact `IOKit.framework/Versions/A/IOKit` record at index 71.
+
+These cache image-list records do not prove runtime dependency resolution,
+standalone filesystem presence, transitive dependency closure, or plugin
+loading. The next static comparison is the equivalent selected-name lookup
+against the donor 20H392 cache inventory.
