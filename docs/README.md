@@ -32,6 +32,7 @@
 - [20H392 / 19H422 MultitouchHID loader comparison](20h392-19h422-multitouch-loader-comparison.md)
 - [20H392 / 19H422 MultitouchHID dependency image comparison](20h392-19h422-multitouch-dependency-image-comparison.md)
 - [20H392 / 19H422 MultitouchSupport loader comparison](20h392-19h422-multitouchsupport-loader-comparison.md)
+- [20H392 / 19H422 libc++ cache image comparison](20h392-19h422-libcxx-cache-image-comparison.md)
 - [20H392 donor dyld shared-cache multitouch image audit](20h392-dyld-cache-multitouch-audit.md)
 - [20H392 donor versus 19H422 target multitouch KernelCache comparison](20h392-19h422-multitouch-kernelcache-comparison.md)
 - [20H392 donor Multitouch HID plugin metadata audit](20h392-multitouch-plugin-audit.md)

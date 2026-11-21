@@ -228,3 +228,25 @@ lists, and parser caveat are recorded in
 The displayed Sections values are excluded because they contain
 implausibly large decoded offsets/sizes. This remains static loader metadata;
 runtime resolution, loading, and touch operation are unverified.
+
+
+## Target libc++ cache image record
+
+The user searched the exact image path
+`/usr/lib/libc++.1.dylib` in the existing read-only 19H422 dyld image
+inventory. Exactly one record was returned:
+
+| Field | Target 19H422 |
+|---|---|
+| Image-list index | 150 |
+| Path | `/usr/lib/libc++.1.dylib` |
+| Version | `1300.36.0.0.0` |
+| UUID | `16BE14F2-A677-3DF1-984D-BBAB893EE3B9` |
+
+This confirms that libc++ is represented in the target dyld cache image
+list. It does not change the observation that the target MultitouchSupport
+PrebuiltLoaderSet output does not list libc++ as a direct dependent-loader
+row. Cache image-list membership and an individual image's dependent-loader
+edges are separate evidence types. Runtime resolution and library loading
+remain unverified. See
+[the donor/target libc++ comparison](20h392-19h422-libcxx-cache-image-comparison.md).

@@ -88,8 +88,16 @@ shared regular dependent-loader rows. The donor additionally lists
 region tables, and dependency rows are recorded in the
 [MultitouchSupport loader comparison](20h392-19h422-multitouchsupport-loader-comparison.md).
 
-The next bounded host-side check is to search both existing read-only dyld
-image inventories for the exact `/usr/lib/libc++.1.dylib` image record.
-This will distinguish a donor-only loader edge from target cache-image-list
-absence. Keep image-list membership, loader edges, KEXT metadata, and
-runtime behavior as separate evidence categories.
+The exact `/usr/lib/libc++.1.dylib` path has now been found in both
+cache inventories: target index 150, version `1300.36.0.0.0`, UUID
+`16BE14F2-A677-3DF1-984D-BBAB893EE3B9`; donor index 93, version
+`1500.65.0.0.0`, UUID
+`07F1FD58-7392-34FF-8D56-AE101EBC175A`. This confirms the donor-only
+MultitouchSupport dependent-loader row is not evidence that libc++ is
+missing from the target cache. The full record comparison is in
+[the libc++ cache-image audit](20h392-19h422-libcxx-cache-image-comparison.md).
+
+The next bounded host-side check is a static comparison of target and donor
+`MultitouchSupport` export metadata, while keeping cache image-list
+membership, loader dependency edges, KEXT metadata, and runtime behavior
+as separate evidence categories.

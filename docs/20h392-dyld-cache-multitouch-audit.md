@@ -255,3 +255,26 @@ The displayed Sections values are excluded because they contain
 implausibly large decoded offsets/sizes. This remains static loader
 metadata; it does not establish target-side dependency resolution,
 compatibility, or runtime touch behavior.
+
+
+## Donor libc++ cache image record
+
+The user searched the exact image path
+`/usr/lib/libc++.1.dylib` in the existing read-only 20H392 dyld image
+inventory. Exactly one record was returned:
+
+| Field | Donor 20H392 |
+|---|---|
+| Image-list index | 93 |
+| Path | `/usr/lib/libc++.1.dylib` |
+| Version | `1500.65.0.0.0` |
+| UUID | `07F1FD58-7392-34FF-8D56-AE101EBC175A` |
+
+The target cache also contains this path, at image-list index 150,
+version `1300.36.0.0.0`, UUID
+`16BE14F2-A677-3DF1-984D-BBAB893EE3B9`. These cache image-list records
+do not establish loader resolution or runtime library loading. The donor's
+MultitouchSupport PrebuiltLoaderSet record lists libc++ as a regular
+dependent, while the target record does not. This is a loader-record
+difference, not evidence that the target cache lacks libc++. See
+[the donor/target libc++ comparison](20h392-19h422-libcxx-cache-image-comparison.md).
