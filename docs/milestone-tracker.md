@@ -537,3 +537,24 @@
   logs while displaying only those sections. Export results have not yet been
   collected; no byte-level comparison, ABI conclusion, runtime behavior, or
   device operation is claimed. No cache files or binaries are committed.
+
+
+- 2026-11-20: Received the target 19H422 and donor 20H392
+  `MultitouchSupport` `Dyld Exports` output. A line-by-line preliminary
+  comparison identifies seven donor-only names:
+  `_MTDeviceGetMaxHoverHeightValue`,
+  `_MTDeviceGetMultipleFirmwaresConfig`,
+  `_MTDeviceSetBinaryFiltersProperty`,
+  `_MTDeviceShouldSkipFaceDetectionMode`,
+  `_MTDeviceUpdateUILockState`,
+  `_OBJC_CLASS_$_MTAHTSupport`, and
+  `_OBJC_METACLASS_$_MTAHTSupport`; each is printed as `regular`.
+  No target-only name was noticed in the supplied excerpt, but the excerpt
+  omitted the target heading and both parser exit-code lines. Exact export
+  totals, duplicate rows, and both-sided set differences remain pending
+  automated parsing of the saved full logs. Added
+  docs/20h392-19h422-multitouchsupport-export-comparison.md and an exact-set
+  parser to the export audit plan. This is cache metadata only; ABI,
+  runtime loading, IOKit attachment, touch delivery, and SpringBoard
+  behavior remain unverified. No device or firmware state was accessed
+  or changed.
