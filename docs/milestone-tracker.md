@@ -971,11 +971,12 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   hashes, and indexes explicitly declared MachServices. It records missing,
   invalid, unreadable, and symlinked plist cases instead of treating them as
   empty metadata. Twelve synthetic tests passed locally; CI will run the full
-  host-side suite. No real 19H422 or 20H392 embedded-bundle results are claimed
-  yet. This is static plist metadata only, not proof of service launch,
-  registration, clients, runtime compatibility, or SpringBoard. The physical
-  iPhone 7 remains on iOS 12.1.4; no device or firmware state was accessed
-  or changed.
+  host-side suite. At the time this inventory tool was added, no actual
+  19H422 or 20H392 embedded-bundle results had been recorded; the later
+  collection and comparison are documented in the entry below. This is
+  static plist metadata only, not proof of service launch, registration,
+  clients, runtime compatibility, or SpringBoard. The physical iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was accessed or changed.
 
 
 - 2026-11-21: Recorded and independently checked the uploaded embedded-bundle
