@@ -226,11 +226,37 @@ output reports:
 | Present in donor 20H392 JSON | 13/20 |
 
 Because the original nine core IDs contain 9 target records and 3 donor
-records, the aggregate implies that all 11 supporting IDs are present in
-the target JSON and 10 of the 11 are present in the donor JSON. Exactly one
-supporting ID is therefore not represented as a selected top-level donor
-record. The excerpt supplied for this appendix begins at `Libm`; the
-identity of that one donor-side omission is not inferred here.
+records, all 11 supporting IDs are present in the target JSON and 10 of
+the 11 are present in the donor JSON. The follow-up status output identifies
+`com.apple.driver.AppleHurricaneErrorHandler` as the sole supporting ID
+reported absent from the selected donor top-level JSON inventory.
+
+| Supporting bundle ID | Target 19H422 | Donor 20H392 |
+|---|---|---|
+| `com.apple.driver.ApplePMGR` | Present | Present |
+| `com.apple.driver.AppleA7IOP` | Present | Present |
+| `com.apple.driver.IOSlaveProcessor` | Present | Present |
+| `com.apple.driver.RTBuddy` | Present | Present |
+| `com.apple.driver.AppleEmbeddedPCIE` | Present | Present |
+| `com.apple.driver.AppleHurricaneErrorHandler` | Present | Absent from this JSON inventory |
+| `com.apple.iokit.IOPCIFamily` | Present | Present |
+| `com.apple.iokit.IOSurface` | Present | Present |
+| `com.apple.kec.Libm` | Present | Present |
+| `com.apple.iokit.IOCryptoAcceleratorFamily` | Present | Present |
+| `com.apple.iokit.IOReportFamily` | Present | Present |
+
+The supplied status listing repeats the AppleHurricaneErrorHandler heading
+and also prints `unavailable (no selected top-level record)`. This is
+recorded as the same top-level inventory limitation, not as a second missing
+dependency. The earlier detailed excerpt still provides full metadata
+comparisons for only Libm, IOCryptoAcceleratorFamily, and IOReportFamily;
+the other eight supporting sections have presence status but are not
+transcribed in this appendix.
+
+“Absent from this JSON inventory” means no selected top-level record was
+found by this exact-ID comparison. It does not establish that the donor
+filesystem contains no equivalent implementation, that the functionality
+is absent, or that no renamed/repackaged component exists.
 
 ### Libm
 
@@ -288,7 +314,8 @@ omitted bundle fields are not treated as values. The differences merit
 target-side preservation and further static inspection, but do not establish
 a behavioral or binary incompatibility.
 
-The remaining eight supporting-bundle sections and the identity of the
-single donor-side supporting record not present in the selected inventory
-were not included in the excerpt received for this appendix. Those details
-remain open pending the omitted portion of the comparison output.
+The follow-up presence listing resolves the donor-side selected
+top-level omission as `com.apple.driver.AppleHurricaneErrorHandler`.
+Detailed metadata for the other eight supporting-bundle sections remains
+untranscribed; only their target/donor presence status is recorded here.
+The selected-inventory finding is not a filesystem-wide absence claim.
