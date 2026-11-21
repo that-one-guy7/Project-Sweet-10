@@ -115,7 +115,7 @@ def preprocessor_contexts(text: str):
     while index < len(lines):
         start = index
         line = lines[index]
-        match = re.match(r"^\\s*#\\s*(if|ifdef|ifndef|elif|else|endif)\\b(.*)$", line)
+        match = re.match(r"^\s*#\s*(if|ifdef|ifndef|elif|else|endif)\b(.*)$", line)
         if not match:
             contexts[index + 1] = [dict(item) for item in stack]
             index += 1
@@ -124,7 +124,7 @@ def preprocessor_contexts(text: str):
         kind = match.group(1)
         parts = [match.group(2).strip()]
         end = index
-        while parts[-1].endswith("\\\\") and end + 1 < len(lines):
+        while parts[-1].endswith("\\") and end + 1 < len(lines):
             parts[-1] = parts[-1][:-1].rstrip()
             end += 1
             parts.append(lines[end].strip())
