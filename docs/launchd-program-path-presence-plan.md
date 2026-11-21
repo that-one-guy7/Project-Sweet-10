@@ -39,11 +39,11 @@ A `regular-file-found` result means only that a regular filesystem object exists
 First locate the previously generated launchd JSON files if they are not already in the project directory:
 
 ```sh
-find "$HOME" -type f \(
-  -name '19H422-launchd-inventory.json' -o
-  -name 'launchd-inventory.json' -o
-  -name 'launchd-inventory(1).json'
-\) -print
+find "$HOME" -type f \\( \\
+  -name '19H422-launchd-inventory.json' -o \\
+  -name 'launchd-inventory.json' -o \\
+  -name 'launchd-inventory(1).json' \\
+\\) -print
 ```
 
 Then run from the Project-Sweet-10 repository root, substituting the two exact JSON file paths found above:
