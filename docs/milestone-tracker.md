@@ -650,3 +650,14 @@ per-query output/error capture, comparison fields, and parser caveats.
 This is a collection plan only; no target loader results are claimed yet.
 M6 remains in progress and M7/SpringBoard has not started. The physical
 iPhone 7 remains on iOS 12.1.4.
+
+
+## M6 BackBoard cache-access diagnosis (2026-11-20)
+
+The user's four iPhone9,1 / 19H422 BackBoard loader queries all exited 1
+with the same host error: opening the target dyld shared-cache file returned
+`permission denied`. This is an input-file access failure, not evidence
+that the frameworks are absent; no target loader records were collected.
+The audit plan now requests read-only `namei -l`, `stat`, and
+`test -r` output before any retry. M6 remains in progress; M7/SpringBoard
+has not started. The physical iPhone 7 remains on iOS 12.1.4.
