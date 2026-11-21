@@ -102,7 +102,7 @@ The launchd Program-path inspector reads a sanitized launchd inventory JSON
 and checks only selected absolute Program paths beneath explicitly supplied
 already-mounted filesystem roots. It uses lstat on each component, stops at
 symlinks, checks bounded root-wrapper prefixes, and never opens or executes
-the named files. Ten synthetic tests cover direct and wrapped paths, symlink
+the named files. Eleven synthetic tests cover direct and wrapped paths, symlink
 handling, missing paths, malformed paths, duplicate labels, schema checks,
 and status aggregation. Results are filesystem metadata only, not daemon
 loadability or launch proof.
