@@ -36,7 +36,7 @@
 - [KernelCache versus nested plugin metadata boundary](ipsw-kernelcache-plugin-metadata-boundary.md)
 - [iPhone9,1 19H422 IOKit personality crosswalk](iphone91-19h422-iokit-personality-crosswalk.md)
 - [iPhone9,1 19H422 multitouch HID plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md)
-- [iPhone9,1 19H422 dyld shared-cache image audit](iphone91-19h422-dyld-cache-multitouch-audit.md)
+- [iPhone9,1 19H422 dyld shared-cache multitouch image audit](iphone91-19h422-dyld-cache-multitouch-audit.md)
 - [iPhone9,1 19H422 target MultitouchHID loader audit plan](iphone91-19h422-target-multitouch-loader-audit-plan.md)
 - [iPhone9,1 19H422 MultitouchHID dependency image inventory](iphone91-19h422-multitouch-dependency-image-inventory.md)
 - [20H392 / 19H422 MultitouchHID loader comparison](20h392-19h422-multitouch-loader-comparison.md)
