@@ -175,15 +175,17 @@ and custom kernel handoff requirements remain separate blockers. See the
 
 ## Next host-side evidence
 
-The target and donor plugin Info.plists have now been compared. The
-subsequent donor filename search returned no `MultitouchHID*` file or
-symlink in either searched mounted donor root, and the target plugin
-directory listing contained only `Info.plist`. The next bounded host-side
-check is to inspect the donor `CFBundleExecutable` field and
-`CodeResources` manifest, then search the complete target mounted
-filesystem for its declared executable. Defer Mach-O comparison until
-actual executable files are located. Even matching Mach-O metadata would
-not prove successful loading.
+The target and donor plugin Info.plists have now been compared. The donor
+plist declares `CFBundleExecutable=MultitouchHID`; the inspected
+`CodeResources` plist exposes `files`, `files2`, `rules`, and `rules2`, with
+empty printed `files` and `files2` entries. No `MultitouchHID*` file or
+symlink was found in either searched mounted donor root. The target plugin
+directory listing contains only `Info.plist`; an additional home-directory
+search displayed no matches, but its exact command and coverage were not
+preserved, so a complete target-root search remains unconfirmed. Defer
+Mach-O comparison until actual executable files are located. The
+`CodeResources` output is not signature verification, and even matching
+Mach-O metadata would not prove successful loading.
 
 The donor KernelCache reports XNU
 `8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public
