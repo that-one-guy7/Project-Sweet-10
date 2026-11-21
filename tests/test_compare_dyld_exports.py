@@ -61,15 +61,23 @@ Other section
         target = [ExportRow(0x100, "regular", "_shared")]
         donor = [ExportRow(0x900, "regular", "_shared")]
         report = compare_exports(target, donor)
-        self.assertIn("Common names with different first printed addresses: 1", report)
-        self.assertIn("Common names with differing kind multisets: 0", report)
+        self.assertIn("Common names with different first printed export addresses: 1", report)
+        self.assertIn("Common names with differing export-kind categories: 0", report)
 
     def test_kind_changes_are_reported(self):
         target = [ExportRow(0x100, "regular", "_shared")]
         donor = [ExportRow(0x100, "weak", "_shared")]
         report = compare_exports(target, donor)
-        self.assertIn("Common names with differing kind multisets: 1", report)
+        self.assertIn("Common names with differing export-kind categories: 1", report)
         self.assertIn("_shared: target=[regular@0x100]; donor=[weak@0x100]", report)
+
+    def test_resolver_address_changes_are_not_kind_changes(self):
+        target = [ExportRow(0x100, "resolver=0x1234", "_resolve")]
+        donor = [ExportRow(0x200, "resolver=0x5678", "_resolve")]
+        report = compare_exports(target, donor)
+        self.assertIn("Common names with differing export-kind categories: 0", report)
+        self.assertIn("Common resolver names with different printed resolver addresses: 1", report)
+        self.assertIn("_resolve: target=[0x1234 x1]; donor=[0x5678 x1]", report)
 
     def test_duplicate_symbol_rows_are_preserved_and_reported(self):
         target = [
