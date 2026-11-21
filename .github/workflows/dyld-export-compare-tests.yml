@@ -5,6 +5,7 @@ on:
     paths:
       - "tools/compare_dyld_exports.py"
       - "tools/compare_dyld_imports.py"
+      - "tools/collect_agx_provider_exports.sh"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
@@ -41,3 +42,6 @@ jobs:
 
       - name: Check import comparator CLI
         run: python3 tools/compare_dyld_imports.py --help
+
+      - name: Check provider collector shell syntax
+        run: bash -n tools/collect_agx_provider_exports.sh
