@@ -40,12 +40,10 @@ In XNU 8796 `osfmk/arm64/machine_routines.c`, CPU topology parsing uses
 `MPIDR_EL1.AFF1` as the physical cluster identifier when `HAS_CLUSTER`
 is enabled. Without it, the code derives a legacy logical cluster from
 CPU type instead (the `CLUSTER_TYPE_P` distinction). More importantly,
-the non-`HAS_CLUSTER` branch at lines 1110–1115 says:
-
-> For H10, there are really 2 physical clusters, but they are not separated
-> into distinct ACCs. AFF1 therefore always reports 0, and AFF0 numbering
-> is linear across both clusters. For MPIDR-based indexing, treat H10 and
-> earlier devices as a single cluster.
+the non-`HAS_CLUSTER` branch at lines 1110–1115 documents that H10-era
+devices have two physical clusters behind a single ACC, with AFF1 fixed at
+zero and AFF0 numbered linearly. For MPIDR-based indexing, the code therefore
+models H10 and earlier devices as one cluster.
 
 Source: [XNU 8796 machine_routines.c, topology parser](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/osfmk/arm64/machine_routines.c#L1036-L1116).
 
