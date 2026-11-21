@@ -167,3 +167,35 @@ confirms that H13's T8101 profile is a contrast case, not an H9 replacement.
 This is source-level classification only; it does not close the transitive
 preprocessor/build-input review or establish iPhone9,1 runtime behavior.
 Do not copy H9.h or enable old flags based on text matches. K2 remains open.
+
+
+## A10/H9 CPU topology and secondary-core handoff (2026-11-21)
+
+A new static comparison of XNU 7195.121.3 and 8796.141.3 found a useful
+positive CPU clue: the 8796 topology parser retains a non-`HAS_CLUSTER`
+path and explicitly documents H10 and earlier devices as a single cluster
+for MPIDR-based indexing. The historical H9 profile does not define
+`HAS_CLUSTER`, while H13 does. This is consistent with an H9-style legacy
+topology, but does not prove the missing T8010 product configuration selects
+that path.
+
+The target 19H422 DeviceTree has two CPU entries (`reg=0` running and
+`reg=1` waiting), which is structurally consistent with a simple legacy
+topology. It does not by itself establish the final enabled CPU count or
+runtime donor handoff.
+
+A major unresolved difference is the physical secondary-core release
+contract: XNU 7195's `AppleARMSMP::PE_cpu_start` passes the physical
+`LowResetVectorBase` address to `IOPMGR::enableCPUCore`; XNU 8796 passes
+zero for physical builds and passes the reset-vector address only for
+`APPLEVIRTUALPLATFORM`. The relevant PMGR implementation is not established
+by the public source comparison. The historical H9 HID5 EDB snoop-reservation
+workaround in 7195 `start.s` is also absent from the reviewed 8796 startup
+assembly.
+
+See [the A10/H9 CPU topology and handoff audit](a10-h9-cpu-topology-handoff-audit.md)
+for exact source links, evidence boundaries, and the next static research
+questions. This is positive source-level compatibility evidence, not proof
+of T8010 build selection, secondary-core startup, runtime behavior, or
+SpringBoard. K4 remains incomplete and no target-specific CPU code is ready.
+The physical iPhone 7 remains on iOS 12.1.4.
