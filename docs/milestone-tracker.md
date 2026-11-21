@@ -1106,3 +1106,21 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   explicit mounted-root coverage. M6 remains in progress; M7 has not started.
   The physical iPhone 7 remains on iOS 12.1.4; no device, firmware, partition,
   or boot state was accessed or changed.
+
+
+- 2026-11-21: Audited the repository's target `BuildManifest.plist` from
+  main (19H422 / iOS 15.8.8). It supports iPhone9,1 and iPhone9,3 and has
+  four identities: d10ap / board 0x08 / T8010 in identities 1 (Erase) and
+  3 (Update), and d101ap / board 0x0C / T8010 in identities 0 and 2.
+  The exact target identities both select OS image 098-68844-067.dmg and
+  kernelcache.release.iphone9; the target-specific DeviceTree and SEP paths
+  are d10ap variants. The OS image's root-hash, canonical-metadata, and
+  static-trust-cache companion paths are recorded. The BuildIdentity
+  component keys do not include Cryptex1,SystemOS or SystemOS; this does not
+  serve as a complete ZIP archive inventory. Online ipsw source review confirms
+  its current dyld extraction logic selects SystemOS when declared and falls
+  back to the filesystem OS DMG when the SystemOS Cryptex lookup is absent.
+  Current-main code is not claimed to match pinned ipsw 3.1.749 exactly.
+  Added structured identity JSON and audit documentation. M6 remains in
+  progress; M7 has not started. The physical iPhone 7 remains on iOS 12.1.4;
+  no device, firmware, partition, security, or boot state was accessed or changed.
