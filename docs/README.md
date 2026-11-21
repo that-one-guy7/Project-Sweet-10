@@ -23,6 +23,7 @@
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)
 - [iPhone9,1 AGXG9P and Metal userland audit plan](19h422-20h392-agx-metal-userland-audit-plan.md)
 - [19H422 / 20H392 graphics KEXT metadata results](19h422-20h392-agx-kext-metadata-results.md)
+- [19H422 / 20H392 AGX and Metal dyld image inventory results](19h422-20h392-agx-metal-dyld-image-results.md)
 - [20H392 service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
 - [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)
