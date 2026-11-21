@@ -1002,3 +1002,20 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   loadability, runtime compatibility, kernel boot, or SpringBoard. M6 remains
   in progress and M7/SpringBoard has not started; the physical iPhone 7
   remains on iOS 12.1.4.
+
+
+- 2026-11-21: Added a complementary exact-bundle-identifier comparison to
+  the earlier normalized-path view of the 19H422/20H392 embedded-service
+  inventories. Grouping by identifier yields 598 common IDs, 35 target-only,
+  and 147 donor-only; 82 target IDs and 106 donor IDs have multiple path
+  records. The duplicate-aware occurrence match pairs 677 records, with 38
+  target and 174 donor occurrences left over. Across shared IDs, allowlisted
+  metadata differences affect MinimumOSVersion (598 IDs; 15.8 versus 16.7),
+  executable filename-presence state (11), NSExtension metadata (9),
+  CFBundleExecutable (3), package type (1), and MachServices (1). This is
+  an alternate identity key, not a replacement for the prior path-level
+  comparison; the two count different things. Added a read-only comparator,
+  CSV output, ten synthetic tests, and CI coverage. These remain plist and
+  filename-presence observations, not launch, registration, ABI, runtime,
+  boot, or SpringBoard evidence. M6 remains in progress, M7 has not started,
+  and the physical iPhone 7 remains on iOS 12.1.4.
