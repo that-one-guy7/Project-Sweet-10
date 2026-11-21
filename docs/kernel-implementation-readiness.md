@@ -23,11 +23,21 @@ Its four BuildIdentity entries use A11/T8015 chip ID 0x8015 and D22AP/D221AP
 board identities. It is a valid donor reference for userland study, not a
 target manifest for iPhone9,1.
 
+A source-versus-binary cross-check also found that the inspected 20H392 donor
+KernelCache reports `RELEASE_ARM64_T8015`, while the public
+`xnu-8796.141.3` tag exposes neither a normal T8015 nor T8010 ARM64 machine
+profile. Its embedded XNU version (`8796.142.1.703.8~1`) is not identical
+to the pinned public tag. The public tag is therefore not demonstrated to
+reproduce the complete shipped donor build configuration. This does not
+prove that no private or product-specific source supports T8015 or could
+support T8010. See the
+[public-source versus shipped-KernelCache comparison](xnu-public-source-vs-shipped-kernel.md).
+
 ## Readiness gates
 
 | Gate | Required evidence | Current status |
 |---|---|---|
-| G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; Apple source-to-kernelcache mapping is not established |
+| G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned, but the inspected 20H392 KernelCache reports XNU 8796.142.1.703.8~1 / RELEASE_ARM64_T8015; exact public source-to-kernelcache mapping and product-specific build inputs are not established |
 | G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Public source presence/absence is pinned and checked across xnu-7195.121.3, xnu-8019.80.24, and xnu-8796.141.3; the full historical dependency graph and migration remain incomplete |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; no target-specific values are approved |
@@ -82,6 +92,7 @@ partition writes, or recovery operations.
 - [XNU configuration selection audit](xnu-config-selection.md)
 - [Historical T8010 XNU profile CI verification](xnu-machine-history-ci.md)
 - [A10/T8010 XNU evidence audit](a10-t8010-xnu-evidence-audit.md)
+- [Public XNU source versus shipped KernelCache identities](xnu-public-source-vs-shipped-kernel.md)
 - [ARM64 platform audit status](platform-audit-status.md)
 - [iPhone9,1 device-tree property inventory](../device-tree/PROPERTY_INVENTORY.md)
 - [XNU handoff requirements](../boot/HANDOFF_REQUIREMENTS.md)
@@ -90,16 +101,30 @@ partition writes, or recovery operations.
 
 ## Additional build-system finding
 
-A versioned audit of Apple's makedefs/MakeInc.def found T8010 in the normal
-ARM64 machine allowlist for xnu-7195.121.3, but not in xnu-8019.80.24 or
-xnu-8796.141.3. The pinned xnu-8796.141.3 kernel make rules validate the
-selected machine config against that allowlist. Its MakeInc.top can optionally
-derive product-to-KernelPlatform mappings from an embedded-device-map database
+A versioned audit of Apple's `makedefs/MakeInc.def` found T8010 in
+the normal ARM64 machine allowlist for `xnu-7195.121.3`, but not in
+`xnu-8019.80.24` or `xnu-8796.141.3`. The pinned
+`xnu-8796.141.3` kernel make rules validate the selected machine config
+against that allowlist. Its `MakeInc.top` can optionally derive
+product-to-KernelPlatform mappings from an embedded-device-map database
 inside the selected SDK platform bundle, but the contents of the relevant SDK
 database have not been inspected.
 
-This narrows the blocker: it is not enough to find a historical T8010 header.
-The selected baseline's normal ARM64 machine-selection rules also omit T8010,
-and the associated historical dependency and target metadata migration remains
-unresolved. Do not bypass that selection check or claim that a VMAPPLE build
-is an iPhone7 build.
+The shipped-binary cross-check adds an important qualification: the 20H392
+donor KernelCache reports `RELEASE_ARM64_T8015`, even though public
+`xnu-8796.141.3` also omits T8015 from its normal ARM64 list and board
+configuration. The public 8796 snapshot therefore does not, by itself,
+reproduce all machine-selection inputs represented by the donor KernelCache.
+This is evidence of incomplete public-source/build-input correspondence,
+not proof that an internal Apple source tree lacked T8015 or that later XNU
+cannot support T8010. The donor version string
+(`8796.142.1.703.8~1`) is not an exact match for the candidate public tag
+(`xnu-8796.141.3`).
+
+This narrows the blocker: it is not enough to find a historical T8010 header
+or to copy the visible machine-selection name. The selected public baseline
+does not expose a T8010 profile, and its exact mapping to the shipped donor
+kernel and product-specific inputs remains unresolved. Do not bypass that
+selection check, copy H9 wholesale, or claim that a VMAPPLE build is an
+iPhone7 build. See the
+[public-source versus shipped-KernelCache comparison](xnu-public-source-vs-shipped-kernel.md).
