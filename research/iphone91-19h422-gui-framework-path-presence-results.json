@@ -1,0 +1,527 @@
+{
+  "candidate_count": 18,
+  "candidate_file_sha256": "e25a54af687e32e3e6959cf2959a7c637e4a195beae08cfa0eb4c0ecc2d46358",
+  "candidates": [
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "RunningBoard",
+      "id": "extensionfoundation-donor-path",
+      "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "reason": "Exact donor-only install path; target cache inventory instead lists the same basename under PrivateFrameworks.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "RunningBoard",
+      "id": "extensionfoundation-target-alternate",
+      "path": "/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "reason": "Known alternate path represented in the target 19H422 cache image list (index 1093).",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "RunningBoard",
+      "id": "privacydisclosurecore",
+      "path": "/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+      "reason": "Donor weak-link dependency with no same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "systemaperture",
+      "path": "/System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "activitykit",
+      "path": "/System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "activityuiservices",
+      "path": "/System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "posterboardui",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "backlightservices",
+      "path": "/System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "backlightserviceshost",
+      "path": "/System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "posterboardservices",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "posterkit",
+      "path": "/System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "coversheetkit",
+      "path": "/System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "sessionassertion",
+      "path": "/System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "biomelibrary",
+      "path": "/System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "pointeruisystemservices",
+      "path": "/System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "paperboardui",
+      "path": "/System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "systemstatusui",
+      "path": "/System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    },
+    {
+      "checks": [
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+          "root_wrapper_depth": 0,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+          "root_wrapper_depth": 1,
+          "state": "missing"
+        },
+        {
+          "filesystem_root": "target_root_0",
+          "relative_candidate_path": "root/root/System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+          "root_wrapper_depth": 2,
+          "state": "missing"
+        }
+      ],
+      "group": "SpringBoard.framework",
+      "id": "systemapertureui",
+      "path": "/System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "status": "not-found-under-scanned-roots"
+    }
+  ],
+  "donor_reference_context": {
+    "board": "D22AP",
+    "build": "20H392",
+    "device": "iPhone10,3",
+    "ios_version": "16.7.16"
+  },
+  "filesystem_root_count": 1,
+  "filesystem_roots": [
+    "target_root_0"
+  ],
+  "root_wrapper_depths_checked": [
+    0,
+    1,
+    2
+  ],
+  "schema": "project-sweet-10.framework-path-presence.v1",
+  "scope_notes": [
+    "Checks only the exact absolute candidate paths in the supplied JSON under the explicitly supplied target roots.",
+    "Checks the root itself and bounded repeated root/ wrapper prefixes; it does not recursively search for basenames or other paths.",
+    "Uses lstat on each path component and stops at symlinks; symlink targets are not followed.",
+    "Does not open, hash, parse, or execute framework files.",
+    "regular-file-found means only that a regular filesystem object was present at one checked path during this scan.",
+    "not-found-under-scanned-roots is limited to the exact candidate paths, roots, and wrapper depths in this report; other paths, volumes, Cryptexes, or runtime locations may contain related files.",
+    "Cache-image-list membership and filesystem path presence are separate evidence categories.",
+    "This is static host-side metadata and does not establish dyld resolution, ABI compatibility, framework loading, service startup, hardware operation, kernel boot, or SpringBoard readiness."
+  ],
+  "status_counts": {
+    "not-found-under-scanned-roots": 18
+  },
+  "target_reference": {
+    "board": "D10AP",
+    "build": "19H422",
+    "device": "iPhone9,1",
+    "ios_version": "15.8.8"
+  }
+}
