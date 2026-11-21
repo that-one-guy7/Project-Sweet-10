@@ -93,6 +93,25 @@ This is static metadata correlation only. The donor kernel is A11/T8015,
 the target is A10/T8010, and no runtime attachment or cross-board
 compatibility has been established.
 
+## Donor and target multitouch plugin plist comparison
+
+The user's host-side inspection has now also read the nested 20H392 donor
+`MultitouchHID.plugin/Info.plist`. It reports bundle
+`com.apple.iokit.plugin.MultitouchHID`, version `6140.3`, minimum OS
+`16.7`, and platform `iPhoneOS`. Its plugin type UUID
+`0516B563-B15B-11DA-96EB-0014519758EF`, factory UUID
+`0CB0FBB9-15EA-11DB-A93C-001451D47183`, and
+`IOHIDPlugInFactory` declaration exactly match the extracted target
+19H422 plugin plist. The target plugin reports version `5100.27` and
+minimum OS `15.8`.
+
+This is exact static plugin-interface metadata continuity across the donor
+and target builds, with explicit version/minimum-OS differences. It does not
+establish that the executable is byte-identical, ABI-compatible beyond the
+declared factory identifiers, loadable by the other build, or suitable for
+the A10/T8010 target. See the
+[20H392 donor plugin metadata audit](20h392-multitouch-plugin-audit.md).
+
 ## Target IOKit personality crosswalk
 
 The user inspected the target 19H422 KernelCache's JSON KEXT metadata. Six
@@ -156,13 +175,12 @@ and custom kernel handoff requirements remain separate blockers. See the
 
 ## Next host-side evidence
 
-The donor KernelCache has now been extracted and inspected. The next bounded
-host-side comparison is the donor's own
-`AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist` against
-the already inspected 19H422 target plugin. Compare the donor plugin's bundle
-ID, version, minimum OS, supported platform, type UUID, and factory UUID.
-Keep donor and target artifacts separate; a matching UUID alone does not
-establish cross-board compatibility.
+The target and donor plugin Info.plists have now been compared. The
+next bounded static check is their plugin executable Mach-O metadata, if
+both binaries are available in the corresponding mounted filesystems.
+Compare architecture, install name, linked libraries, build-version
+load command, UUID, and code-signature presence without treating these
+metadata as proof of successful loading.
 
 The donor KernelCache reports XNU
 `8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public
