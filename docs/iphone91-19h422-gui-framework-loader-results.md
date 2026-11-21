@@ -4,6 +4,8 @@
 
 This is a read-only record of three user-supplied `ipsw dyld image` outputs from the iPhone 7 / `iPhone9,1` / D10AP target-reference SystemOS shared cache for iOS 15.8.8 build 19H422.
 
+The SpringBoard path queried here is `/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard`. It is the private framework binary, not the separate `/System/Library/CoreServices/SpringBoard.app/SpringBoard` application executable recorded in the donor executable audit. Keep those image identities distinct.
+
 The standalone IPSW version file identifies:
 
 - Version: `3.1.749`
@@ -29,6 +31,8 @@ SpringBoard's loader record additionally prints `Info: initializers|regions=5` a
 ## Direct dependent rows
 
 The following counts are from the supplied Dependents blocks and preserve regular and weak-link rows as separate types.
+
+No `BindTargets` block appears in the supplied three outputs. This report does not infer that any of the three records has an empty BindTargets set.
 
 | Requested image | Regular rows | Weak-link rows | Total rows |
 |---|---:|---:|---:|
