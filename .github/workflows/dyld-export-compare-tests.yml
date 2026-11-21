@@ -6,6 +6,7 @@ on:
       - "tools/compare_dyld_exports.py"
       - "tools/compare_dyld_imports.py"
       - "tools/collect_agx_provider_exports.sh"
+      - "tools/collect_libsystem_load_commands.sh"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
@@ -16,6 +17,7 @@ on:
       - "tools/compare_dyld_exports.py"
       - "tools/compare_dyld_imports.py"
       - "tools/collect_agx_provider_exports.sh"
+      - "tools/collect_libsystem_load_commands.sh"
       - "tests/test_compare_dyld_exports.py"
       - "tests/test_compare_dyld_imports.py"
       - ".github/workflows/dyld-export-compare-tests.yml"
@@ -46,3 +48,6 @@ jobs:
 
       - name: Check provider collector shell syntax
         run: bash -n tools/collect_agx_provider_exports.sh
+
+      - name: Check libSystem metadata collector shell syntax
+        run: bash -n tools/collect_libsystem_load_commands.sh
