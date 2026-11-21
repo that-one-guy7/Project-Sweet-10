@@ -184,7 +184,7 @@ M6 remains in progress. M7 (SpringBoard on iPhone9,1) has not started.
 
 ## `ipsw` metadata boundary
 
-The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The separate `MultitouchHID.plugin` path must be verified from the matching 19H422 filesystem bundle, not inferred from the KernelCache KEXT JSON. The source-level basis and next evidence needed are recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
+The pinned ipsw 3.1.749 source shows that `ipsw kernel kexts --json` serializes the KernelCache's `_PrelinkInfoDictionary` records. `io_kit_personalities` is an optional, `omitempty` field in the decoded `CFBundle` record. Therefore, its absence in the `AppleMultitouchSPI` JSON object is not evidence that the related nested plugin is absent or unused. The user has now extracted the nested `MultitouchHID.plugin/Info.plist` from the matching 19H422 filesystem. Its bundle identity, version, minimum OS, plug-in type UUID, and factory mapping are recorded in the [multitouch plugin metadata audit](iphone91-19h422-multitouch-plugin-audit.md). The plugin executable and cryptographic signature remain unverified. The source-level serialization boundary is recorded in [the metadata boundary audit](ipsw-kernelcache-plugin-metadata-boundary.md).
 
 
 ## Linux filesystem extraction status
