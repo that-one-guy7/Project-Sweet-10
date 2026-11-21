@@ -18,6 +18,7 @@
 - [Embedded XPC-service and app-extension inventory results](embedded-xpc-service-results.md)
 - [19H422 / 20H392 embedded XPC-service and app-extension comparison results](embedded-xpc-service-comparison-results.md)
 - [Embedded XPC MachServices versus LaunchDaemon provider cross-check](embedded-xpc-launchd-crosscheck-results.md)
+- [Selected LaunchDaemon Program-path presence inventory](launchd-program-path-presence-plan.md)
 - [20H392 split dyld shared-cache inventory](20h392-dyld-cache-inventory.md)
 - [20H392 dyld PrebuiltLoaderSet audit](20h392-prebuilt-loader-audit.md)
 - [20H392 BackBoard framework dependency expansion](20h392-backboard-framework-dependency-expansion.md)
