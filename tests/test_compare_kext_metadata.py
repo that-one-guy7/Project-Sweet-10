@@ -149,5 +149,49 @@ class CompareKextMetadataTests(unittest.TestCase):
             load_inventory(path)
 
 
+    def test_target_only_record_reports_personalities_and_dependencies(self):
+        target_record = {
+            "id": T8010_PMGR,
+            "version": "1",
+            "io_kit_personalities": {
+                "AppleT8010PMGR": {
+                    "IONameMatch": "pmgr1,t8010",
+                    "IOProviderClass": "AppleARMIODevice",
+                }
+            },
+            "os_bundle_libraries": {
+                ARM_PLATFORM: "1.0.0",
+                "com.apple.driver.ApplePMGR": "1.0",
+            },
+        }
+        report = compare({T8010_PMGR: target_record}, {})
+        self.assertIn("TARGET 19H422 IOKit personalities", report)
+        self.assertIn("AppleT8010PMGR", report)
+        self.assertIn("pmgr1,t8010", report)
+        self.assertIn("TARGET 19H422 os_bundle_libraries (2 entries)", report)
+        self.assertIn("com.apple.driver.ApplePMGR", report)
+        self.assertIn("DONOR 20H392: unavailable", report)
+
+    def test_donor_only_record_reports_personalities_and_dependencies(self):
+        donor_record = {
+            "id": T8010_PMGR,
+            "io_kit_personalities": {
+                "DonorOnlyPersonality": {
+                    "IONameMatch": "donor,only",
+                }
+            },
+            "os_bundle_libraries": {
+                "com.apple.kpi.iokit": "18.0",
+            },
+        }
+        report = compare({}, {T8010_PMGR: donor_record})
+        self.assertIn("DONOR 20H392 IOKit personalities", report)
+        self.assertIn("DonorOnlyPersonality", report)
+        self.assertIn("donor,only", report)
+        self.assertIn("DONOR 20H392 os_bundle_libraries (1 entries)", report)
+        self.assertIn("com.apple.kpi.iokit", report)
+        self.assertIn("TARGET 19H422: unavailable", report)
+
+
 if __name__ == "__main__":
     unittest.main()
