@@ -70,12 +70,13 @@
       ]
     }
   ],
-  "conclusion": "T8010 exists in the audited 7195 public source, but is absent from both files in 8019, 8796, and current public main. Exact removal commit is not yet identified. Current main also has a test-level T8010 PMAP_CS default-policy reference; this does not restore the missing T8010 board configuration or build allowlist.",
+  "conclusion": "T8010 exists in the audited 7195 public source, but is absent from both build-selection files in 8019, 8796, current public main, and the four audited 10002 tags. Exact removal commit is not yet identified. Current main also has a test-level T8010 PMAP_CS default-policy reference; this does not restore the missing T8010 board configuration or build allowlist.",
   "limitations": [
     "This is a comparison of two source files at four refs, not a complete XNU platform audit.",
     "Absence from public source does not establish absence from Apple's private build inputs.",
     "A historical board configuration does not establish that a newer kernel can be made compatible by copying that block.",
-    "No build, device boot, or runtime behavior is established by this metadata."
+    "No build, device boot, or runtime behavior is established by this metadata.",
+    "The supplemental xnu-10002 tag audit checks only board_config.h, MakeInc.def, and the exact historical H9.h path; it is not a full-tree or private-build-input audit."
   ],
   "supplemental_observations": {
     "current_main_ref": "f6217f891ac0bb64f3d375211650a4c1ff8ca1ea",
@@ -96,6 +97,76 @@
       "observation": "No T8010-specific conditional was found in this file at the four audited refs; 8019, 8796, and current main contain a T6000-specific wfe_allowed conditional.",
       "limitation": "A single-file observation, not a complete source-tree search."
     },
-    "historical_availability": "tests/vm_test_code_signing.c was not found at the three older pinned tags through the repository contents API; this is recorded as a current-main observation only."
+    "historical_availability": "tests/vm_test_code_signing.c was not found at the three older pinned tags through the repository contents API; this is recorded as a current-main observation only.",
+    "later_public_tags": [
+      {
+        "ref": "xnu-10002.1.13",
+        "tagger_date": "2023-09-26",
+        "commit_sha": "1031c584a5e37aff177559b9f69dbd3c8c3fd30a",
+        "board_config_blob_sha": "d0670940fb14fe976fe56c9f68d70465a294bfea",
+        "makeinc_blob_sha": "99f65e14c88262163ce16048d79a974b67996326",
+        "board_config_t8010": false,
+        "makeinc_t8010_allowlist": false,
+        "normal_arm64_allowlist": [
+          "BCM2837",
+          "T6000",
+          "T8101",
+          "T8103",
+          "VMAPPLE"
+        ],
+        "h9_header_at_historical_path": false
+      },
+      {
+        "ref": "xnu-10002.41.9",
+        "tagger_date": "2023-11-01",
+        "commit_sha": "699cd48037512bf4380799317ca44ca453c82f57",
+        "board_config_blob_sha": "cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498",
+        "makeinc_blob_sha": "50eb4ec248859aca3664cca05e6a37714812a222",
+        "board_config_t8010": false,
+        "makeinc_t8010_allowlist": false,
+        "normal_arm64_allowlist": [
+          "BCM2837",
+          "T6000",
+          "T8101",
+          "T8103",
+          "VMAPPLE"
+        ],
+        "h9_header_at_historical_path": false
+      },
+      {
+        "ref": "xnu-10002.61.3",
+        "tagger_date": "2023-12-15",
+        "commit_sha": "0f4c859e951fba394238ab619495c4e1d54d0f34",
+        "board_config_blob_sha": "cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498",
+        "makeinc_blob_sha": "50eb4ec248859aca3664cca05e6a37714812a222",
+        "board_config_t8010": false,
+        "makeinc_t8010_allowlist": false,
+        "normal_arm64_allowlist": [
+          "BCM2837",
+          "T6000",
+          "T8101",
+          "T8103",
+          "VMAPPLE"
+        ],
+        "h9_header_at_historical_path": false
+      },
+      {
+        "ref": "xnu-10002.81.5",
+        "tagger_date": "2024-01-31",
+        "commit_sha": "5e3eaea39dcf651e66cb99ba7d70e32cc4a99587",
+        "board_config_blob_sha": "cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498",
+        "makeinc_blob_sha": "50eb4ec248859aca3664cca05e6a37714812a222",
+        "board_config_t8010": false,
+        "makeinc_t8010_allowlist": false,
+        "normal_arm64_allowlist": [
+          "BCM2837",
+          "T6000",
+          "T8101",
+          "T8103",
+          "VMAPPLE"
+        ],
+        "h9_header_at_historical_path": false
+      }
+    ]
   }
 }
