@@ -147,7 +147,10 @@ the executable bytes.
 | Donor type UUID/factory UUID/factory function | Confirmed from printed plist fields |
 | Donor and target plugin type UUIDs match | Exact string equality confirmed |
 | Donor and target factory UUIDs/functions match | Exact string equality confirmed |
-| Donor `MultitouchHID*` file/symlink in the two searched mounted roots | Not found by the user's recursive search on 2026-11-20 |\n| Donor plugin directory contents | Only `Info.plist` and `_CodeSignature/CodeResources` listed |\n| Target plugin directory contents | Only `Info.plist` listed; no whole-target-root search recorded |\n| Plugin executable bytes or Mach-O identity | Not available from the inspected plugin directories; comparison blocked |
+| Donor `MultitouchHID*` file/symlink in the two searched mounted roots | Not found by the user's recursive search on 2026-11-20 |
+| Donor plugin directory contents | Only `Info.plist` and `_CodeSignature/CodeResources` listed |
+| Target plugin directory contents | Only `Info.plist` listed; no whole-target-root search recorded |
+| Plugin executable bytes or Mach-O identity | Not available from the inspected plugin directories; comparison blocked |
 | Code signature validity | Not tested |
 | Runtime plug-in load or IOKit attachment | Not tested |
 | Touch-event delivery on iPhone9,1 | Not tested |
