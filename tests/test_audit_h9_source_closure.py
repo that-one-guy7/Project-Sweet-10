@@ -127,19 +127,18 @@ class H9SourceClosureTests(unittest.TestCase):
             old = make_tree(base / "old", True)
             new = make_tree(base / "new", False)
             conditional = new / "osfmk/arm64/conditional.c"
-            conditional.write_text(
-                "#if defined(OUTER)\\n"
-                "#if FEATURE \\\\\n"
-                "    && defined(APPLEHURRICANE)\\n"
-                "int first = APPLEHURRICANE;\\n"
-                "#else\\n"
-                "int second = APPLEHURRICANE;\\n"
-                "#endif\\n"
-                "#else\\n"
-                "int third = APPLEHURRICANE;\\n"
-                "#endif\\n",
-                encoding="utf-8",
-            )
+            conditional.write_text("\n".join([
+                "#if defined(OUTER)",
+                "#if FEATURE " + chr(92),
+                "    && defined(APPLEHURRICANE)",
+                "int first = APPLEHURRICANE;",
+                "#else",
+                "int second = APPLEHURRICANE;",
+                "#endif",
+                "#else",
+                "int third = APPLEHURRICANE;",
+                "#endif",
+            ]) + "\n", encoding="utf-8")
             result = audit_pair(old, new)
             macro = next(x for x in result["macros"] if x["name"] == "APPLEHURRICANE")
             rows = {
@@ -164,9 +163,9 @@ class H9SourceClosureTests(unittest.TestCase):
 
     def test_preprocessor_structure_reports_unmatched_directives(self):
         from audit_h9_source_closure import preprocessor_contexts
-        contexts, kinds, issues = preprocessor_contexts(
-            "#else\\nint x;\\n#endif\\n#if OPEN\\nint y;\\n"
-        )
+        contexts, kinds, issues = preprocessor_contexts("\n".join([
+            "#else", "int x;", "#endif", "#if OPEN", "int y;"
+        ]) + "\n")
         self.assertEqual(kinds[1], "else")
         self.assertEqual(contexts[2], [])
         self.assertEqual(
