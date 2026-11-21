@@ -3,7 +3,7 @@
 ## Scope and provenance
 
 This report records the user-supplied read-only extraction of selected
-complete top-level records from the parsed KEXT JSON inventories:
+top-level records and selected metadata fields from the parsed KEXT JSON inventories:
 
 - Target: iPhone 7 `iPhone9,1` / D10AP / iOS 15.8.8 / build `19H422`
 - Donor: iPhone X `iPhone10,3` / D22AP / iOS 16.7.16 / build `20H392`
