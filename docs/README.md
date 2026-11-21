@@ -26,6 +26,7 @@
 - [19H422 / 20H392 AGX and Metal dyld image inventory results](19h422-20h392-agx-metal-dyld-image-results.md)
 - [19H422 / 20H392 AGX and Metal PrebuiltLoader results](19h422-20h392-agx-metal-prebuilt-loader-results.md)
 - [19H422 / 20H392 AGX loader-edge follow-up](19h422-20h392-agx-loader-edge-followup.md)
+- [19H422 / 20H392 AGX and Metal Mach-O export audit plan](19h422-20h392-agx-metal-export-audit-plan.md)
 - [20H392 service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
 - [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)
