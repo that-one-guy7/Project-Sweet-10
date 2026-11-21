@@ -44,3 +44,11 @@ six-snapshot public XNU matrix: historical T8010/H9 presence in
 intermediate `xnu-8019.80.24`, early and selected `xnu-8796` snapshots,
 and later `xnu-12377.1.9`. This is a synthetic, host-only source-structure
 test; it does not compile XNU or establish device support.
+
+The selected KEXT metadata comparator reads the 19H422 target and 20H392
+donor `ipsw kernel kext` JSON exports. It compares exact top-level bundle
+IDs, selected IOKit personality fields, and `os_bundle_libraries`
+declarations. Synthetic tests verify exact-ID filtering, field comparisons,
+duplicate rejection, malformed input handling, and that dependency mentions
+are not misclassified as top-level bundles. It is a JSON metadata comparison,
+not a KEXT loader, ABI validator, or device test.
