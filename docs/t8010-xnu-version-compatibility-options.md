@@ -63,6 +63,45 @@ The test file was not found at the three older pinned tags through the repositor
 | `tests/vm_test_code_signing.c` | `c728d9325e4d897c40c5bbc6f29900841bddea4a` | T8010 appears in PMAP_CS default-policy test logic only |
 | `osfmk/arm64/cpu.c` | `b58e288185b247a95815a1624190e173254ce491` | Selected CPU source contains a T6000 conditional, not a T8010 conditional |
 
+## Follow-up: later public XNU 10002 tags
+
+To check whether the public T8010 machine profile reappeared in a later XNU source generation, the same build-selection files were inspected at four published tags in `apple-oss-distributions/xnu`. The exact historical `pexpert/pexpert/arm64/H9.h` path was also checked at each ref.
+
+| Public tag | Tag date | Resolved commit | T8010 board block in `board_config.h` | T8010 in normal ARM64 allowlist | `H9.h` at historical path |
+|---|---|---|---|---|---|
+| `xnu-10002.1.13` | 2023-09-26 | `1031c584a5e37aff177559b9f69dbd3c8c3fd30a` | Absent | Absent | Not found |
+| `xnu-10002.41.9` | 2023-11-01 | `699cd48037512bf4380799317ca44ca453c82f57` | Absent | Absent | Not found |
+| `xnu-10002.61.3` | 2023-12-15 | `0f4c859e951fba394238ab619495c4e1d54d0f34` | Absent | Absent | Not found |
+| `xnu-10002.81.5` | 2024-01-31 | `5e3eaea39dcf651e66cb99ba7d70e32cc4a99587` | Absent | Absent | Not found |
+
+All four `MakeInc.def` snapshots list the same normal ARM64 machine set:
+`BCM2837 T6000 T8101 T8103 VMAPPLE`. None contains a T8010 machine flag.
+The first tag has its own `board_config.h` blob; the last three tags have
+identical blob hashes for both inspected files, so the repeated result is not
+four independent source-file revisions.
+
+| Tag | `board_config.h` blob SHA | `MakeInc.def` blob SHA |
+|---|---|---|
+| `xnu-10002.1.13` | `d0670940fb14fe976fe56c9f68d70465a294bfea` | `99f65e14c88262163ce16048d79a974b67996326` |
+| `xnu-10002.41.9` | `cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498` | `50eb4ec248859aca3664cca05e6a37714812a222` |
+| `xnu-10002.61.3` | `cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498` | `50eb4ec248859aca3664cca05e6a37714812a222` |
+| `xnu-10002.81.5` | `cd5e4f8bd47b98cbb0def1e1f5fcd9f96b0fc498` | `50eb4ec248859aca3664cca05e6a37714812a222` |
+
+Direct source links:
+- [10002.1.13 board_config.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.1.13/pexpert/pexpert/arm64/board_config.h) · [MakeInc.def](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.1.13/makedefs/MakeInc.def)
+- [10002.41.9 board_config.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.41.9/pexpert/pexpert/arm64/board_config.h) · [MakeInc.def](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.41.9/makedefs/MakeInc.def)
+- [10002.61.3 board_config.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.61.3/pexpert/pexpert/arm64/board_config.h) · [MakeInc.def](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.61.3/makedefs/MakeInc.def)
+- [10002.81.5 board_config.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.81.5/pexpert/pexpert/arm64/board_config.h) · [MakeInc.def](https://github.com/apple-oss-distributions/xnu/blob/xnu-10002.81.5/makedefs/MakeInc.def)
+
+This extends the public-source observation: T8010 is absent from the two
+audited build-selection files not only in the inspected 8019/8796 snapshots
+and current main, but also in these four later 10002 tags. The scope remains
+strictly bounded to those two files and the exact historical H9 header path.
+It is **not** a full-tree search, does not rule out T8010 strings or
+product-specific configuration elsewhere, and does not recover Apple's
+private/product build inputs. It does not establish source-to-binary
+provenance, a build, ABI compatibility, hardware support, or runtime behavior.
+
 ## Reproducibility
 
 Files read directly from `apple-oss-distributions/xnu`:
