@@ -1,0 +1,72 @@
+name: Audit historical H9 macro consumers
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "tools/audit_h9_source_closure.py"
+      - "tests/test_audit_h9_source_closure.py"
+      - "xnu/history/xnu-7195.121.3.lock.json"
+      - "xnu/BASELINE.lock.json"
+      - ".github/workflows/h9-source-closure.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit-h9:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Project Sweet-10
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read pinned XNU source commits
+        id: locks
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          historical = json.loads(
+              Path("xnu/history/xnu-7195.121.3.lock.json").read_text(encoding="utf-8")
+          )
+          candidate = json.loads(
+              Path("xnu/BASELINE.lock.json").read_text(encoding="utf-8")
+          )
+          print("historical=" + historical["commit_sha"])
+          print("candidate=" + candidate["commit_sha"])
+          PY
+
+      - name: Check out complete historical XNU 7195 source
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.locks.outputs.historical }}
+          path: xnu/historical-7195
+          persist-credentials: false
+
+      - name: Check out complete candidate XNU 8796 source
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.locks.outputs.candidate }}
+          path: xnu/upstream
+          persist-credentials: false
+
+      - name: Run synthetic host-side tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Scan H9 feature-macro references and include closure
+        run: |
+          python3 tools/audit_h9_source_closure.py \
+            xnu/historical-7195 xnu/upstream \
+            --json-output h9-source-closure.json
+
+      - name: Upload read-only H9 source scan
+        uses: actions/upload-artifact@v4
+        with:
+          name: h9-source-closure-${{ github.sha }}
+          path: h9-source-closure.json
+          if-no-files-found: error
+          retention-days: 30

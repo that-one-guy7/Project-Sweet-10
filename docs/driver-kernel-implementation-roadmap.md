@@ -59,7 +59,7 @@ References:
 | Gate | Evidence required before implementation | Current status |
 |---|---|---|
 | K1 — Kernel source provenance | Exact source/build inputs for 20H392 donor kernel, or a documented replacement baseline with explicit uncertainty; explain target 19H422 shipped-kernel source gap too | Open |
-| K2 — T8010/H9 migration closure | Full transitive dependency and configuration-consumer review for historical T8010/H9 code against the selected baseline; each macro and removed interface classified | In progress; direct consumer audit exists, full closure is incomplete |
+| K2 — T8010/H9 migration closure | Full transitive dependency and configuration-consumer review for historical T8010/H9 code against the selected baseline; each macro and removed interface classified | Full-tree textual macro inventory completed for pinned XNU 7195/8796 (12 macros, 3,508/3,961 files, 23 locally resolved include files, two resolver gaps); manual conditional, build-input, dependency, and migration review remains incomplete |
 | K3 — Reproducible baseline build | Unmodified source build with pinned host OS, Xcode/SDK, compiler, IIG/MIG, external headers, SDK device-map input, build settings, logs, and artifact hashes | Not started; the current user host is Ubuntu and Apple build inputs are unverified |
 | K4 — Target platform facts | Source-backed CPU features/topology, memory map, clock/timebase, interrupt controller and routing, timer, storage, DMA, power, and security facts | Incomplete |
 | K5 — DeviceTree contract | Correct cell widths, property formats, required nodes, register ranges, compatible strings, interrupts, and references, each tied to evidence | Incomplete; the unusual multitouch `reg` property remains an explicit parsing caveat |
@@ -131,3 +131,27 @@ not a full-tree search or Apple's private product-specific build inputs.
 No exact donor source provenance, T8010 port, ABI, device support, runtime
 behavior, or bootability is established. The physical iPhone 7 remains on
 iOS 12.1.4; M7/SpringBoard remains not started.
+
+
+## Full-tree H9 source-consumer audit (2026-11-21)
+
+The project now carries a reproducible read-only scanner for all 12 historical
+H9 feature macros across complete pinned XNU 7195 and XNU 8796 source trees.
+It records every textual occurrence with path, line, and coarse context,
+compares the names with XNU 8796 H13 definitions, and resolves the local
+include closure reachable from H9.h. The completed scan covered 3,508
+historical and 3,961 candidate source/build files; 23 include files were
+resolved locally and two SDK-style includes remain unresolved.
+
+The scan is not a C preprocessor or linker. It does not decide whether a
+conditional is active in an Apple product build, expand macros, reproduce
+generated/private headers, or prove a feature exists on A10. Several shared
+architecture consumers persist, but H13 definitions are not substitutes for
+H9 settings. Three legacy macro names had no textual matches in the scanned
+8796 candidate files; that is not proof of hardware absence or complete
+removal. See [the full-tree H9 audit](h9-source-fulltree-audit.md).
+
+The next work is manual per-feature migration review: classify the source
+replacement or unresolved blocker for CPU startup/errata, KTRR-versus-CTRR,
+PMU/AIC coupling, page/pmap protection, and sleep/power paths. Do not copy
+H9.h or enable old flags based on text matches. K2 remains open.
