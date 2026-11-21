@@ -90,10 +90,18 @@ The 19H422 target filesystem's extracted
 
 Both target and donor `AppleMultitouchDriver` KernelCache personality
 records reference the same plug-in type UUID in their
-`IOCFPlugInTypes` dictionaries. This is a concrete cross-build static
-metadata link. The donor plugin's own filesystem Info.plist has not yet been
-independently extracted and compared, so the target's plugin version and
-factory mapping must not be projected onto the donor.
+`IOCFPlugInTypes` dictionaries. The donor's own filesystem plugin
+`Info.plist` has now also been inspected. It independently confirms bundle
+`com.apple.iokit.plugin.MultitouchHID`, version `6140.3`, minimum OS
+`16.7`, platform `iPhoneOS`, the same type UUID, factory UUID, and
+`IOHIDPlugInFactory` function as the target's 19H422 plugin. The donor
+plist is 1,126 bytes with SHA-256
+`6700b351288f1420754edcc8107a118b935d7ce250653f737ff448f9ddb7f3b1`.
+The target plugin is version `5100.27` with minimum OS `15.8`. See the
+[donor plugin audit](20h392-multitouch-plugin-audit.md) for the field-by-field
+comparison.
+
+
 
 ## Interpretation
 
@@ -123,11 +131,11 @@ plugin loading, touch-event delivery, and display operation remain untested.
 
 ## Next bounded host-side comparison
 
-The next useful file-level check is to inspect the 20H392 donor filesystem's
-own `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist` and
-compare its bundle version, minimum OS, supported platform, type UUID, and
-factory UUID with the extracted 19H422 target plugin. Keep the donor and
-target reports separate and use only the IPSW files on the analysis computer.
+The target and donor plugin Info.plists have now been compared. The next
+bounded static task is to inspect the two plugin executable Mach-O files, if
+available, for architecture, install name, linked libraries, build-version
+load command, UUID, and code-signature presence. Keep the two artifacts
+separate; Mach-O metadata does not prove runtime compatibility.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,
