@@ -156,8 +156,11 @@ The next bounded host-side check is documented in the
 [MultitouchSupport export audit plan](20h392-19h422-multitouchsupport-export-audit-plan.md).
 It uses the pinned `ipsw dyld macho --symbols -V` parser path to collect the
 `Dyld Exports` section from both caches. Compare names and flags first; keep
-addresses as cache-specific references. A later `MultitouchHID` comparison
-is contingent on reliable parser output.
+addresses as cache-specific references. The initial supplied export sections are now compared in
+[the MultitouchSupport export comparison](20h392-19h422-multitouchsupport-export-comparison.md).
+Seven donor-only names are observed provisionally; exact counts and the
+absence of target-only names remain pending the saved-log set comparison.
+A later `MultitouchHID` export inspection is contingent on reliable parser output.
 
 No binary, shared-cache file, filesystem image, firmware file, or device
 state is changed or committed by this documentation.
