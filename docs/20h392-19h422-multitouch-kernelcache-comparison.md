@@ -114,11 +114,13 @@ contains only `Info.plist` and
 `CFBundleExecutable=MultitouchHID`. Its `CodeResources` plist has top-level
 keys `files`, `files2`, `rules`, and `rules2`; the printed `files` and
 `files2` entries were both empty. This is a manifest-structure observation,
-not code-signature verification. The inspected 19H422 target plugin
-directory contains only `Info.plist`; the pasted transcript also showed a
-home-directory executable-search heading with no matching paths displayed,
-but did not preserve the exact command or searched roots, so a complete
-target-filesystem search is still unconfirmed.
+not code-signature verification. The complete 19H422 target filesystem DMG was subsequently mounted
+read-only at `$HOME/19H422-full-fs-mount`. The user verified
+`root/System/Library/Extensions` exists and searched the complete mount
+for regular files and symlinks whose case-insensitive names match
+`MultitouchHID*`. No paths were returned. This closes the full-filesystem
+search for that filename pattern within the mounted 19H422 filesystem DMG;
+it does not cover other IPSW components or unmounted/shared-cache images.
 
 Consequently, the shared plugin type/factory UUID metadata remains confirmed,
 but no donor or target plugin executable is currently available from the
@@ -160,15 +162,15 @@ plist declares `CFBundleExecutable=MultitouchHID`; its
 `CodeResources` plist reports top-level keys `files`, `files2`,
 `rules`, and `rules2`, with empty printed `files` and `files2`
 entries. No matching donor executable was found in either searched mounted
-donor root. The target plugin directory listing contains only
-`Info.plist`; the additional home-directory search displayed no matches,
-but its exact command and coverage were not preserved, so a complete
-target-root search remains unconfirmed. The next bounded static task is to
-enumerate and document any remaining relevant mounted IPSW component roots.
-A Mach-O comparison is deferred until executable files are actually
-located. The `CodeResources` output is not signature verification. Keep
-donor and target artifacts separate; metadata does not prove runtime
-compatibility.
+donor root. The complete read-only 19H422 filesystem DMG
+(`098-68844-067.dmg`) has now been searched for regular files and symlinks
+matching `MultitouchHID*`; no paths were returned. No matching executable
+was found in either of the two searched donor mount roots either. The next
+bounded static task is to inventory the 19H422 dyld shared-cache files and
+inspect their image-path list for a possible cache-backed plugin image. A
+Mach-O comparison remains blocked until actual executable bytes are located.
+The `CodeResources` output is not signature verification. Keep donor and
+target artifacts separate; metadata does not prove runtime compatibility.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,
