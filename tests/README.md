@@ -75,3 +75,13 @@ is static bundle metadata, not evidence of runtime service registration.
 The first supplied 19H422 target and 20H392 donor inventory run is summarized
 in `docs/embedded-xpc-service-results.md`. These are actual sanitized plist
 reports, separate from the synthetic fixtures used by the unit tests.
+
+
+The embedded-service identifier comparator consumes sanitized output from
+tools/inspect_embedded_services.py. It groups records by exact bundle
+identifier, preserves duplicate occurrence counts and source paths, and
+compares sets of distinct selected metadata values. It can also write a CSV
+with one row per unique identifier. Its synthetic tests cover shared and
+unique identities, duplicate records, metadata differences, missing IDs,
+CSV generation, schema validation, and MachServices declaration counts.
+This is a static JSON comparison, not a runtime service or ABI test.
