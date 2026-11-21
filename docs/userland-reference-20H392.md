@@ -40,6 +40,27 @@ This is an observed iPhone X donor binary identity. The repository's pinned
 public XNU candidate `xnu-8796.141.3` is not claimed to be the exact source
 revision for this KernelCache; source-to-binary correspondence remains open.
 
+## Donor multitouch plugin filesystem metadata
+
+The user's mounted 20H392 donor filesystem contains
+`AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/Info.plist`.
+The inspected plist is 1,126 bytes with SHA-256
+`6700b351288f1420754edcc8107a118b935d7ce250653f737ff448f9ddb7f3b1`.
+It reports:
+
+- Bundle ID: `com.apple.iokit.plugin.MultitouchHID`.
+- Version: `6140.3`.
+- Minimum OS: `16.7`.
+- Supported platform: `iPhoneOS`.
+- Plug-in type UUID: `0516B563-B15B-11DA-96EB-0014519758EF`.
+- Factory UUID: `0CB0FBB9-15EA-11DB-A93C-001451D47183`.
+- Factory function: `IOHIDPlugInFactory`.
+
+These identifiers match the separately inspected 19H422 target plugin plist;
+the target version/minimum OS are 5100.27 / 15.8. This is static metadata
+continuity, not evidence of cross-board plugin compatibility or runtime
+loading. See [the donor plugin comparison](20h392-multitouch-plugin-audit.md).
+
 ## Source-derived versus unverified
 Source-derived: ios-sweet identifies its userland as iPhone X 16.7.16 (20H392), and its device as iPhone X (iPhone10,3 / D22AP).
 
