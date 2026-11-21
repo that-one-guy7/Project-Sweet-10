@@ -47,7 +47,7 @@ class FrameworkLocationInventoryTests(unittest.TestCase):
             row = report["candidates"][0]
             self.assertEqual(report["schema"], OUTPUT_SCHEMA)
             self.assertEqual(report["scan_status"], "complete")
-            self.assertEqual(row["status"], "match-found")
+            self.assertEqual(row["status"], "binary-file-found")
             self.assertEqual(
                 {item["match_kind"] for item in row["matches"]},
                 {"binary-name", "framework-bundle-name"},
@@ -120,7 +120,7 @@ class FrameworkLocationInventoryTests(unittest.TestCase):
 
             report = build_inventory(candidates, root)
             row = report["candidates"][0]
-            self.assertEqual(row["status"], "match-found")
+            self.assertEqual(row["status"], "bundle-name-entry-only")
             self.assertEqual(len(row["matches"]), 1)
             self.assertEqual(row["matches"][0]["entry_kind"], "symlink")
             self.assertEqual(row["matches"][0]["match_kind"], "framework-bundle-name")
