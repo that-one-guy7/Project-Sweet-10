@@ -171,9 +171,19 @@ This confirms cache image-list representation only. It does not prove
 standalone filesystem presence, runtime dependency resolution, successful
 loading, or transitive dependency closure.
 
-## Next bounded inventory comparison
+## Completed donor/target inventory comparison
 
-Run the equivalent selected-name lookup against the existing read-only
-donor inventory `$HOME/20H392-dyld-images.json`. Compare the target and
-donor paths, versions, and UUIDs for the seven image records. This remains
-static cache metadata research, not a compatibility or runtime verdict.
+The user supplied the equivalent seven-name lookup from the existing
+read-only donor inventory `$HOME/20H392-dyld-images.json`. All seven
+selected image families are present in the donor and target inventories.
+Every corresponding record has a different version string and UUID.
+The complete side-by-side comparison is recorded in
+[the donor/target dependency image comparison](20h392-19h422-multitouch-dependency-image-comparison.md).
+
+This closes the selected image-list inventory check only. It does not
+establish binary compatibility, dependency resolution, plugin loading,
+or hardware behavior. The next bounded host-side research task is to inspect
+the loader metadata for the target and donor `MultitouchSupport` images
+and compare it with the existing target/donor `AppleMultitouchSPI` and
+`AppleHIDTransportSPI` KernelCache records. Keep cache image-list
+membership, loader edges, KEXT metadata, and runtime behavior separate.
