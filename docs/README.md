@@ -33,6 +33,7 @@
 - [19H422 / 20H392 AGX libSystem re-export follow-up](19h422-20h392-agx-libsystem-reexport-results.md)
 - [19H422 / 20H392 libSystem re-export load-command results](19h422-20h392-libsystem-reexport-load-command-results.md)
 - [19H422 / 20H392 AGX libSystem re-exported import results](19h422-20h392-agx-libsystem-reexport-symbol-results.md)
+- [19H422 / 20H392 AGX libSystem symbol-level re-export chain results](19h422-20h392-agx-libsystem-reexport-chain-results.md)
 - [20H392 service and graphics dependency inspection plan](20h392-service-graphics-dependency-plan.md)
 - [20H392 IOKit and font-framework dependency results](20h392-iokit-font-framework-dependency-results.md)
 - [20H392 FontServices and CoreText inspection plan](20h392-fontservices-coretext-plan.md)

@@ -948,3 +948,17 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
 - 2026-11-21: Inspected the uploaded target/donor libSystem load-command JSON (both query status 0; stderr empty). Both /usr/lib/libSystem.B.dylib images carry LC_REEXPORT_DYLIB commands: 33 target and 32 donor, with 32 exact shared paths, one target-only libsystem_product_info_filter.dylib path, and no donor-only path. Twenty-four of the 32 common paths print different current-version strings; all compatibility-version strings are 1. The parent libraries' direct export rows therefore do not represent the full re-exported symbol surface. Added a read-only collector for the exact 33 target / 32 donor re-export image paths; the next step is provider-export membership analysis of the 100 target / 102 donor AGX imports previously labelled libSystem.B.dylib. This remains static load-command metadata, not runtime dyld resolution or ABI proof. No device or firmware state changed.
 
 - 2026-11-21: Compared all AGX imports originally attributed to libSystem.B.dylib against direct exports from the exact one-level LC_REEXPORT_DYLIB provider paths in the 19H422 and 20H392 caches. The uploaded provider archive contained 65 logs (33 target, 32 donor); all 65 queries exited 0. All 100 target and 102 donor libSystem-attributed import names occur in exactly one child provider's direct Dyld Exports list; none is ambiguous or unmatched. By combining this with the previously recorded direct matches for the other 12 Symtab provider labels, all 418/418 target and 464/464 donor undefined-import rows have exact provider-specific export-name membership. The 96 shared libSystem-attributed import names map to the same child provider across builds; four are target-only and six donor-only. Added a reproducible one-level mapper, seven synthetic tests, and a 106-row symbol/provider CSV. This remains static name evidence, not dyld bind, ABI, runtime, GPU, boot, or SpringBoard proof; no device or firmware state changed.
+
+
+- 2026-11-21: Traced the symbol-level re-export kinds in the saved AGX
+  libSystem provider logs. In both 19H422 and 20H392, 13 parent-import
+  names have a symbol-level forwarding row: one from libcompiler_rt to
+  libsystem_pthread and twelve from libsystem_c to libsystem_platform.
+  Each forwarded name has exactly one matching downstream regular export
+  row; no unresolved chain was observed. All 13 forwarded symbol/provider/
+  terminal mappings are identical across the two builds. Added a bounded
+  chain tracer, eleven synthetic tests, and a 26-row build/name CSV.
+  This is decoded export-trie metadata only, not proof of a dyld bind,
+  implementation/ABI compatibility, runtime loading, GPU initialization,
+  boot, or SpringBoard. The physical iPhone 7 remains on iOS 12.1.4; no
+  device, firmware, partition, security, or boot state was accessed or changed.
