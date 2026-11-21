@@ -60,3 +60,13 @@ parsing, missing/empty sections, target-only and donor-only names, printed
 kind-category changes, resolver-address differences (without misclassifying them as kind changes), duplicate symbol rows, and cache-local address differences.
 It does not read cache binaries, extract images, or establish ABI/runtime
 compatibility.
+
+
+The embedded XPC-service/app-extension inventory reads only Info.plist or
+Contents/Info.plist inside .xpc and .appex bundles (or other explicitly
+selected suffixes). It emits allowlisted bundle/service/extension fields and
+plist hashes, skips symlinked bundle and plist entries, and never reads or
+executes bundle binaries. Synthetic tests cover bundle discovery, multiple
+roots, service/provider indexing, extension metadata, malformed/missing
+plists, unsafe executable names, symlinks, and source-file preservation. This
+is static bundle metadata, not evidence of runtime service registration.
