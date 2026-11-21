@@ -1,0 +1,36 @@
+name: KEXT metadata comparator tests
+
+on:
+  pull_request:
+    paths:
+      - "tools/compare_kext_metadata.py"
+      - "tests/test_compare_kext_metadata.py"
+      - ".github/workflows/kext-metadata-compare-tests.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/compare_kext_metadata.py"
+      - "tests/test_compare_kext_metadata.py"
+      - ".github/workflows/kext-metadata-compare-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compare-kext-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run synthetic tests
+        run: python3 -m unittest discover -s tests -p 'test_compare_kext_metadata.py' -v
+
+      - name: Check CLI help
+        run: python3 tools/compare_kext_metadata.py --help
