@@ -57,44 +57,90 @@ indices and target image indices belong to separate cache inventories;
 their numerical difference does not imply load order, priority, or
 compatibility.
 
-## UUID status and follow-up `dyld image` result
+## PrebuiltLoaderSet record and dependency inventory
 
-The supplied `ipsw dyld info --dylibs` text excerpt reports each image's
-index, version, and path, but it does not include the donor
-`MultitouchHID` Mach-O UUID. The donor UUID is therefore **not recorded
-or inferred** in this report.
-
-The user then queried the exact path with:
+The user queried the exact image path with:
 
 ```text
 ipsw dyld image "$DONOR_CACHE" "$IMAGE" -V
 ```
 
-The supplied output reported the exact image path, VM Size
-`0x20e0c000`, loader flags
-`prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022`, a loader
-reference `index: 2556`, and dependency names including
-`MultitouchSupport.framework` and IOKit. It did **not** print an image
-UUID, nor the ID/Name/Flags/UUID block seen in the current upstream
-`ipsw dyld image` example.
+The supplied output resolved the same `MultitouchHID` path and returned
+this PrebuiltLoaderSet record:
 
-The loader reference index `2556` is recorded as a loader/closure
-reference only. It is not equated with the separate `dyld info --dylibs`
-image-list index `2557`; their relationship has not been established.
-The output is consistent with a prebuilt-loader/closure view rather than
-the image-array UUID record needed for this comparison. Several printed
-Swift/Objective-C section offsets and sizes are implausible (some values
-resemble ASCII fragments), so those section rows are excluded from
-interpretation pending independent validation. They are not evidence that
-the underlying cache image is corrupt.
+| Field | Donor output |
+|---|---|
+| Path | `/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID` |
+| VM Size | `0x20e0c000` |
+| Loader flags | `prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022` |
+| Loader reference | `index: 2556` |
+| Info flags | `initializers|overridable|regions=5` |
+| Exports trie | Offset `0x0b346300`, size `0xfe18` |
+| Regions | Five regions reported, with `r-x`, `rw-`, and `r--` permissions |
 
-The next bounded metadata query is the donor equivalent of the target
-inventory that previously exposed UUID fields:
-`ipsw dyld info --dylibs --json "$DONOR_CACHE"`. The JSON output should
-be searched for the exact full image path and the complete matching
-record retained. Until that result is available, the target UUID is known
-(`304953E6-6B67-3CF1-B7CA-E011978210DE`) but the donor UUID comparison
-remains incomplete.
+The command also reported 14 dependencies:
+
+| Kind | Dependency |
+|---|---|
+| regular | `WirelessDiagnostics.framework/WirelessDiagnostics` |
+| regular | `CoreAccessories.framework/CoreAccessories` |
+| weak-link | `CoreAnalytics.framework/CoreAnalytics` |
+| regular | `Foundation.framework/Foundation` |
+| regular | `MultitouchSupport.framework/MultitouchSupport` |
+| regular | `IOKit.framework/IOKit` |
+| weak-link | `ProtocolBuffer.framework/ProtocolBuffer` |
+| regular | `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter` |
+| weak-link | `libMobileGestalt.dylib` |
+| regular | `libIOReport.dylib` |
+| regular | `libc++.1.dylib` |
+| regular | `libSystem.B.dylib` |
+| regular | `CoreFoundation.framework/CoreFoundation` |
+| regular | `libobjc.A.dylib` |
+
+This records the donor image's static loader/dependency metadata. It does
+not prove that these dependencies are installed or usable on iPhone9,1,
+that the plugin loads at runtime, or that a HID provider attaches.
+
+The output's `Sections` block contains implausibly large decoded offsets
+and sizes, including values that resemble ASCII fragments. Those section
+rows are excluded from interpretation pending independent parser
+validation. This is not evidence that the cache image itself is corrupt.
+
+The loader reference index `2556` is recorded separately from the
+one-based donor `dyld info --dylibs` image-list entry `2557`. Their
+relationship has not been established, so they are not treated as
+interchangeable identifiers.
+
+## UUID status and corrected lookup method
+
+The supplied `ipsw dyld image ... -V` output does **not** contain a
+Mach-O UUID. The earlier generic expectation that this command would
+print an image UUID does not apply to the path taken for this iOS 16
+cache. Source review of the pinned ipsw 3.1.749 implementation explains
+the difference: `dyld image` first tries to resolve a PrebuiltLoaderSet
+entry and prints the loader record when that succeeds. Its older
+image-array fallback prints a cache-image record instead.
+
+For this donor cache, the source-backed UUID query is the same method
+used for the target: `ipsw dyld info --dylibs --json`. In the pinned
+source, the JSON inventory's per-image record contains `index`,
+`name`, `version`, `uuid`, and `load_address`, populated from the
+cached image's partial Mach-O. The donor UUID therefore remains
+**pending** until the matching JSON record is retrieved.
+
+The exact next query is:
+
+```bash
+"$BIN" dyld info --dylibs --json "$DONOR_CACHE" > "$HOME/20H392-dyld-images.json"
+```
+
+Then filter the `dylibs` array for the exact full path shown above and
+retain its `index`, `name`, `version`, `uuid`, and `load_address`
+fields.
+
+Pinned source references:
+- [ipsw 3.1.749 dyld image command](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/cmd/ipsw/cmd/dyld/dyld_image.go)
+- [ipsw 3.1.749 DSC JSON inventory](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/internal/commands/dsc/dsc.go)
 
 ## Interpretation
 
@@ -114,7 +160,8 @@ This is stronger than plist-only evidence because both cache inventories
 list compiled image records for the plugin path. It remains metadata-level
 evidence: no raw Mach-O bytes have been compared, the donor UUID has not
 yet been retrieved, and no signature verification or runtime test is
-claimed. The shared install path and previously observed matching plugin
+claimed. The donor PrebuiltLoaderSet dependency list is static closure
+metadata only and does not establish target-side dependency resolution. The shared install path and previously observed matching plugin
 type/factory UUID declarations do not establish binary compatibility,
 provider attachment, or cross-board support.
 
@@ -131,7 +178,7 @@ iPhone9,1 hardware identity.
 | Donor `MultitouchHID` path and image-list version | Confirmed in supplied grep output |
 | Donor related multitouch/HID image paths and versions | Confirmed in supplied grep output |
 | Target 19H422 corresponding paths and versions | Confirmed in the previously recorded target cache inventory |
-| Donor `MultitouchHID` Mach-O UUID | Pending exact `ipsw dyld image` query |
+| Donor `MultitouchHID` Mach-O UUID | Pending exact `ipsw dyld info --dylibs --json` inventory query |
 | Raw donor/target Mach-O byte comparison | Not performed |
 | Signature validation | Not performed |
 | Runtime plugin loading or IOKit attachment | Not tested |
