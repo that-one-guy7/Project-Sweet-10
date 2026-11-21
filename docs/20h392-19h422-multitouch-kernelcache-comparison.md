@@ -103,6 +103,24 @@ comparison.
 
 
 
+## Plugin executable availability
+
+A subsequent user-side directory check found no file or symlink named
+`MultitouchHID*` anywhere under either searched 20H392 donor mount root:
+`$HOME/20H392/mnt/root/root` and
+`$HOME/20H392/systemos-mnt/root/root`. The donor plugin directory itself
+contains only `Info.plist` and
+`_CodeSignature/CodeResources`. The inspected 19H422 target plugin
+directory contains only `Info.plist`; a recursive search of the complete
+target filesystem has not yet been recorded.
+
+Consequently, the shared plugin type/factory UUID metadata remains confirmed,
+but no donor or target plugin executable is currently available from the
+inspected directories for Mach-O inspection. This is an artifact-availability
+limitation, not evidence that the executable is absent from every IPSW
+component or every unmounted/shared-cache location. The mere presence of
+`CodeResources` does not verify a code signature.
+
 ## Interpretation
 
 The comparison establishes three useful facts:
@@ -131,11 +149,14 @@ plugin loading, touch-event delivery, and display operation remain untested.
 
 ## Next bounded host-side comparison
 
-The target and donor plugin Info.plists have now been compared. The next
-bounded static task is to inspect the two plugin executable Mach-O files, if
-available, for architecture, install name, linked libraries, build-version
-load command, UUID, and code-signature presence. Keep the two artifacts
-separate; Mach-O metadata does not prove runtime compatibility.
+The target and donor plugin Info.plists have now been compared. The donor
+executable was not found in either searched mounted root, and the target
+plugin directory listing contained no executable. The next bounded static
+task is to inspect the donor plist's `CFBundleExecutable` value and
+`CodeResources` manifest, then search the complete target mounted
+filesystem by the target's declared executable filename. A Mach-O comparison
+is deferred until executable files are actually located. Keep donor and
+target artifacts separate; metadata does not prove runtime compatibility.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,
