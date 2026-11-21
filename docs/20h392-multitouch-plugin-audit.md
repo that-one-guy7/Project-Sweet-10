@@ -48,7 +48,7 @@ KernelCache identity is included only to identify the same donor build context.
 | `CFBundleShortVersionString` | `5100.27` | `6140.3` |
 | `MinimumOSVersion` | `15.8` | `16.7` |
 | `CFBundleSupportedPlatforms` | `iPhoneOS` | `iPhoneOS` |
-| `CFBundleExecutable` | `MultitouchHID` | Not included in the user's printed donor-field subset |
+| `CFBundleExecutable` | `MultitouchHID` | `MultitouchHID` |
 | Plugin type UUID | `0516B563-B15B-11DA-96EB-0014519758EF` | `0516B563-B15B-11DA-96EB-0014519758EF` |
 | Factory UUID | `0CB0FBB9-15EA-11DB-A93C-001451D47183` | `0CB0FBB9-15EA-11DB-A93C-001451D47183` |
 | Factory function | `IOHIDPlugInFactory` | `IOHIDPlugInFactory` |
@@ -124,6 +124,15 @@ listing of the donor plugin directory then showed only:
 - `Info.plist` (1,126 bytes).
 - `_CodeSignature/CodeResources` (2,467 bytes).
 
+The user's follow-up Python inspection confirmed that the donor Info.plist
+declares `CFBundleExecutable=MultitouchHID` and `CFBundleVersion=6140.3`.
+The 2,467-byte `CodeResources` plist parsed with keys `files`, `files2`,
+`rules`, and `rules2`; the printed `files` and `files2` maps contained
+no entries. The output did not report the contents of `rules` or
+`rules2`. This does not locate the executable or verify a code signature:
+the declared executable name is metadata, and CodeResources parsing is not
+cryptographic signature validation.
+
 The earlier target plugin directory listing showed only `Info.plist`
 (1,117 bytes). This target result is limited to the inspected plugin
 directory; a recursive search of the entire target mounted filesystem has
@@ -144,6 +153,8 @@ the executable bytes.
 | Donor plugin Info.plist exists in the mounted 20H392 filesystem | Confirmed by user-supplied path and successful plist read |
 | Donor plist size and SHA-256 | Confirmed: 1,126 bytes; hash recorded above |
 | Donor bundle ID/version/minimum OS/platform | Confirmed from printed plist fields |
+| Donor `CFBundleExecutable` | Confirmed: `MultitouchHID` |
+| Donor CodeResources structure | Keys `files`, `files2`, `rules`, and `rules2` present; printed `files`/`files2` maps empty; signature validity not tested |
 | Donor type UUID/factory UUID/factory function | Confirmed from printed plist fields |
 | Donor and target plugin type UUIDs match | Exact string equality confirmed |
 | Donor and target factory UUIDs/functions match | Exact string equality confirmed |
@@ -158,16 +169,17 @@ the executable bytes.
 
 ## Next bounded host-side research
 
-The plugin plist comparison is complete, but the expected executable was
-not found in either searched donor mount tree, and the target plugin directory
-listing also did not contain it. The next bounded host-side check is to read
-the donor plist's `CFBundleExecutable` value and inspect the
-`_CodeSignature/CodeResources` manifest to determine which bundle resources
-it records. Separately, perform a filename-only recursive search of the
-complete target mounted filesystem for the target's declared executable.
-Only if actual executable files are located should their Mach-O metadata be
-compared. Do not infer signature validity from the existence of
-`CodeResources`; it is not a cryptographic verification result.
+The donor executable name and CodeResources structure have now been read, but
+the donor executable itself was not found in either searched donor mount root.
+The next bounded host-side task is a filename-only search across the complete
+19H422 target filesystem for `MultitouchHID*`. First identify the actual
+read-only mount root of the complete target filesystem DMG
+(`098-68844-067.dmg`); the previously recorded extracted plugin directory
+under `$HOME/19H422-multitouch-plugin/` is not evidence of a complete
+filesystem-root search. Include regular files and symlinks and record the
+exact root searched. If the executable is found, inspect its file identity
+before considering any further metadata comparison. Keep all work read-only
+and host-side; do not infer signature validity from CodeResources.
 
 Any executable comparison remains descriptive. It must not be used as a
 basis for copying donor binaries to the iPhone 7 or claiming runtime
