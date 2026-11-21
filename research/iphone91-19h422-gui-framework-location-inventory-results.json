@@ -1,0 +1,278 @@
+{
+  "schema": "project-sweet-10.framework-location-inventory.reviewed.v1",
+  "source_report_schema": "project-sweet-10.framework-location-inventory.v1",
+  "target_reference": {
+    "device": "iPhone9,1",
+    "board": "D10AP",
+    "build": "19H422",
+    "ios_version": "15.8.8"
+  },
+  "donor_reference_context": {
+    "device": "iPhone10,3",
+    "board": "D22AP",
+    "build": "20H392",
+    "ios_version": "16.7.16"
+  },
+  "target_root": "/home/hey/19H422-full-fs-mount/root",
+  "candidate_file_sha256": "e25a54af687e32e3e6959cf2959a7c637e4a195beae08cfa0eb4c0ecc2d46358",
+  "scan_status": "complete",
+  "summary": {
+    "candidate_count": 18,
+    "original_report_status_counts": {
+      "match-found": 2,
+      "no-match-in-complete-scan": 16
+    },
+    "reviewed_status_counts": {
+      "bundle-directory-only": 2,
+      "no-match-in-complete-scan": 16
+    },
+    "directories_scanned": 104017,
+    "entries_seen": 382833,
+    "matching_entries": 1,
+    "walk_error_count": 0,
+    "entry_stat_error_count": 0
+  },
+  "candidates": [
+    {
+      "id": "extensionfoundation-donor-path",
+      "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "group": "RunningBoard",
+      "reason": "Exact donor-only install path; target cache inventory instead lists the same basename under PrivateFrameworks.",
+      "original_report_status": "match-found",
+      "reviewed_status": "bundle-directory-only",
+      "binary_basename_found": false,
+      "bundle_directory_found": true,
+      "matches": [
+        {
+          "path": "System/Library/PrivateFrameworks/ExtensionFoundation.framework",
+          "basename": "ExtensionFoundation.framework",
+          "entry_kind": "directory",
+          "match_kind": "framework-bundle-name"
+        }
+      ]
+    },
+    {
+      "id": "extensionfoundation-target-alternate",
+      "path": "/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+      "group": "RunningBoard",
+      "reason": "Known alternate path represented in the target 19H422 cache image list (index 1093).",
+      "original_report_status": "match-found",
+      "reviewed_status": "bundle-directory-only",
+      "binary_basename_found": false,
+      "bundle_directory_found": true,
+      "matches": [
+        {
+          "path": "System/Library/PrivateFrameworks/ExtensionFoundation.framework",
+          "basename": "ExtensionFoundation.framework",
+          "entry_kind": "directory",
+          "match_kind": "framework-bundle-name"
+        }
+      ]
+    },
+    {
+      "id": "privacydisclosurecore",
+      "path": "/System/Library/PrivateFrameworks/PrivacyDisclosureCore.framework/PrivacyDisclosureCore",
+      "group": "RunningBoard",
+      "reason": "Donor weak-link dependency with no same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "systemaperture",
+      "path": "/System/Library/PrivateFrameworks/SystemAperture.framework/SystemAperture",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "activitykit",
+      "path": "/System/Library/Frameworks/ActivityKit.framework/ActivityKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "activityuiservices",
+      "path": "/System/Library/PrivateFrameworks/ActivityUIServices.framework/ActivityUIServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "posterboardui",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardUI.framework/PosterBoardUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "backlightservices",
+      "path": "/System/Library/PrivateFrameworks/BacklightServices.framework/BacklightServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "backlightserviceshost",
+      "path": "/System/Library/PrivateFrameworks/BacklightServicesHost.framework/BacklightServicesHost",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "posterboardservices",
+      "path": "/System/Library/PrivateFrameworks/PosterBoardServices.framework/PosterBoardServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "posterkit",
+      "path": "/System/Library/PrivateFrameworks/PosterKit.framework/PosterKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "coversheetkit",
+      "path": "/System/Library/PrivateFrameworks/CoverSheetKit.framework/CoverSheetKit",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "sessionassertion",
+      "path": "/System/Library/PrivateFrameworks/SessionAssertion.framework/SessionAssertion",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "biomelibrary",
+      "path": "/System/Library/PrivateFrameworks/BiomeLibrary.framework/BiomeLibrary",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "pointeruisystemservices",
+      "path": "/System/Library/PrivateFrameworks/PointerUISystemServices.framework/PointerUISystemServices",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "paperboardui",
+      "path": "/System/Library/PrivateFrameworks/PaperBoardUI.framework/PaperBoardUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "systemstatusui",
+      "path": "/System/Library/PrivateFrameworks/SystemStatusUI.framework/SystemStatusUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    },
+    {
+      "id": "systemapertureui",
+      "path": "/System/Library/PrivateFrameworks/SystemApertureUI.framework/SystemApertureUI",
+      "group": "SpringBoard.framework",
+      "reason": "Selected donor SpringBoard dependency without a same-basename target cache image-list record.",
+      "original_report_status": "no-match-in-complete-scan",
+      "reviewed_status": "no-match-in-complete-scan",
+      "binary_basename_found": false,
+      "bundle_directory_found": false,
+      "matches": []
+    }
+  ],
+  "matches": [
+    {
+      "path": "System/Library/PrivateFrameworks/ExtensionFoundation.framework",
+      "basename": "ExtensionFoundation.framework",
+      "entry_kind": "directory",
+      "matched_candidates": [
+        {
+          "candidate_id": "extensionfoundation-donor-path",
+          "candidate_path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "match_kind": "framework-bundle-name"
+        },
+        {
+          "candidate_id": "extensionfoundation-target-alternate",
+          "candidate_path": "/System/Library/PrivateFrameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "match_kind": "framework-bundle-name"
+        }
+      ]
+    }
+  ],
+  "walk_errors": [],
+  "entry_stat_errors": [],
+  "interpretation": [
+    "The original v1 scanner reports match-found when either the executable basename or enclosing framework-directory basename matches.",
+    "The only matched entry is the ExtensionFoundation.framework directory; no file named ExtensionFoundation was found.",
+    "Both ExtensionFoundation candidate records refer to the same discovered directory; this does not establish the donor Frameworks install path or prove the executable exists.",
+    "Sixteen other candidate bundle and executable basenames were not found in the complete traversal of the supplied target OS root.",
+    "This scan covers one mounted OS filesystem tree, not other volumes, Cryptexes, snapshots, the dyld shared cache contents, or runtime locations.",
+    "A filesystem filename scan does not establish Mach-O validity, code-signature validity, dyld resolution, ABI compatibility, service startup, hardware operation, kernel boot, or SpringBoard readiness."
+  ]
+}
