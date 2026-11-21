@@ -407,3 +407,24 @@ The complete ordered lists, derived donor-side edges, and caveats are in
 The broad donor font chain is now bounded and documented. M6's next priority
 is an iPhone9,1 target-native crosswalk, not indiscriminate expansion of
 generic donor frameworks. This remains static research only; M7 has not started.
+
+
+## Selected GUI-chain Program-path presence check (pending)
+
+The exact selected Program paths are now covered by a bounded host-side
+metadata inspector, `tools/inspect_launchd_program_paths.py`. It checks the
+nine GUI/platform job labels already compared in the target/donor launchd
+inventory: backboardd, runningboardd, SpringBoard, configd, notifyd,
+mediaserverd, wifid, bluetoothd, and mobileactivationd.
+
+The script checks the exact paths under the supplied already-mounted roots,
+plus up to two explicit repeated `root/` wrapper levels. It uses `lstat`
+and stops at symlinks; it never opens or executes program files. The detailed
+method and the exact command using the supplied mount roots are in
+[the Program-path inventory plan](launchd-program-path-presence-plan.md).
+
+No actual path-presence result has been recorded yet because the mounted
+filesystem roots exist on the user's Ubuntu VM, not in the repository runner.
+The next evidence item is the generated JSON report. A regular-file result
+will remain only a filename/type observation, not binary, signature, ABI,
+loadability, or launch proof.
