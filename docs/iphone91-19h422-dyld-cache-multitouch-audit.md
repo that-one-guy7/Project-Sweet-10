@@ -250,3 +250,28 @@ row. Cache image-list membership and an individual image's dependent-loader
 edges are separate evidence types. Runtime resolution and library loading
 remain unverified. See
 [the donor/target libc++ comparison](20h392-19h422-libcxx-cache-image-comparison.md).
+
+
+## Target MultitouchSupport exported-name comparison
+
+The user supplied the target-side and donor-side `Dyld Exports` output for
+`MultitouchSupport`. The target image is cache index 1249, version
+`5100.27.0.0.0`, UUID
+`0EAF98B3-8D31-3A90-A578-1787797B9467`. The first pasted block is
+treated as target because the documented command prints target before
+donor; the pasted excerpt omitted the target heading and both parser
+exit-code lines.
+
+Seven names are visible in the donor list but not in the target list:
+`_MTDeviceGetMaxHoverHeightValue`,
+`_MTDeviceGetMultipleFirmwaresConfig`,
+`_MTDeviceSetBinaryFiltersProperty`,
+`_MTDeviceShouldSkipFaceDetectionMode`,
+`_MTDeviceUpdateUILockState`,
+`_OBJC_CLASS_$_MTAHTSupport`, and
+`_OBJC_METACLASS_$_MTAHTSupport`. All seven are printed as
+`regular`. The target list has a broad overlapping multitouch export
+surface. Exact counts, duplicates, and target-only names remain pending
+automated comparison of the saved full logs. These export records do not
+prove ABI compatibility or runtime loading. See
+[the target/donor export comparison](20h392-19h422-multitouchsupport-export-comparison.md).
