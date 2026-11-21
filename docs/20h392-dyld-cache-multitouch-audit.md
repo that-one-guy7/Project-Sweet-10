@@ -278,3 +278,17 @@ MultitouchSupport PrebuiltLoaderSet record lists libc++ as a regular
 dependent, while the target record does not. This is a loader-record
 difference, not evidence that the target cache lacks libc++. See
 [the donor/target libc++ comparison](20h392-19h422-libcxx-cache-image-comparison.md).
+
+
+## Donor MultitouchSupport exported-name comparison
+
+The donor 20H392 `MultitouchSupport` export output includes the seven
+additional exported names recorded in
+[the target/donor export comparison](20h392-19h422-multitouchsupport-export-comparison.md):
+five `_MTDevice...` function names and the
+`_OBJC_CLASS_$_MTAHTSupport` / `_OBJC_METACLASS_$_MTAHTSupport`
+pair. The supplied rows identify these as `regular` exports. This
+establishes a difference in the compared export-name surface only; no
+hardware capability, implementation, ABI, or runtime conclusion is made.
+Exact set counts and duplicate checks remain pending comparison of the
+two saved complete parser logs.
