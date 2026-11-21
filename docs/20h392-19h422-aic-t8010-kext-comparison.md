@@ -64,3 +64,21 @@ It rejects duplicate selected bundle IDs and malformed inventory roots.
   or runtime values.
 - No target constants are inferred from the donor. No device, firmware,
   partition, or boot state is accessed or modified.
+
+## One-sided bundle records
+
+When a selected bundle exists in only one parsed inventory, the comparator
+prints the available side's selected IOKit personality names/fields and
+`os_bundle_libraries` names/values. This preserves useful target-native
+metadata for T8010-specific KEXTs even when the iPhone X donor has no matching
+top-level bundle record. The missing side is still described only as absent
+from that JSON inventory.
+
+An empty dependency-version value or omitted bundle field is an export value
+or omission, not a demonstrated ABI mismatch. The comparator does not infer
+compatibility from presence, names, or version strings. All results remain
+static metadata only.
+
+The one-sided report is covered by synthetic tests for both target-only and
+donor-only records. Re-run the same command above after updating the local
+repository to capture the fuller output.
