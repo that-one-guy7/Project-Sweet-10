@@ -67,7 +67,7 @@ References:
 1. **Unmodified kernel baseline:** establish a reproducible build of the chosen source before introducing local changes. This validates the toolchain only; it does not prove iPhone9,1 support.
 2. **A10/T8010 platform foundation:** prepare a small, reviewable platform configuration from the completed H9 dependency analysis. Do not copy `H9.h` wholesale or bypass the machine-selection guard.
 3. **CPU, memory, and DeviceTree contracts:** establish the CPU feature set, memory ownership/map, DeviceTree interpretation, and handoff interfaces before peripheral work.
-4. **Interrupt controller and timer:** these are the first hardware-service candidates because later drivers depend on them. The actual controller, node, register ranges, IRQ mapping, counter frequency, and callbacks must be identified from D10AP evidence; do not assume AIC or reuse donor/Qualcomm values.
+4. **Interrupt controller and timer:** these are the first hardware-service candidates because later drivers depend on them. The static 19H422 target DeviceTree already identifies an `aic,1` master node and an `aic-timebase` timer node, with first register windows that the generic XNU mapper consumes. The missing contract is the final runtime tree, complete interrupt specifier/routing and per-core delivery, EOI behavior, timer counter semantics/frequency, and compatibility of the controller implementation with the selected XNU source. Do not infer full AIC support from the node name alone or reuse donor/Qualcomm values.
 5. **Bus controllers:** only after bus resource/interrupt/power contracts are documented, assess SPI and I2C host-controller support.
 6. **Leaf devices:** then assess the target-native display chain (display controller, MIPI-DSI, Pinot panel, LM3539 backlight) and input chain (Samsung SPI, K1 HID transport, multitouch layer). Their existence in the target KernelCache is a useful reference, not a compatibility guarantee for XNU 8796.
 7. **Userland integration:** expand the target/donor service and framework comparison, then address launchd and the SpringBoard dependency set. M7 remains a separate milestone.
@@ -76,7 +76,7 @@ References:
 
 The highest-value next preparation task is the **T8010/H9 transitive source-closure audit**: map every H9 macro, board-selection path, conditional consumer, required type/header, and removed interface into its XNU 8796 counterpart. The current macro consumer note is a useful first pass but is explicitly not exhaustive. In parallel, keep collecting source-backed D10AP platform facts without turning unknown DeviceTree fields into constants.
 
-The next driver to implement cannot responsibly be selected until the target interrupt-controller and timer contracts are resolved. The current evidence only proves selected static personality matches; it does not identify the live controller implementation or all required register/IRQ data.
+The first driver still cannot be selected for implementation. The target reference provides static AIC and AIC-timebase mapping inputs, but it does not yet establish the runtime routing, EOI, timer-frequency, or driver-initialization contract. After the H9 source scan, the next research task should be a focused AIC/timer source-to-DeviceTree crosswalk, not a speculative driver.
 
 ## Explicit non-goals for this preparation phase
 
