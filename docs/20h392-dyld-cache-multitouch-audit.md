@@ -121,22 +121,34 @@ the difference: `dyld image` first tries to resolve a PrebuiltLoaderSet
 entry and prints the loader record when that succeeds. Its older
 image-array fallback prints a cache-image record instead.
 
-For this donor cache, the source-backed UUID query is the same method
-used for the target: `ipsw dyld info --dylibs --json`. In the pinned
-source, the JSON inventory's per-image record contains `index`,
-`name`, `version`, `uuid`, and `load_address`, populated from the
-cached image's partial Mach-O. The donor UUID therefore remains
-**pending** until the matching JSON record is retrieved.
+For this donor cache, the source-backed UUID method was
+`ipsw dyld info --dylibs --json`. The user successfully ran that
+inventory query and supplied one exact matching record:
 
-The exact next query is:
+| Field | 20H392 donor |
+|---|---|
+| Image-list index | `2557` |
+| Full install path | `/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID` |
+| Source version | `6140.3.0.0.0` |
+| Mach-O UUID | `78E1FB55-113A-3500-9D2D-1D8E282BED45` |
+| Load address | `8757542912` (`0x20a000000`) |
 
-```bash
-"$BIN" dyld info --dylibs --json "$DONOR_CACHE" > "$HOME/20H392-dyld-images.json"
-```
+The corresponding 19H422 target record is index `1948`, version
+`5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`, and load address
+`7982772224`. The different UUIDs show that the donor and target cache
+images do not share the same Mach-O build identifier. They do not by
+themselves establish source-level differences, semantic differences,
+byte-for-byte inequality, or incompatibility. No raw Mach-O extraction
+or byte comparison has been performed.
 
-Then filter the `dylibs` array for the exact full path shown above and
-retain its `index`, `name`, `version`, `uuid`, and `load_address`
-fields.
+The pinned ipsw 3.1.749 source documents why the earlier
+`ipsw dyld image ... -V` query returned a PrebuiltLoaderSet record
+instead: that command prefers the loader-set path when it is available.
+The JSON inventory emits the per-image `index`, `name`, `version`,
+`uuid`, and `load_address` fields from the cached image's partial
+Mach-O.
+
 
 Pinned source references:
 - [ipsw 3.1.749 dyld image command](https://github.com/blacktop/ipsw/blob/a7dfadbcaca8375b424c12a68dae40767e5e07c1/cmd/ipsw/cmd/dyld/dyld_image.go)
@@ -158,9 +170,8 @@ The supplied cache inventories establish that:
 
 This is stronger than plist-only evidence because both cache inventories
 list compiled image records for the plugin path. It remains metadata-level
-evidence: no raw Mach-O bytes have been compared, the donor UUID has not
-yet been retrieved, and no signature verification or runtime test is
-claimed. The donor PrebuiltLoaderSet dependency list is static closure
+evidence: no raw Mach-O bytes have been separately extracted or compared, and no
+signature verification or runtime test is claimed. The donor PrebuiltLoaderSet dependency list is static closure
 metadata only and does not establish target-side dependency resolution. The shared install path and previously observed matching plugin
 type/factory UUID declarations do not establish binary compatibility,
 provider attachment, or cross-board support.
@@ -178,8 +189,8 @@ iPhone9,1 hardware identity.
 | Donor `MultitouchHID` path and image-list version | Confirmed in supplied grep output |
 | Donor related multitouch/HID image paths and versions | Confirmed in supplied grep output |
 | Target 19H422 corresponding paths and versions | Confirmed in the previously recorded target cache inventory |
-| Donor `MultitouchHID` Mach-O UUID | Pending exact `ipsw dyld info --dylibs --json` inventory query |
-| Raw donor/target Mach-O byte comparison | Not performed |
+| Donor `MultitouchHID` Mach-O UUID | Confirmed: `78E1FB55-113A-3500-9D2D-1D8E282BED45` (image-list index 2557) |
+| Raw donor/target Mach-O byte comparison | Not performed; UUIDs differ, but raw bytes have not been extracted |
 | Signature validation | Not performed |
 | Runtime plugin loading or IOKit attachment | Not tested |
 | Touch-event delivery on iPhone9,1 | Not tested |
