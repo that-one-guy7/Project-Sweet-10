@@ -73,6 +73,14 @@ The external iOS profile includes four patches under
 | `xnu-8796.141.3-typed-delete-and-uio-alignment.patch` | Adjusts typed-pointer compatibility and explicit alignment of UIO stack buffers |
 | `xnu-8796.141.3-vfs-getvfs-with-vfsops.patch` | Backports `vfs_getvfs_with_vfsops` from public XNU 10063.141.1 and adds the symbol to `BSDKernel.exports`; this is a downstream root-stack adaptation, not proof that public XNU 8796 has an Apple-side missing-symbol defect |
 
+A separate file-by-file review is now recorded in
+[static triage of the four downstream patches](unixnu-xnu-patch-triage.md).
+The reviewed diffs group into prelink lifecycle/representation changes,
+toolchain-dependent UIO alignment, and a downstream VFS/root integration
+extension. None adds a T8010 machine profile, H9 CPU description, A10
+interrupt/timer implementation, iPhone9,1 DeviceTree contract, or Apple
+peripheral driver.
+
 These are adaptations for that project's source, toolchain, prelink, and root
 integration. Their presence is not proof that Apple omitted the same logic
 from its internal 20H392 source, and they are not an A10/T8010 patch recipe.
