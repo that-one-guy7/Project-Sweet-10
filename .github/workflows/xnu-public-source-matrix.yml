@@ -5,6 +5,9 @@ on:
   pull_request:
     paths:
       - "xnu/BASELINE.lock.json"
+      - "docs/t8010-xnu-version-compatibility-options.md"
+      - "docs/xnu-machine-history-ci.md"
+      - "research/t8010-xnu-source-matrix.json"
       - "xnu/history/**"
       - "tools/audit_xnu_machine_history.py"
       - "tools/audit_xnu_public_source_matrix.py"
@@ -16,6 +19,9 @@ on:
     branches: [main]
     paths:
       - "xnu/BASELINE.lock.json"
+      - "docs/t8010-xnu-version-compatibility-options.md"
+      - "docs/xnu-machine-history-ci.md"
+      - "research/t8010-xnu-source-matrix.json"
       - "xnu/history/**"
       - "tools/audit_xnu_machine_history.py"
       - "tools/audit_xnu_public_source_matrix.py"
@@ -36,7 +42,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Read all six pinned XNU commits
+      - name: Read all ten pinned XNU commits
         id: xnu-locks
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
@@ -50,6 +56,10 @@ jobs:
               ("xnu8796early", "xnu/history/xnu-8796.101.5.lock.json"),
               ("xnu8796baseline", "xnu/BASELINE.lock.json"),
               ("xnu12377", "xnu/history/xnu-12377.1.9.lock.json"),
+              ("xnu10002_1_13", "xnu/history/xnu-10002.1.13.lock.json"),
+              ("xnu10002_41_9", "xnu/history/xnu-10002.41.9.lock.json"),
+              ("xnu10002_61_3", "xnu/history/xnu-10002.61.3.lock.json"),
+              ("xnu10002_81_5", "xnu/history/xnu-10002.81.5.lock.json"),
           )
           for output, filename in locks:
               record = json.loads(Path(filename).read_text(encoding="utf-8"))
@@ -140,6 +150,62 @@ jobs:
             /pexpert/pexpert/arm64/board_config.h
             /pexpert/pexpert/arm64/H9.h
 
+      - name: Check out public XNU 10002.1.13
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu10002_1_13 }}
+          path: xnu/public-10002-1.13
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out public XNU 10002.41.9
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu10002_41_9 }}
+          path: xnu/public-10002-41.9
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out public XNU 10002.61.3
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu10002_61_3 }}
+          path: xnu/public-10002-61.3
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
+      - name: Check out public XNU 10002.81.5
+        uses: actions/checkout@v4
+        with:
+          repository: apple-oss-distributions/xnu
+          ref: ${{ steps.xnu-locks.outputs.xnu10002_81_5 }}
+          path: xnu/public-10002-81.5
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /makedefs/MakeInc.def
+            /makedefs/MakeInc.kernel
+            /pexpert/pexpert/arm64/board_config.h
+            /pexpert/pexpert/arm64/H9.h
+
       - name: Verify all pinned source identities
         run: |
           python3 tools/verify_xnu_source.py xnu/historical-7195 xnu/history/xnu-7195.121.3.lock.json
@@ -148,12 +214,18 @@ jobs:
           python3 tools/verify_xnu_source.py xnu/early-8796 xnu/history/xnu-8796.101.5.lock.json
           python3 tools/verify_xnu_source.py xnu/upstream xnu/BASELINE.lock.json
           python3 tools/verify_xnu_source.py xnu/latest-public xnu/history/xnu-12377.1.9.lock.json
+          python3 tools/verify_xnu_source.py xnu/public-10002-1.13 xnu/history/xnu-10002.1.13.lock.json
+          python3 tools/verify_xnu_source.py xnu/public-10002-41.9 xnu/history/xnu-10002.41.9.lock.json
+          python3 tools/verify_xnu_source.py xnu/public-10002-61.3 xnu/history/xnu-10002.61.3.lock.json
+          python3 tools/verify_xnu_source.py xnu/public-10002-81.5 xnu/history/xnu-10002.81.5.lock.json
 
       - name: Run synthetic host-side tests
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
-      - name: Audit six-snapshot T8010/H9 source matrix
+      - name: Audit ten-snapshot T8010/H9 source matrix
         run: |
           python3 tools/audit_xnu_public_source_matrix.py \
             xnu/historical-7195 xnu/target-era-8020 xnu/transition-8019 \
-            xnu/early-8796 xnu/upstream xnu/latest-public
+            xnu/early-8796 xnu/upstream xnu/latest-public \
+            xnu/public-10002-1.13 xnu/public-10002-41.9 \
+            xnu/public-10002-61.3 xnu/public-10002-81.5
