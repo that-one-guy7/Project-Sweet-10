@@ -17,7 +17,7 @@ from typing import Any
 
 from inspect_framework_paths import InspectionError, load_candidates
 
-OUTPUT_SCHEMA = "project-sweet-10.framework-location-inventory.v1"
+OUTPUT_SCHEMA = "project-sweet-10.framework-location-inventory.v2"
 
 
 def _metadata_kind(metadata: os.stat_result) -> str:
@@ -157,8 +157,25 @@ def build_inventory(candidates_path: str | Path, target_root: str | Path) -> dic
     candidate_rows: list[dict[str, Any]] = []
     for candidate in document["candidates"]:
         candidate_matches = matches_by_id[candidate["id"]]
-        if candidate_matches:
-            status = "match-found"
+        binary_entries = [
+            item for item in candidate_matches if item["match_kind"] == "binary-name"
+        ]
+        binary_files = [
+            item for item in binary_entries if item["entry_kind"] == "regular-file"
+        ]
+        bundle_directories = [
+            item for item in candidate_matches
+            if item["match_kind"] == "framework-bundle-name"
+            and item["entry_kind"] == "directory"
+        ]
+        if binary_files:
+            status = "binary-file-found"
+        elif binary_entries:
+            status = "binary-name-entry-found"
+        elif bundle_directories:
+            status = "bundle-directory-only"
+        elif candidate_matches:
+            status = "bundle-name-entry-only"
         elif errors:
             status = "no-match-scan-incomplete"
         else:
@@ -175,6 +192,14 @@ def build_inventory(candidates_path: str | Path, target_root: str | Path) -> dic
                 else None
             ),
             "status": status,
+            "binary_matches": sorted(
+                binary_entries,
+                key=lambda item: (item["path"], item["entry_kind"]),
+            ),
+            "bundle_directory_matches": sorted(
+                bundle_directories,
+                key=lambda item: (item["path"], item["entry_kind"]),
+            ),
             "matches": sorted(
                 candidate_matches,
                 key=lambda item: (item["path"], item["match_kind"]),
