@@ -133,11 +133,11 @@ Different export names or flags would identify additional static differences, bu
 ## Exact-set comparison of the saved logs
 
 After the two complete parser logs have been generated using the command
-above, this optional standard-library script parses the first `Dyld Exports`
+above, this optional standard-library script parses the first \`Dyld Exports\`
 section in each log and compares names and printed kinds. It does not
 re-open or modify either cache.
 
-```bash
+\`\`\`bash
 python3 - "$HOME/19H422-MultitouchSupport-exports.txt" "$HOME/20H392-MultitouchSupport-exports.txt" <<'PY'
 import collections
 import re
@@ -145,7 +145,7 @@ import sys
 from pathlib import Path
 
 line_re = re.compile(
-    r"^\\s*(0x[0-9a-fA-F]+):\\s+\\(([^)]+)\\)\\s+(\\S+)\\s*$"
+    r"^\s*(0x[0-9a-fA-F]+):\s+\(([^)]+)\)\s+(\S+)\s*$"
 )
 
 def read_exports(filename):
@@ -198,15 +198,15 @@ else:
     print("Donor duplicate names:", sorted(n for n, rows in donor.items() if len(rows) > 1))
     print("Common unique names:", len(common))
 
-    print("\\nTarget-only names:")
+    print("\nTarget-only names:")
     for name in sorted(target_names - donor_names):
         print(" ", name)
 
-    print("\\nDonor-only names:")
+    print("\nDonor-only names:")
     for name in sorted(donor_names - target_names):
         print(" ", name)
 
-    print("\\nNames with differing printed kinds:")
+    print("\nNames with differing printed kinds:")
     for name in sorted(common):
         target_kinds = sorted({row[0] for row in target[name]})
         donor_kinds = sorted({row[0] for row in donor[name]})
@@ -216,13 +216,12 @@ else:
     differing_addresses = sum(
         target[name][0][1] != donor[name][0][1] for name in common
     )
-    print("\\nCommon names with different first printed addresses:",
+    print("\nCommon names with different first printed addresses:",
           differing_addresses)
     print("Address differences are cache-layout metadata, not a compatibility test.")
-
-read -r -p "Press Enter to close..."
 PY
-```
+read -r -p "Press Enter to close..."
+\`\`\`
 
 The script requires both complete logs to contain a parser-generated
 `Dyld Exports` heading. Preserve any parser errors rather than treating
