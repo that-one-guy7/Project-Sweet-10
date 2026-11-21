@@ -108,23 +108,42 @@ The text KEXT listing printed `AppleMobileDispH9P (140.0.0)`, while the JSON res
 | IOKit personality dictionary returned | Confirmed for eight of the nine; no field was returned for `AppleMultitouchSPI` |
 | Exact IONameMatch overlap with target DeviceTree | Confirmed for display, Synopsys MIPI-DSI, Samsung SPI, K1 SPI HID transport, Pinot LCD, and LM3539 backlight |
 | Display `backlight-control` property condition | Not present in the allowlisted `/arm-io/disp0` output; the extra display-to-backlight association is not established |
-| Nested `MultitouchHID.plugin` Info.plist in matching 19H422 filesystem | Confirmed; bundle ID, version, minimum OS, type UUID, and factory mapping inspected |\n| Plugin executable extracted / cryptographic signature validated | Not confirmed / not tested |\n| IOKit provider actually attaches at runtime | Not tested |
+| Nested `MultitouchHID.plugin` Info.plist in matching 19H422 filesystem | Confirmed; bundle ID, version, minimum OS, type UUID, and factory mapping inspected |
+| Plugin executable extracted / cryptographic signature validated | Not confirmed / not tested |\n| IOKit provider actually attaches at runtime | Not tested |
 | Display, touch, or backlight operation | Not tested |
 | Compatibility of these iOS 15 KEXTs with the separate 20H392 donor userland/kernel | Not established |
 
 ## What this advances
 
-The M5 static research is now materially stronger: six target hardware nodes have exact name-level overlaps with personalities from the target-native 19H422 KernelCache, including the display subsystem, Synopsys MIPI-DSI controller, Pinot panel, Samsung SPI controller, K1 touch transport, and LM3539 backlight. The multitouch metadata also records the HID-interface/plugin relationship that deserves further static study. The separate display-to-backlight `backlight-control` property condition remains unconfirmed.
+The M5 static research is now materially stronger: six target hardware nodes have exact name-level overlaps with personalities from the target-native 19H422 KernelCache, including the display subsystem, Synopsys MIPI-DSI controller, Pinot panel, Samsung SPI controller, K1 touch transport, and LM3539 backlight. The multitouch metadata now has a static type-UUID/factory mapping between the `AppleMultitouchDriver` service personalities and the extracted plugin Info.plist. Runtime service attachment and event delivery remain unverified. The separate display-to-backlight `backlight-control` property condition remains unconfirmed.
 
 This is still evidence from the iOS 15.8.8 target reference. It does not solve the separate XNU 8796 T8010 machine-profile gap, the static DeviceTree's zero clock/memory/panic fields, the custom loader handoff, or 20H392 userland compatibility.
 
 ## Next bounded host-side checks
 
-1. Inspect the `AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin` metadata from the host-side KernelCache extraction, if ipsw exposes that nested plugin as a separate metadata object. Keep it as a plugin reference until confirmed.
-2. Review the target display/backlight personality dictionaries together with the allowlisted DeviceTree result to clarify whether the missing `backlight-control` marker is a hard requirement, optional association, or property expected on a different registry object. Do not infer runtime attachment from plist metadata.
-3. Compare these target 19H422 personality records against the 20H392 donor's corresponding framework/service requirements at the metadata level only. Keep donor-versus-target version and platform differences explicit.
+The target-native multitouch metadata check is complete. The next useful
+comparison is the corresponding metadata from the separate iOS 16.7.16
+(20H392) donor KernelCache, if its actual component is available on the
+analysis computer.
 
-No device connection, firmware update, restore, partition write, exploit, or boot operation is part of these checks. Synthetic tests cover both new fields and verify that an unrelated display-node serial-number field remains excluded.
+1. The uploaded 20H392 BuildManifest records the component name
+   `kernelcache.release.iphone10b` and a digest, but the BuildManifest upload
+   did not include the KernelCache bytes. The donor KernelCache's actual
+   version string and KEXT records remain unverified here.
+2. Compare only the relevant bundle identifiers, versions, minimum OS and
+   platform fields, IOKit personalities, plugin type/factory UUIDs, and bundle
+   dependencies for `AppleHIDTransport`,
+   `AppleHIDTransportSPI`, `AppleMultitouchSPI`, and
+   `AppleMultitouchDriver`.
+3. Keep the target iPhone 7 19H422 / D10AP / A10-T8010 and donor iPhone X
+   20H392 / D22AP / A11-T8015 in separate columns. Matching names or UUIDs
+   do not establish cross-board compatibility or justify copying drivers.
+4. Preserve the current device state. This comparison is local file inspection
+   only; it does not require installing the donor IPSW on the phone.
+
+The exact 20H392 KernelCache artifact or its verified extracted path is the
+remaining input needed for this comparison. The standalone BuildManifest
+alone cannot validate the component's contents.
 
 ## References
 
