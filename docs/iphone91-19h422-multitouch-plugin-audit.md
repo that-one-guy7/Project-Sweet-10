@@ -172,23 +172,52 @@ plugin factory executes, or that touch events reach applications.
 | `AppleMultitouchDriver` references `MultitouchHID.plugin` | Confirmed in supplied KEXT personality metadata |
 | Nested plugin Info.plist exists in the matching 19H422 filesystem | Confirmed by successful host-side extraction |
 | Plugin bundle identifier, version, minimum OS, platform, and factory mapping | Confirmed in extracted Info.plist |
-| Plugin executable extracted and inspected | Not confirmed by the supplied file listing |
+| Plugin executable available in complete 19H422 filesystem | No matching regular file or symlink named `MultitouchHID*` returned by the full read-only filesystem-DMG search; no executable bytes available |
 | Code signature cryptographically validated | Not tested; extracting `_CodeSignature/CodeResources` alone is not validation |
 | Runtime IOKit matching, provider attachment, plugin load, or touch operation | Not tested |
 | Compatibility with iPhone X 20H392 donor kernel/userland | Not established |
 
+## Full target-filesystem executable search
+
+The user successfully mounted the complete 19H422 iPhone9,1 filesystem DMG
+read-only with ipsw 3.1.749. The selected component was
+`098-68844-067.dmg`, mounted at:
+
+```text
+/home/hey/19H422-full-fs-mount
+```
+
+The mount was confirmed by `findmnt` as FUSE with read-only options. The
+user found the target extension directory at:
+
+```text
+/home/hey/19H422-full-fs-mount/root/System/Library/Extensions
+```
+
+A filename-only search was then run over the complete mount point, including
+regular files and symlinks, for case-insensitive names matching
+`MultitouchHID*`. It returned no paths. The command suppressed permission
+and traversal diagnostics, so this is recorded as “no matching path returned
+by the completed search,” not as a cryptographic or runtime result.
+
+Together with the earlier target bundle extraction, this means the target
+plugin Info.plist is present in the extracted metadata set, but no matching
+plugin executable file or symlink was located anywhere in the mounted
+19H422 filesystem DMG under the declared executable-name prefix. This does
+not establish absence from every other IPSW component, an unmounted image,
+or another shared-cache representation.
+
 ## Next bounded host-side research
 
-The useful next static comparison is the corresponding multitouch metadata in
-the separate 20H392 donor artifacts. Compare bundle identifiers, versions,
-minimum OS/platform declarations, IOKit personalities, plugin type/factory
-UUIDs, and dependencies. Keep the target-native 19H422 evidence and the
-iPhone X 20H392 donor evidence in separate columns; matching names or versions
-would not prove cross-device compatibility.
-
-The plugin executable and signature can also be examined as a separate
-host-side artifact if they are extracted later. Do not infer their contents
-from Info.plist or CodeResources.
+The target and donor plugin plists now have matching type/factory identifiers,
+but different bundle versions/minimum OS values, and neither complete
+filesystem search produced a standalone `MultitouchHID` executable. The next
+bounded static check is to inventory the 19H422 dyld shared-cache files and
+inspect their image-path list for a matching plugin image or related entry.
+This may determine whether the code is represented in another cache-backed
+location; it must not be assumed in advance. Keep all work read-only and
+host-side. Do not infer runtime loading or signature validity from cache
+metadata, bundle identifiers, or CodeResources.
 
 No device connection, firmware update, restore, partition write, exploit, or
 boot operation is part of this report. No KernelCache, KEXT executable,
