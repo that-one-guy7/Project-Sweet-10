@@ -761,3 +761,31 @@ Do not describe the nodes as undiscovered or start a speculative driver.
 
 M6 remains in progress; M7/SpringBoard has not started. The physical iPhone 7
 remains on iOS 12.1.4. No device or firmware state was accessed or changed.
+
+
+## M2 full-tree H9 source scan completed (2026-11-20)
+
+The pinned, read-only GitHub Actions scan of complete XNU 7195 and XNU 8796
+source trees completed successfully in run
+`44864823137`. Both source checkouts, the synthetic tests, the source scan,
+and the JSON artifact upload passed. The scan covered 3,508 historical and
+3,961 candidate source/build files and 12 H9 feature macros. Key findings:
+three Hurricane conditional consumers remain in XNU 8796 but the old
+startup `start.s` occurrence is absent; generic 16K-page, PAN, global-sleep,
+PMU, KPC and kernel-protection consumers remain in source; the KTRR hook is
+still generic but H13 uses CTRR; `HAS_MIGSTS`,
+`HAS_CPMU_L2C_EVENTS`, and `SINGLE_STEP_RETIRE_ERRATA` had no textual
+matches. H13 defines some common features but does not recreate the H9
+profile. All counts are textual inventory, not active compile paths or
+hardware conclusions. The local include walk resolved 23 files and left two
+SDK/include-path items unresolved. Exact results and cautions are recorded in
+`docs/h9-source-fulltree-audit.md`.
+
+The next preparation task is now a manual source migration assessment for
+CPU startup/errata, KTRR-versus-CTRR, PMU/AIC coupling, pmap/page-size
+protection, and sleep/power features. Separately, static D10AP AIC and
+AIC-timebase nodes/register windows are already known; the missing facts are
+interrupt routing/EOI and runtime timer semantics/frequency, plus confirmation
+of a compatible AIC controller implementation. No target kernel or driver
+patch is authorized by this scan. M6 remains in progress; M7/SpringBoard
+has not started. The physical iPhone 7 remains on iOS 12.1.4.
