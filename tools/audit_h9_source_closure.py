@@ -89,6 +89,8 @@ def classify_line(line: str):
     stripped = line.strip()
     if re.match(r"#\s*(if|ifdef|ifndef|elif)\b", stripped):
         return "preprocessor-condition"
+    if re.match(r"#\s*(else|endif)\b", stripped):
+        return "preprocessor-control"
     if re.match(r"#\s*(define|undef)\b", stripped):
         return "preprocessor-definition"
     if stripped.startswith("//") or stripped.startswith("/*") or stripped.startswith("*"):
