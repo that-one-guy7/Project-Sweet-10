@@ -45,6 +45,8 @@ References:
 - The 19H422 target-reference DeviceTree has been parsed and its board/SoC and selected display/touch nodes inventoried.
 - Target-native 19H422 KernelCache metadata contains candidate display, MIPI-DSI, LCD, SPI/HID, and backlight KEXT personalities.
 - Six target DeviceTree compatible strings have static `IONameMatch` overlaps in target-native KEXT metadata: `disp0,t8010`, `mipi-dsim-1,synopsys`, `lcd,pinot`, `spi-1,samsung`, `hid-transport,k1`, and `backlight,lm3539`.
+- The 19H422 target KernelCache KEXT JSON contains `com.apple.driver.AppleInterruptController` version `1.0.0d1`; its `aic,1` personality expects `AppleARMIODevice`, exactly matching the target `/arm-io/aic` compatible string. This resolves static bundle/personality presence, not runtime attachment.
+- The same target KEXT JSON records T8010 platform personalities for `arm-io,t8010`, `mcc,t8010`, `error-handler,t8010`, `pmgr1,t8010`, `apcie,t8010`, `soc-tuner,t8010`, and `clpc,t8010`. Provider and release details are recorded separately.
 - The 19H422 / 20H392 BackBoard loader audit is complete. The target and donor records have been compared; the two HID framework records differ by one donor-only `StudyLog` edge each.
 - These findings are static metadata only. They do not prove driver source availability, KPI/ABI compatibility, runtime attachment, event delivery, display operation, or SpringBoard.
 
@@ -67,16 +69,35 @@ References:
 1. **Unmodified kernel baseline:** establish a reproducible build of the chosen source before introducing local changes. This validates the toolchain only; it does not prove iPhone9,1 support.
 2. **A10/T8010 platform foundation:** prepare a small, reviewable platform configuration from the completed H9 dependency analysis. Do not copy `H9.h` wholesale or bypass the machine-selection guard.
 3. **CPU, memory, and DeviceTree contracts:** establish the CPU feature set, memory ownership/map, DeviceTree interpretation, and handoff interfaces before peripheral work.
-4. **Interrupt controller and timer:** these are the first hardware-service candidates because later drivers depend on them. The actual controller, node, register ranges, IRQ mapping, counter frequency, and callbacks must be identified from D10AP evidence; do not assume AIC or reuse donor/Qualcomm values.
+4. **Interrupt controller and timer:** these remain the first early-service research priority. The target 19H422 metadata now identifies an `AppleInterruptController` KEXT with an exact `aic,1` personality match, but the private implementation, IRQ mapping/routing, acknowledge/EOI path, timer source/frequency, and callback contract remain unresolved. Do not infer them from generic headers or reuse donor/Qualcomm values.
 5. **Bus controllers:** only after bus resource/interrupt/power contracts are documented, assess SPI and I2C host-controller support.
 6. **Leaf devices:** then assess the target-native display chain (display controller, MIPI-DSI, Pinot panel, LM3539 backlight) and input chain (Samsung SPI, K1 HID transport, multitouch layer). Their existence in the target KernelCache is a useful reference, not a compatibility guarantee for XNU 8796.
 7. **Userland integration:** expand the target/donor service and framework comparison, then address launchd and the SpringBoard dependency set. M7 remains a separate milestone.
 
 ## Best next work now
 
-The highest-value next preparation task is the **T8010/H9 transitive source-closure audit**: map every H9 macro, board-selection path, conditional consumer, required type/header, and removed interface into its XNU 8796 counterpart. The current macro consumer note is a useful first pass but is explicitly not exhaustive. In parallel, keep collecting source-backed D10AP platform facts without turning unknown DeviceTree fields into constants.
+The first target-side AIC inventory is complete: 19H422 contains
+`AppleInterruptController` version `1.0.0d1`, and its personality matches
+`aic,1` with provider class `AppleARMIODevice`. The seven selected
+T8010 platform personalities and their provider classes are also recorded.
+This resolves KEXT presence and static match-property questions only.
 
-The next driver to implement cannot responsibly be selected until the target interrupt-controller and timer contracts are resolved. The current evidence only proves selected static personality matches; it does not identify the live controller implementation or all required register/IRQ data.
+The next bounded evidence task is to compare those same AIC/T8010 bundle
+and personality records against the 20H392 iPhone X donor KernelCache.
+That comparison must preserve release boundaries and must not treat a
+matching personality as binary/KPI compatibility.
+
+In parallel, review and finish the open
+[full-tree T8010/H9 source-consumer audit PR #82](https://github.com/that-one-guy7/Project-Sweet-10/pull/82).
+Then close the remaining kernel gates: exact source/build provenance,
+a reproducible unmodified baseline build, target CPU/memory/platform facts,
+the complete DeviceTree and XNU handoff contracts, and host-side validation.
+A target-specific kernel or driver is not ready while those gates are open.
+
+The private AIC implementation is not present in the reviewed public XNU
+paths. Static plist metadata is not enough to reconstruct a controller or
+timer driver. The physical target remains on iOS 12.1.4; all current work
+is host-side research.
 
 ## Explicit non-goals for this preparation phase
 

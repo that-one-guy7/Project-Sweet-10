@@ -768,3 +768,35 @@ target-native KEXT before proposing any driver implementation. No AIC
 driver constants or register programming should be inferred from the
 generic header. The physical iPhone 7 remains on iOS 12.1.4; no device or
 firmware state was accessed or changed.
+
+
+## M1/M8 target-native AIC and T8010 KEXT metadata confirmed (2026-11-20)
+
+The user supplied read-only filter output from the iPhone9,1 / D10AP /
+iOS 15.8.8 (19H422) KernelCache KEXT JSON. It confirms
+`com.apple.driver.AppleInterruptController` version `1.0.0d1`,
+bundle path `/System/Library/Extensions/AppleInterruptController.kext`,
+and an IOKit personality with `IOClass=AppleInterruptController`,
+`IONameMatch=aic,1`, and `IOProviderClass=AppleARMIODevice`.
+This is an exact static match-property overlap with the previously parsed
+target DeviceTree node `/arm-io/aic` (`compatible=aic,1`). The prior
+uncertainty about whether the 19H422 KEXT metadata contains this bundle and
+personality is resolved.
+
+The same output records target T8010-family personalities:
+`arm-io,t8010`, `mcc,t8010`, `error-handler,t8010`,
+`pmgr1,t8010`, `apcie,t8010`, `soc-tuner,t8010`, and
+`clpc,t8010`, with the provider classes preserved in
+`docs/iphone91-19h422-aic-kext-inventory.md`. The output's
+`Matching records: 129` is not a unique KEXT count because the broad
+`AppleARMPlatform` term matches many `os_bundle_libraries` records.
+
+This is static metadata from the iOS 15.8.8 / 19H422 target-reference
+KernelCache, not the iOS 16.7.16 / 20H392 iPhone X donor. It does not
+prove runtime provider creation, IOKit attachment, IRQ routing, EOI,
+timer behavior, private KEXT ABI compatibility with XNU 8796, or
+SpringBoard. The next bounded comparison is the same selected AIC/T8010
+bundle and personality inventory in the 20H392 donor KernelCache.
+Kernel implementation gates remain open; no target driver constants or
+register behavior are inferred. The physical iPhone 7 remains on
+iOS 12.1.4; no device or firmware state was accessed or changed.

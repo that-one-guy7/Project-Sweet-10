@@ -66,6 +66,8 @@ Additional target-platform KEXTs in the same inventory include:
 | `com.apple.driver.AppleT8010SOCTuner` | 1 | T8010 SoC tuning family bundle present |
 | `com.apple.AGXG9P` | 190.23 | GPU family bundle present; detailed device/provider matching not inspected |
 | `com.apple.iokit.IOGPUFamily` | 35.29 | GPU framework-family bundle present |
+| `com.apple.driver.AppleInterruptController` | 1.0.0d1 | Target-native AIC KEXT; exact `aic,1` personality / `AppleARMIODevice` provider match is documented in the [AIC KEXT inventory](iphone91-19h422-aic-kext-inventory.md) |
+| `com.apple.driver.AppleT8010PCIe` | 1 | T8010 PCIe bundle and `apcie,t8010` personality are documented in the [AIC/T8010 KEXT inventory](iphone91-19h422-aic-kext-inventory.md) |
 
 The full ordered KEXT listing is retained in the user's local analysis output, not copied into the repository wholesale. No KernelCache or extracted KEXT binary is committed.
 
@@ -75,6 +77,7 @@ The separate 19H422 DeviceTree audit records:
 
 - Board/product identity: `D10AP` / `iPhone9,1`.
 - SoC node: `/arm-io`, compatible with `arm-io,t8010`.
+- AIC node: `/arm-io/aic`, compatible with `aic,1`; target-native `AppleInterruptController` KEXT metadata has an exact `IONameMatch=aic,1` personality overlap. Runtime attachment remains unverified; see the [AIC/T8010 KEXT inventory](iphone91-19h422-aic-kext-inventory.md).
 - Display subsystem: `/arm-io/disp0`, compatible with `disp0,t8010`.
 - LCD panel: `lcd,pinot`.
 - SPI controller: `/arm-io/spi2`, compatible with `spi-1,samsung`.
