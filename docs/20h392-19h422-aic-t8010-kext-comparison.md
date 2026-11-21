@@ -82,3 +82,36 @@ static metadata only.
 The one-sided report is covered by synthetic tests for both target-only and
 donor-only records. Re-run the same command above after updating the local
 repository to capture the fuller output.
+
+
+## Supporting dependency inventory extension
+
+The comparator now also selects the following exact top-level bundle IDs,
+which were named by the target T8010-family KEXTs' direct
+`os_bundle_libraries` declarations:
+
+- `com.apple.driver.ApplePMGR`
+- `com.apple.driver.AppleA7IOP`
+- `com.apple.driver.IOSlaveProcessor`
+- `com.apple.driver.RTBuddy`
+- `com.apple.driver.AppleEmbeddedPCIE`
+- `com.apple.driver.AppleHurricaneErrorHandler`
+- `com.apple.iokit.IOPCIFamily`
+- `com.apple.iokit.IOSurface`
+- `com.apple.kec.Libm`
+- `com.apple.iokit.IOCryptoAcceleratorFamily`
+- `com.apple.iokit.IOReportFamily`
+
+These are selected as exact top-level IDs; a name appearing only as a
+dependency reference does not count as a top-level bundle record. The
+comparator labels the original nine IDs as core AIC/T8010 bundles and the
+eleven additional IDs as supporting dependencies.
+
+Run the same command above after updating the local repository. Save the
+new report as
+`$HOME/20H392-19H422-t8010-supporting-kext-comparison.txt`.
+
+The extension is one dependency hop only. It does not recursively discover
+all transitive dependencies, and no selected record's presence proves that
+its binary is ABI-compatible or attaches at runtime. An absent record means
+only that the exact top-level ID was not found in the parsed inventory.
