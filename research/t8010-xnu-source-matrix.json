@@ -76,7 +76,7 @@
     "Absence from public source does not establish absence from Apple's private build inputs.",
     "A historical board configuration does not establish that a newer kernel can be made compatible by copying that block.",
     "No build, device boot, or runtime behavior is established by this metadata.",
-    "The supplemental xnu-10002 tag audit checks only board_config.h, MakeInc.def, and the exact historical H9.h path; it is not a full-tree or private-build-input audit."
+    "The supplemental xnu-10002 audit checks board_config.h, MakeInc.def, the MakeInc.kernel machine-selection guard, and the exact historical H9.h path; it is not a full-tree or private-build-input audit."
   ],
   "supplemental_observations": {
     "current_main_ref": "f6217f891ac0bb64f3d375211650a4c1ff8ca1ea",
@@ -114,7 +114,9 @@
           "T8103",
           "VMAPPLE"
         ],
-        "h9_header_at_historical_path": false
+        "h9_header_at_historical_path": false,
+        "makeinc_kernel_blob_sha": "18f009d98debf509d842a21279f93ba9d2a876c4",
+        "tag_signature": "unsigned"
       },
       {
         "ref": "xnu-10002.41.9",
@@ -131,7 +133,9 @@
           "T8103",
           "VMAPPLE"
         ],
-        "h9_header_at_historical_path": false
+        "h9_header_at_historical_path": false,
+        "makeinc_kernel_blob_sha": "e18143637004e3200c7b50375f61d2a3888790d0",
+        "tag_signature": "unsigned"
       },
       {
         "ref": "xnu-10002.61.3",
@@ -148,7 +152,9 @@
           "T8103",
           "VMAPPLE"
         ],
-        "h9_header_at_historical_path": false
+        "h9_header_at_historical_path": false,
+        "makeinc_kernel_blob_sha": "e18143637004e3200c7b50375f61d2a3888790d0",
+        "tag_signature": "unsigned"
       },
       {
         "ref": "xnu-10002.81.5",
@@ -165,7 +171,9 @@
           "T8103",
           "VMAPPLE"
         ],
-        "h9_header_at_historical_path": false
+        "h9_header_at_historical_path": false,
+        "makeinc_kernel_blob_sha": "e18143637004e3200c7b50375f61d2a3888790d0",
+        "tag_signature": "unsigned"
       }
     ]
   }
