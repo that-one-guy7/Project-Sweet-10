@@ -16,8 +16,8 @@ from pathlib import Path
 H9_PATH = Path("pexpert/pexpert/arm64/H9.h")
 H13_PATH = Path("pexpert/pexpert/arm64/H13.h")
 
-DEFINE_RE = re.compile(r"^\\s*#\\s*define\\s+([A-Za-z_][A-Za-z0-9_]*)\\b(.*)$")
-INCLUDE_RE = re.compile(r'^\\s*#\\s*include\\s*[<"]([^>"]+)[>"]')
+DEFINE_RE = re.compile(r"^\s*#\s*define\s+([A-Za-z_][A-Za-z0-9_]*)\b(.*)$")
+INCLUDE_RE = re.compile(r'^\s*#\s*include\s*[<"]([^>"]+)[>"]')
 SOURCE_SUFFIXES = {
     ".c", ".h", ".S", ".s", ".cc", ".cpp", ".cxx", ".hpp", ".hh",
     ".inc", ".def", ".mk", ".pl", ".py", ".sh", ".y", ".l",
@@ -87,9 +87,9 @@ def parse_any_defines(header: Path):
 
 def classify_line(line: str):
     stripped = line.strip()
-    if re.match(r"#\\s*(if|ifdef|ifndef|elif)\\b", stripped):
+    if re.match(r"#\s*(if|ifdef|ifndef|elif)\b", stripped):
         return "preprocessor-condition"
-    if re.match(r"#\\s*(define|undef)\\b", stripped):
+    if re.match(r"#\s*(define|undef)\b", stripped):
         return "preprocessor-definition"
     if stripped.startswith("//") or stripped.startswith("/*") or stripped.startswith("*"):
         return "comment"
@@ -309,7 +309,7 @@ def main(argv=None):
     if args.json_output:
         args.json_output.parent.mkdir(parents=True, exist_ok=True)
         args.json_output.write_text(
-            json.dumps(report, indent=2) + "\\n", encoding="utf-8"
+            json.dumps(report, indent=2) + "\n", encoding="utf-8"
         )
 
     print("H9 source closure scan")
