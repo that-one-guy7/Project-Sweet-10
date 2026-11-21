@@ -1,0 +1,36 @@
+name: Dyld export log comparator tests
+
+on:
+  pull_request:
+    paths:
+      - "tools/compare_dyld_exports.py"
+      - "tests/test_compare_dyld_exports.py"
+      - ".github/workflows/dyld-export-compare-tests.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "tools/compare_dyld_exports.py"
+      - "tests/test_compare_dyld_exports.py"
+      - ".github/workflows/dyld-export-compare-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compare-dyld-exports:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run host-side synthetic tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Check comparator CLI
+        run: python3 tools/compare_dyld_exports.py --help
