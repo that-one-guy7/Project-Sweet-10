@@ -98,6 +98,71 @@ def classify_line(line: str):
     return "code-or-other"
 
 
+def preprocessor_contexts(text: str):
+    """Map physical source lines to lexical conditional guards.
+
+    Conditions are recorded, not evaluated. Continued directives are joined
+    for readable expressions while every physical line retains the parent
+    context of that directive.
+    """
+    lines = text.splitlines()
+    contexts = {}
+    directive_kinds = {}
+    issues = []
+    stack = []
+    index = 0
+
+    while index < len(lines):
+        start = index
+        line = lines[index]
+        match = re.match(r"^\s*#\s*(if|ifdef|ifndef|elif|else|endif)\b(.*)$", line)
+        if not match:
+            contexts[index + 1] = [dict(item) for item in stack]
+            index += 1
+            continue
+
+        kind = match.group(1)
+        parts = [match.group(2).strip()]
+        end = index
+        while parts[-1].endswith("\\") and end + 1 < len(lines):
+            parts[-1] = parts[-1][:-1].rstrip()
+            end += 1
+            parts.append(lines[end].strip())
+        expression = " ".join(part for part in parts if part).strip()
+
+        for physical in range(start, end + 1):
+            contexts[physical + 1] = [dict(item) for item in stack]
+            directive_kinds[physical + 1] = kind
+
+        if kind in {"if", "ifdef", "ifndef"}:
+            stack.append({
+                "directive": kind,
+                "expression": expression,
+                "opening_line": start + 1,
+                "current_branch": kind,
+            })
+        elif kind in {"elif", "else"}:
+            if not stack:
+                issues.append({"line": start + 1, "directive": kind, "issue": "branch-without-open-conditional"})
+            else:
+                stack[-1]["current_branch"] = kind
+                stack[-1]["expression"] = expression if kind == "elif" else ""
+        elif kind == "endif":
+            if not stack:
+                issues.append({"line": start + 1, "directive": kind, "issue": "closing-without-open-conditional"})
+            else:
+                stack.pop()
+        index = end + 1
+
+    for item in stack:
+        issues.append({
+            "line": item["opening_line"],
+            "directive": item["directive"],
+            "issue": "unclosed-conditional",
+        })
+    return contexts, directive_kinds, issues
+
+
 def scan_references(root: Path, definitions, excluded_paths=()):
     """Find identifier-token references in candidate source/build files."""
     excluded = {Path(p).resolve() for p in excluded_paths}
@@ -109,23 +174,35 @@ def scan_references(root: Path, definitions, excluded_paths=()):
     }
     found = {name: [] for name in patterns}
     file_count = 0
+    preprocessor_issues = []
 
     for path in iter_source_files(root):
         if path.resolve() in excluded:
             continue
         relative = path.relative_to(root).as_posix()
         file_text = read_text(path)
+        line_contexts, directive_kinds, issues = preprocessor_contexts(file_text)
+        preprocessor_issues.extend(
+            {"path": relative, **issue} for issue in issues
+        )
         file_count += 1
         for line_no, line in enumerate(file_text.splitlines(), 1):
             for name, pattern in patterns.items():
                 if pattern.search(line):
+                    kind = directive_kinds.get(line_no)
+                    context = (
+                        "preprocessor-control" if kind in {"else", "endif"}
+                        else "preprocessor-condition" if kind
+                        else classify_line(line)
+                    )
                     found[name].append({
                         "path": relative,
                         "line": line_no,
-                        "context": classify_line(line),
+                        "context": context,
+                        "preprocessor_guards": line_contexts.get(line_no, []),
                         "text": line.strip()[:240],
                     })
-    return found, file_count
+    return found, file_count, preprocessor_issues
 
 
 def _include_roots(root: Path):
@@ -216,10 +293,10 @@ def audit_pair(old_root: Path, new_root: Path):
         raise AuditError("historical H9 header not found: {}".format(h9_header))
 
     definitions = parse_defines(h9_header)
-    old_refs, old_files = scan_references(
+    old_refs, old_files, old_pp_issues = scan_references(
         old_root, definitions, excluded_paths=(h9_header,)
     )
-    new_refs, new_files = scan_references(new_root, definitions)
+    new_refs, new_files, new_pp_issues = scan_references(new_root, definitions)
 
     h13 = new_root / H13_PATH
     h13_definitions = {}
@@ -252,7 +329,7 @@ def audit_pair(old_root: Path, new_root: Path):
         })
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "method": (
             "identifier-token scan of candidate source/build files; not a "
             "compiler/preprocessor dependency graph"
@@ -269,6 +346,16 @@ def audit_pair(old_root: Path, new_root: Path):
         "modern_profile_header": H13_PATH.as_posix() if h13.is_file() else None,
         "h9_macro_count": len(definitions),
         "macros": comparisons,
+        "preprocessor_structure": {
+            "old_source_issue_count": len(old_pp_issues),
+            "old_source_issues": old_pp_issues,
+            "new_source_issue_count": len(new_pp_issues),
+            "new_source_issues": new_pp_issues,
+            "note": (
+                "Conditional expressions and current branches are recorded "
+                "lexically, not evaluated with compiler or product build settings."
+            ),
+        },
         "old_h9_include_closure": include_closure(old_root, h9_header),
         "caveats": [
             (
@@ -282,8 +369,9 @@ def audit_pair(old_root: Path, new_root: Path):
                 "by private build inputs."
             ),
             (
-                "The scanner does not evaluate preprocessor conditions, macro "
-                "expansion, generated headers, or compiler configuration."
+                "The scanner records lexical preprocessor guard context but does "
+                "not evaluate conditions, macro expansion, generated headers, or "
+                "compiler/product configuration."
             ),
             (
                 "No macro value is inferred from H13 when H13 does not define the "

@@ -121,6 +121,58 @@ class H9SourceClosureTests(unittest.TestCase):
                     for x in files["pexpert/pexpert/arm64/H9.h"])
             )
 
+    def test_preprocessor_guards_track_nested_branches_and_continuations(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            old = make_tree(base / "old", True)
+            new = make_tree(base / "new", False)
+            conditional = new / "osfmk/arm64/conditional.c"
+            conditional.write_text("\n".join([
+                "#if defined(OUTER)",
+                "#if FEATURE " + chr(92),
+                "    && defined(APPLEHURRICANE)",
+                "int first = APPLEHURRICANE;",
+                "#else",
+                "int second = APPLEHURRICANE;",
+                "#endif",
+                "#else",
+                "int third = APPLEHURRICANE;",
+                "#endif",
+            ]) + "\n", encoding="utf-8")
+            result = audit_pair(old, new)
+            macro = next(x for x in result["macros"] if x["name"] == "APPLEHURRICANE")
+            rows = {
+                row["text"]: row for row in macro["new_occurrences"]
+                if row["path"] == "osfmk/arm64/conditional.c"
+                and row["text"].startswith("int ")
+            }
+            self.assertEqual(
+                [guard["current_branch"] for guard in rows["int first = APPLEHURRICANE;"]["preprocessor_guards"]],
+                ["if", "if"],
+            )
+            self.assertIn("FEATURE", rows["int first = APPLEHURRICANE;"]["preprocessor_guards"][1]["expression"])
+            self.assertEqual(
+                [guard["current_branch"] for guard in rows["int second = APPLEHURRICANE;"]["preprocessor_guards"]],
+                ["if", "else"],
+            )
+            self.assertEqual(
+                [guard["current_branch"] for guard in rows["int third = APPLEHURRICANE;"]["preprocessor_guards"]],
+                ["else"],
+            )
+            self.assertEqual(result["preprocessor_structure"]["new_source_issue_count"], 0)
+
+    def test_preprocessor_structure_reports_unmatched_directives(self):
+        from audit_h9_source_closure import preprocessor_contexts
+        contexts, kinds, issues = preprocessor_contexts("\n".join([
+            "#else", "int x;", "#endif", "#if OPEN", "int y;"
+        ]) + "\n")
+        self.assertEqual(kinds[1], "else")
+        self.assertEqual(contexts[2], [])
+        self.assertEqual(
+            [item["issue"] for item in issues],
+            ["branch-without-open-conditional", "closing-without-open-conditional", "unclosed-conditional"],
+        )
+
     def test_missing_h9_header_fails_clearly(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
@@ -136,7 +188,7 @@ class H9SourceClosureTests(unittest.TestCase):
             old = make_tree(base / "old", True)
             new = make_tree(base / "new", False)
             result = audit_pair(old, new)
-            self.assertIn('"schema_version": 1', json.dumps(result))
+            self.assertIn('"schema_version": 2', json.dumps(result))
 
 
 if __name__ == "__main__":

@@ -113,10 +113,19 @@ from the repository lock files, runs the host-side test suite, runs the
 scanner, and uploads \`h9-source-closure.json\` as a workflow artifact.
 
 The scanner is deliberately a textual inventory, not a C preprocessor or
-linker dependency graph. It does not evaluate conditional branches, macro
-expansion, SDK search paths, generated headers, or private build inputs.
-A missing match remains an unresolved source question rather than a hardware
-capability conclusion.
+linker dependency graph. Its schema-v2 report now records the lexical
+preprocessor-guard stack for each occurrence, including nested
+`#if`/`#ifdef`/`#ifndef`, `#elif`, and `#else` branches. Continued
+conditional directives are joined for display, and unmatched conditional
+directives are reported as structural issues. This makes the surrounding
+source context reviewable without claiming that any branch is active.
+
+The scanner still does **not** evaluate expressions, expand macros, resolve
+compiler SDK search paths, reconstruct generated headers, or apply Apple's
+product-specific build definitions. Guard records are source context only;
+they are not proof of the selected product build path. A missing match
+remains an unresolved source question rather than a hardware capability
+conclusion.
 
 ## Implementation decision
 
@@ -258,3 +267,21 @@ EOI, timer counter semantics and runtime frequency, and whether public
 XNU 8796 contains the needed AIC controller implementation or only
 generic mapping/header support. No driver implementation is justified
 until those contracts are understood.
+
+
+## Guard-aware source context enhancement (2026-11-21)
+
+The scanner's schema-v2 output now attaches a `preprocessor_guards` stack
+to every textual occurrence. Each guard records its opening directive,
+source line, expression, and current branch (`if`, `elif`, or `else`).
+Single-line and backslash-continued conditional directives are represented.
+The report also counts and lists unmatched branch/closing directives and
+unclosed conditionals in each source tree.
+
+Synthetic tests cover nested conditions, `#else` branch transitions,
+continued `#if` expressions, and malformed/unbalanced directive structure.
+This is a parser-quality improvement for manual review, not a C preprocessor:
+it does not evaluate expressions, model macro definitions, parse comments as
+a complete C lexer, or reproduce Apple product build flags. The original
+2026-11-20 scan counts above remain the historical schema-v1 run; a fresh
+workflow run produces schema-v2 output with guard context.
