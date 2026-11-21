@@ -57,6 +57,6 @@ not a KEXT loader, ABI validator, or device test.
 The dyld export-log comparator reads only saved text output from
 `ipsw dyld macho --symbols -V`. Synthetic tests cover export-section
 parsing, missing/empty sections, target-only and donor-only names, printed
-kind changes, duplicate symbol rows, and cache-local address differences.
+kind-category changes, resolver-address differences (without misclassifying them as kind changes), duplicate symbol rows, and cache-local address differences.
 It does not read cache binaries, extract images, or establish ABI/runtime
 compatibility.
