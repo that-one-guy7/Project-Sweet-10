@@ -16,9 +16,13 @@ directories. By default it discovers directory names ending in \`.xpc\` or
 inventory \`.app\` bundles themselves unless explicitly requested with
 \`--suffix .app\`.
 
-No target or donor embedded-bundle result is recorded in this plan yet. The
-next step is to run the tool against the already-mounted host-side roots and
-review the resulting sanitized JSON before drawing any comparison.
+The first target/donor collection and path-level comparison are now recorded
+in [the inventory results](embedded-xpc-service-results.md). The uploaded reports
+contain 719 target candidates and 855 donor candidates, with four missing
+Info.plists in each and no scan errors. The comparison preserves each bundle
+path because many bundle identifiers occur in both installed-app and
+AppPlaceholders locations. M6 remains in progress; the results are static
+metadata and do not establish runtime service registration or SpringBoard.
 
 ## Input roots
 
