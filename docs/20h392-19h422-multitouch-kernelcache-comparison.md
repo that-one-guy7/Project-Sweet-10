@@ -149,14 +149,20 @@ plugin loading, touch-event delivery, and display operation remain untested.
 
 ## Next bounded host-side comparison
 
-The target and donor plugin Info.plists have now been compared. The donor
-executable was not found in either searched mounted root, and the target
-plugin directory listing contained no executable. The next bounded static
-task is to inspect the donor plist's `CFBundleExecutable` value and
-`CodeResources` manifest, then search the complete target mounted
-filesystem by the target's declared executable filename. A Mach-O comparison
-is deferred until executable files are actually located. Keep donor and
-target artifacts separate; metadata does not prove runtime compatibility.
+The donor plist declares `CFBundleExecutable=MultitouchHID`. Its
+2,467-byte `CodeResources` plist contains the keys `files`, `files2`,
+`rules`, and `rules2`; the printed `files` and `files2` maps were empty.
+The donor filename search still returned no matching file or symlink in
+either searched donor mount root. The target plugin directory listing
+contains only `Info.plist`, but a search of the complete target filesystem
+has not been recorded.
+
+The next bounded static task is to identify the complete read-only mount
+root for target filesystem DMG `098-68844-067.dmg` and search that root for
+`MultitouchHID*` regular files and symlinks. The prior narrow extraction
+directory is not a full-root search. Defer Mach-O comparison until actual
+executable files are located. CodeResources contents do not establish
+signature validity or executable availability.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,
