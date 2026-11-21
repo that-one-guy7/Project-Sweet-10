@@ -1156,10 +1156,15 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
 
 - 2026-11-21: Added a source-version strategy note for T8010. The pinned
   XNU 8796 public tree still lacks the T8010 machine profile in the audited
-  paths, but current public XNU main has an ARM64 T8010 machine allowlist
-  entry and `ARM64_BOARD_CONFIG_T8010` / H9 block. This demonstrates the
-  gap is revision-specific, not a permanent XNU limitation. A later public
-  tree is not thereby ABI-compatible with the iOS 16.7.16 20H392 userland.
+  paths, and the current public XNU main also lacks both the T8010 board block and
+  normal ARM64 machine allowlist entry. The earlier claim that current main
+  restored T8010 was incorrect: it came from a separate archived
+  apple/darwin-xnu page, not the current apple-oss-distributions/xnu tree.
+  Direct reads of board_config.h and MakeInc.def at 7195.121.3, 8019.80.24,
+  8796.141.3 and current main show T8010 present only in 7195.121.3 among
+  those refs. The exact removal commit remains unidentified. A historical
+  7195 profile is not automatically compatible with 20H392 userland or a
+  newer XNU kernel.
   The Qualcomm ios-sweet comparison confirms that its Redmi Note 10 Pro port
   uses a custom SWEET machine/platform implementation, generated ADT and
   hardware-specific timer/PSCI adaptations; the README still lists major
@@ -1169,3 +1174,18 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   forward-port. M6 remains in progress; M7 has not started. The physical
   iPhone 7 remains on iOS 12.1.4; no device, firmware, partition, security,
   or boot state was accessed or changed.
+
+
+- 2026-11-21: Corrected the T8010 source-history conclusion after directly
+  fetching both `pexpert/pexpert/arm64/board_config.h` and
+  `makedefs/MakeInc.def` from `apple-oss-distributions/xnu` at four refs.
+  T8010 is present in 7195.121.3 (H9, 3 CPUs, one cluster, Hurricane build
+  flag), but absent from both files at 8019.80.24, 8796.141.3 and current
+  main. The earlier statement that current main restored T8010 was wrong;
+  it was based on a different archived repository page. The exact commit
+  removing the profile is not yet identified. Added the corrected comparison
+  and machine-readable source matrix. No kernel implementation or device
+  operation is proposed from this source-only evidence. M6 remains in
+  progress; M7/SpringBoard has not started. The physical iPhone 7 remains on
+  iOS 12.1.4; no device, firmware, partition, security, or boot state was
+  accessed or changed.
