@@ -18,6 +18,10 @@ The public XNU source comparison is now broader than the original three-tag audi
 | `xnu-8796.101.5` | No | Early Darwin 22 public reference |
 | `xnu-8796.141.3` | No | Current pinned iOS 16-generation source candidate |
 | `xnu-12377.1.9` | No | Later public source reference, not a Sweet-10 baseline |
+| `xnu-10002.1.13` | No | Later public source reference, not a Sweet-10 baseline |
+| `xnu-10002.41.9` | No | Later public source reference; same inspected source blobs as later 10002 tags |
+| `xnu-10002.61.3` | No | Later public source reference; same inspected source blobs as 10002.41.9 and .81.5 |
+| `xnu-10002.81.5` | No | Later public source reference; same inspected source blobs as 10002.41.9 and .61.3 |
 
 In `xnu-7195.121.3`, the normal ARM64 machine list includes `T8010`, `MACHINE_FLAGS_ARM64_T8010` maps it to `-DARM64_BOARD_CONFIG_T8010 -mcpu=hurricane`, `board_config.h` selects the T8010 block, and that block includes `H9.h`. The later public snapshots omit the T8010 machine flag, board block, and H9 header at the audited paths.
 
@@ -106,3 +110,24 @@ is host-side research.
 - No restore, flashing, partition, or boot-state changes.
 - No target-specific driver constants invented from donor or Qualcomm devices.
 - No claim that a generic XNU build, a loader record, or a static IOKit personality makes SpringBoard bootable.
+
+
+### Ten-snapshot public-source follow-up (2026-11-21)
+
+A read-only CI-backed matrix now includes four additional public
+`xnu-10002` tags. All four omit the T8010 board block from
+`pexpert/pexpert/arm64/board_config.h`, omit T8010 from the normal ARM64
+allowlist in `makedefs/MakeInc.def`, and lack the historical
+`pexpert/pexpert/arm64/H9.h` path. Their normal ARM64 allowlist is
+`BCM2837 T6000 T8101 T8103 VMAPPLE`. The .41.9, .61.3, and .81.5
+tags share the same inspected blob hashes for the board header, machine
+allowlist, and kernel selection guard. This extends the bounded public-source
+history; it does not make later tags candidate target baselines.
+
+The ten-snapshot matrix and synthetic tests passed in
+[GitHub Actions run 44938201241](https://github.com/that-one-guy7/Project-Sweet-10/actions/runs/44938201241).
+The scope remains limited to the selected source/build-selection paths,
+not a full-tree search or Apple's private product-specific build inputs.
+No exact donor source provenance, T8010 port, ABI, device support, runtime
+behavior, or bootability is established. The physical iPhone 7 remains on
+iOS 12.1.4; M7/SpringBoard remains not started.

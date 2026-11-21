@@ -49,7 +49,7 @@ and [UniXNU 20H392 cross-check](unixnu-20h392-xnu-baseline-crosscheck.md).
 | Gate | Required evidence | Current status |
 |---|---|---|
 | G1 — Source identity | Exact XNU source revision tied to the chosen 20H392 kernel component, or a clearly documented candidate with uncertainty | Candidate xnu-8796.141.3 is pinned; an independent downstream UniXNU profile co-pins its commit with the exact 20H392 donor KernelCache SHA and reports 62 clean patch applications. That report excludes compilation, binary ABI and hardware; the profile uses DEVELOPMENT_ARM64_BCM2837, not T8015/T8010. Public version-stamping logic explains why the donor's 8796.142.1.703.8~1 label is not necessarily a Git tag. Exact Apple source provenance and product-specific inputs remain unknown |
-| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | Public source presence/absence is pinned and checked across xnu-7195.121.3, xnu-8019.80.24, and xnu-8796.141.3; the full historical dependency graph and migration remain incomplete |
+| G2 — Historical A10 support | Full dependency and interface review of the old T8010/H9 implementation against the selected baseline | The read-only source matrix now checks ten public XNU snapshots (7195, 8020, 8019, 8796.101, 8796.141, 12377.1.9, and four 10002 tags); T8010/H9 appears only in xnu-7195.121.3 at the audited machine-selection and board paths. Full historical dependency closure and migration remain incomplete; private/product-specific inputs and full-tree source references are outside this matrix |
 | G3 — Build environment | Reproducible unmodified iPhoneOS ARM64 baseline build with recorded host, SDK, compiler, generated headers, external dependencies, configuration selections, and logs | Not started; pinned xnu-8796.141.3 normal ARM64 machine allowlist omits T8010; SDK device-map contents and host toolchain are unverified |
 | G4 — Target platform evidence | Revisioned iPhone9,1/D10AP evidence for CPU topology/features, memory map, clocks, interrupt/timer topology, storage, and required platform services | Incomplete; the 19H422 KernelCache now confirms an AppleInterruptController KEXT and `aic,1` personality, but IRQ routing, EOI, timer, CPU/memory, storage, and runtime provider contracts remain unresolved |
 | G5 — Device-tree contract | Verified target device-tree schema and required properties, with each value tied to reliable source evidence | Incomplete; static `aic,1` DeviceTree / KEXT IONameMatch overlap is confirmed, but cell/property requirements, full interrupt specifiers, timer contract, and runtime-populated values are not established |
@@ -177,3 +177,33 @@ contracts are resolved. Do not assume AIC or copy donor/Qualcomm register
 values. The next highest-value source task is the full transitive T8010/H9
 dependency and conditional-consumer closure, beyond the existing direct
 feature-macro scan.
+
+
+## Ten-snapshot T8010/H9 matrix update (2026-11-21)
+
+The public-source comparison now checks ten pinned Apple XNU snapshots:
+`xnu-7195.121.3`, `xnu-8020.101.4`, `xnu-8019.80.24`,
+`xnu-8796.101.5`, `xnu-8796.141.3`, `xnu-12377.1.9`,
+`xnu-10002.1.13`, `xnu-10002.41.9`, `xnu-10002.61.3`, and
+`xnu-10002.81.5`. At the audited build-selection paths, T8010/H9 is
+present only in the historical 7195 snapshot. All four 10002 tags omit the
+T8010 board block, the normal ARM64 allowlist entry, and the historical
+`H9.h` path; their normal ARM64 machine list is
+`BCM2837 T6000 T8101 T8103 VMAPPLE`. The latter three tags share the
+same inspected source-file blob hashes, so they are not four independent
+revisions of those files.
+
+The read-only matrix workflow passed on PR #136
+([run 44938201241](https://github.com/that-one-guy7/Project-Sweet-10/actions/runs/44938201241)):
+all ten pinned source checkouts, source-lock checks, synthetic tests, and
+the matrix audit completed successfully. The separate pinned XNU/PongoOS
+source-check workflow also passed ([run 44938201251](https://github.com/that-one-guy7/Project-Sweet-10/actions/runs/44938201251)).
+
+This remains a bounded comparison of `board_config.h`, `MakeInc.def`,
+the `MakeInc.kernel` machine-selection guard, and the exact historical
+`H9.h` path. It is not a full-tree audit or a disclosure of Apple's private
+product build inputs. It does not establish the exact 20H392 source commit,
+a target configuration, compilation, hardware support, ABI compatibility,
+runtime behavior, or bootability. G1/G2 remain open; no target-specific
+kernel implementation is authorized by this result. The physical iPhone 7
+remains on iOS 12.1.4 and M7/SpringBoard has not started.

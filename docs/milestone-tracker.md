@@ -1189,3 +1189,21 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   progress; M7/SpringBoard has not started. The physical iPhone 7 remains on
   iOS 12.1.4; no device, firmware, partition, security, or boot state was
   accessed or changed.
+
+- 2026-11-21: Extended the read-only T8010/H9 public-source comparison from
+  six to ten pinned Apple XNU snapshots by adding
+  `xnu-10002.1.13`, `xnu-10002.41.9`, `xnu-10002.61.3`, and
+  `xnu-10002.81.5`. All four lack the T8010 board block, normal ARM64
+  allowlist entry, and historical `H9.h` path at the audited locations.
+  Their normal ARM64 allowlist is
+  `BCM2837 T6000 T8101 T8103 VMAPPLE`; the latter three tags share the
+  same blob hashes for the three inspected source/build files. GitHub
+  Actions run 44938201241 passed all ten source checkouts, lock checks,
+  synthetic tests, and the matrix audit; pinned XNU/PongoOS source workflow
+  run 44938201251 also passed. This remains a bounded source-path comparison,
+  not a full-tree or private-build-input audit, and does not establish exact
+  Apple source provenance, compilation, ABI, hardware support, runtime
+  behavior, or bootability. G1/G2 remain open; M7/SpringBoard has not
+  started. The physical iPhone 7 remains on iOS 12.1.4. The work is recorded
+  in [PR #136](https://github.com/that-one-guy7/Project-Sweet-10/pull/136).
+
