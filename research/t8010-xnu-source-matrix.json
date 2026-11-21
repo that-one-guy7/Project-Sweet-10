@@ -70,11 +70,32 @@
       ]
     }
   ],
-  "conclusion": "T8010 exists in the audited 7195 public source, but is absent from both files in 8019, 8796, and current public main. Exact removal commit is not yet identified.",
+  "conclusion": "T8010 exists in the audited 7195 public source, but is absent from both files in 8019, 8796, and current public main. Exact removal commit is not yet identified. Current main also has a test-level T8010 PMAP_CS default-policy reference; this does not restore the missing T8010 board configuration or build allowlist.",
   "limitations": [
     "This is a comparison of two source files at four refs, not a complete XNU platform audit.",
     "Absence from public source does not establish absence from Apple's private build inputs.",
     "A historical board configuration does not establish that a newer kernel can be made compatible by copying that block.",
     "No build, device boot, or runtime behavior is established by this metadata."
-  ]
+  ],
+  "supplemental_observations": {
+    "current_main_ref": "f6217f891ac0bb64f3d375211650a4c1ff8ca1ea",
+    "vm_test_code_signing": {
+      "path": "tests/vm_test_code_signing.c",
+      "blob_sha": "c728d9325e4d897c40c5bbc6f29900841bddea4a",
+      "t8010_reference": "Listed with T8011, T8012, and T8015 as a SoC where PMAP_CS is disabled by default unless pmap_cs=1 is present.",
+      "interpretation": "A test-level PMAP_CS policy reference; not a board configuration or ARM64 build allowlist entry."
+    },
+    "arm64_cpu": {
+      "path": "osfmk/arm64/cpu.c",
+      "blob_sha_by_ref": {
+        "xnu-7195.121.3": "ad3f9a68511705fc28d7987cef52236d5ef895af",
+        "xnu-8019.80.24": "37cc918fe50b9a940085045ccb0174c22b104e74",
+        "xnu-8796.141.3": "94e91306b14364f720ea80e46d853035aabd78e6",
+        "main": "b58e288185b247a95815a1624190e173254ce491"
+      },
+      "observation": "No T8010-specific conditional was found in this file at the four audited refs; 8019, 8796, and current main contain a T6000-specific wfe_allowed conditional.",
+      "limitation": "A single-file observation, not a complete source-tree search."
+    },
+    "historical_availability": "tests/vm_test_code_signing.c was not found at the three older pinned tags through the repository contents API; this is recorded as a current-main observation only."
+  }
 }
