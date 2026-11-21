@@ -1,81 +1,77 @@
-# T8010 XNU source-version options for Project Sweet-10
+# Corrected T8010 XNU public-source history
 
-## Question
+## Important correction
 
-Would selecting a different XNU/iOS generation fix the missing T8010 board configuration in the pinned public `xnu-8796.141.3` baseline, and why did the Qualcomm-based `ios-sweet` port reach SpringBoard?
+The previous version of this document incorrectly stated that current public XNU `main` had restored the T8010 board profile. A direct read of the current `apple-oss-distributions/xnu` repository disproves that statement.
 
-## Short conclusion
+The earlier web result came from the separate archived `apple/darwin-xnu` repository and must not be treated as the current public source tree. The current source of record used for this comparison is `apple-oss-distributions/xnu`.
 
-The missing `ARM64_BOARD_CONFIG_T8010` in the pinned `xnu-8796.141.3` tree is revision-specific, not a permanent limitation of public XNU. The older audited `xnu-7195.121.3` tree contains the T8010/H9 profile, and the current public XNU `main` branch again contains both the T8010 board block and an ARM64 machine allowlist entry for T8010.
+## Direct source comparison
 
-That does **not** mean the current `main` kernel can be paired directly with iOS 16.7.16 userland. Kernel source revision, kernel build configuration, shipped-kernel identity, and userspace ABI are separate compatibility questions.
+The same two files were read at each exact ref: `pexpert/pexpert/arm64/board_config.h` and `makedefs/MakeInc.def`.
 
-## Source evidence matrix
+| XNU ref | T8010 board block in board_config.h | T8010 in normal ARM64 allowlist | Result |
+|---|---|---|---|
+| `xnu-7195.121.3` | Present; includes `H9.h` | Present; `MACHINE_FLAGS_ARM64_T8010 = -DARM64_BOARD_CONFIG_T8010 -mcpu=hurricane` | T8010 public profile present |
+| `xnu-8019.80.24` | Absent | Absent; allowlist is `BCM2837 T6000 T8101 VMAPPLE` | Removed by this source generation |
+| `xnu-8796.141.3` | Absent | Absent; allowlist is `BCM2837 T6000 T8101 T8103 VMAPPLE` | Still absent in pinned baseline |
+| current `main` | Absent | Absent; allowlist is `T6000 T6020 T6030 T6031 T6041 T8101 T8103 T8112 T8122 T8132 VMAPPLE` | Not restored in current public main |
 
-| Source / binary reference | T8010 evidence | Interpretation |
+### Exact historical T8010 profile found in 7195
+
+The 7195 `board_config.h` T8010 block:
+- includes `pexpert/arm64/H9.h`;
+- sets `MAX_CPUS 3`;
+- sets `MAX_CPU_CLUSTERS 1`;
+- sets `MAX_L2_CLINE 7`;
+- under DEVELOPMENT/DEBUG, enables `PMAP_CS` and sets `PMAP_CS_ENABLE 0`.
+
+The 7195 `MakeInc.def` normal ARM64 allowlist includes T8010 and defines the T8010 build flags with `-mcpu=hurricane`.
+
+This is evidence of a historical public configuration, not a complete iPhone 7 platform implementation.
+
+## What changed, and what it means
+
+The T8010 board configuration and build allowlist are both absent from 8019, 8796 and current public main. Therefore the evidence does **not** support the earlier idea that simply moving to current public XNU would restore T8010 support.
+
+The path-history endpoint for `board_config.h` at `xnu-8019.80.24` reports the first 8019 import in this path history as `xnu-8019.41.5` (commit `e6231be02a03711ca404e5121a151b24afbff733`, dated 2022-02-04 by the author metadata), whose parent is the public `xnu-7195.50.7.100.1` import (commit `bb611c8fecc755a0d8e56e2fa51513527c5b7a0e`). The T8010 block is already absent in the 8019.41.5 snapshot. This narrows the public snapshot boundary, but these are bulk source imports rather than a commit-by-commit development history; they do not identify the internal change that removed the profile.
+
+The absence from public XNU does not prove Apple never maintained T8010 support internally. Apple's shipped iPhone9,1 19H422 kernel metadata is separately recorded as `8020.241.44~1 / RELEASE_ARM64_T8010`, showing that Apple shipped a T8010-targeted kernel in the iOS 15 generation. Public source snapshots and Apple's complete private build inputs are not interchangeable.
+
+## Does changing iOS version solve the project?
+
+Not automatically.
+
+1. A fully matched iPhone9,1 iOS 15 kernel and userland is the closest stock-generation reference for the hardware, but it changes the project's goal away from the 20H392 iOS 16.7.16 donor userland.
+2. Reusing the old 7195 T8010 board block with a newer XNU is not a safe or sufficient compatibility fix. The board header is only one part of the platform configuration; surrounding machine, CPU, interrupt, power, memory, device-tree, and kernel-interface changes still matter.
+3. Keeping 20H392 means the missing public T8010 profile remains an open source-porting question. The historical 7195 profile can be studied as evidence, but should not be copied wholesale or treated as a working port.
+
+**Revised recommendation:** keep the intended 20H392 research target documented, but do not claim that a newer public XNU revision has a T8010 profile. Before proposing any source change, establish the exact historical removal point and inventory the platform-specific files/configuration that changed between 7195 and 8019. This is static source research only.
+
+## Reproducibility
+
+Files read directly from `apple-oss-distributions/xnu`:
+
+| Ref | File | Git blob SHA |
 |---|---|---|
-| Public `xnu-7195.121.3` | Historical T8010/H9 profile present in audited source | Useful historical source reference; substantially older than iOS 16 |
-| Public `xnu-8019.80.24` | T8010 profile absent in audited ARM64 machine/board paths | Public source gap; not proof that Apple’s private build inputs lacked it |
-| Pinned public `xnu-8796.141.3` | T8010 profile absent from audited ARM64 machine allowlist and `board_config.h` | Blocks a stock T8010 configuration using this exact public tree |
-| iPhone9,1 19H422 shipped KernelCache | Reports `8020.241.44~1 / RELEASE_ARM64_T8010` | Confirms Apple shipped an iOS 15-generation T8010 kernel for this device; does not supply its complete corresponding source tree |
-| Current public XNU `main` | `makedefs/MakeInc.def` lists T8010 in `SUPPORTED_ARM64_MACHINE_CONFIGS`; `board_config.h` has `ARM64_BOARD_CONFIG_T8010` including `H9.h` | Proves the T8010 profile exists in a later public source revision; not proof of iOS 16 userland compatibility |
+| 7195.121.3 | `pexpert/pexpert/arm64/board_config.h` | `0990f9885ea9adb9ca453e3a57241f0d0155fa78` |
+| 7195.121.3 | `makedefs/MakeInc.def` | `bf2b6f8a805da4a8abce2590a118dea390ca9f7d` |
+| 8019.80.24 | `pexpert/pexpert/arm64/board_config.h` | `259962b3430420e9b90222b4a42282eb6c623209` |
+| 8019.80.24 | `makedefs/MakeInc.def` | `3a15620d70d85af974fd296c9e87666a5867f1ff` |
+| 8796.141.3 | `pexpert/pexpert/arm64/board_config.h` | `945453413cd8f055449a654639fbea6a083e74cc` |
+| 8796.141.3 | `makedefs/MakeInc.def` | `5bd6f23dd10c3316ba0ac3ca5a1515256753975e` |
+| current main | `pexpert/pexpert/arm64/board_config.h` | `159356da70e354cb4affbf7951c02aa2ab8c87e1` |
+| current main | `makedefs/MakeInc.def` | `cccb411ec9b9fa0d842cc6bbcb02b6e1b7e0355f` |
 
-Current public source references:
-- [XNU current ARM64 board configuration](https://github.com/apple-oss-distributions/xnu/blob/main/pexpert/pexpert/arm64/board_config.h), T8010 block and H9 include.
-- [XNU current build machine allowlist](https://github.com/apple-oss-distributions/xnu/blob/main/makedefs/MakeInc.def), `SUPPORTED_ARM64_MACHINE_CONFIGS` and `MACHINE_FLAGS_ARM64_T8010`.
-- [Pinned XNU 8796.141.3 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/pexpert/pexpert/arm64/board_config.h).
-- [Historical XNU 7195.121.3 board configuration](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/pexpert/pexpert/arm64/board_config.h).
+## Related Qualcomm comparison
 
-## Would a different iOS version fix it?
+The `ios-sweet` Redmi Note 10 Pro port is a distinct Qualcomm platform project. Its README and engineering notes describe custom SWEET platform work and hardware-specific adaptations; this is not evidence that Android itself makes XNU compatible or that T8010 support is unnecessary. See the upstream [README](https://github.com/dipa-studio/ios-sweet) and [NOTES](https://github.com/dipa-studio/ios-sweet/blob/main/NOTES.md).
 
-There are three different choices, with different outcomes:
+## Project status
 
-### 1. Use a native iPhone 7 iOS 15 kernel and matching iOS 15 userland
-
-This is the generation Apple shipped for iPhone9,1: the project’s 19H422 BuildManifest identifies iPhone9,1 / d10ap, and the target KernelCache is recorded as `RELEASE_ARM64_T8010`. A fully matched iOS 15 stack is a much less speculative compatibility target for this hardware.
-
-However, this is no longer the project’s original goal of running the iPhone X’s iOS 16.7.16 (20H392) userland on iPhone7. It is a different project target. No change to the user’s physical phone is proposed.
-
-### 2. Keep iOS 16.7.16 userland and use an older T8010-capable XNU
-
-This may make the T8010 board definition easier to source, but it introduces a major kernel/userspace generation mismatch. Kernel interfaces, IOKit/KPI expectations, platform services, and private userland assumptions must be checked; a board macro from an older tree is not a compatibility bridge by itself.
-
-### 3. Keep the XNU 8796 / 20H392 goal and use other XNU revisions as source references
-
-This preserves the intended iOS 16 generation. The historical 7195 T8010/H9 implementation and current public `main` T8010 block are possible source references for a carefully reviewed forward-port. The actual patch would still need to be checked against the 8796 kernel interfaces and target-specific 19H422 hardware evidence. The public 19H422 KernelCache’s T8010 version stamp provides a useful target-era comparison, but does not reveal Apple’s complete private source inputs.
-
-**Recommended research direction:** do not switch the userland target yet. Keep 20H392 as the explicit experimental target, and perform a source-level T8010 profile comparison across 7195, 8796, and current public XNU main. Decide whether the missing profile is a bounded configuration gap or whether required platform code and interfaces changed enough that a larger port is needed. Do not infer compatibility from one macro/header.
-
-## Why the Qualcomm Android-device port reached SpringBoard
-
-The reference is not “iOS running on top of Android”. The Redmi Note 10 Pro (`sweet`) is Qualcomm SM7150 / Snapdragon 732G hardware. The project replaces the Android kernel/userland path with a custom XNU port and iOS userland. It keeps a stock device bootloader as the first-stage loader, then uses its own shim, generated Apple Device Tree, custom XNU patches, platform drivers and an iPhone X 20H392 root filesystem.
-
-The upstream README describes this architecture and reports six of eight CPU cores, Qualcomm GICv3 interrupts/timers, a custom UFS host driver, software rendering, touch input, and SpringBoard on that hardware. It does not reuse Apple's T8010 board profile because it is a different SoC; it adds its own `SWEET` machine configuration and Qualcomm-specific adaptations.
-
-The same project's notes show it had to adapt:
-- XNU's VMAPPLE timer path to the Qualcomm GICv3 interrupt group/IRQ arrangement.
-- XNU's VMAPPLE PSCI call from `hvc` to Qualcomm's `smc`.
-- CPU feature/compiler assumptions for Qualcomm Kryo.
-- Boot memory-map and device-tree data for the Qualcomm platform.
-
-The port's README also explicitly lists major missing features: Wi-Fi, Bluetooth, cellular, audio, camera, sensors, GPS, SEP/Face ID and GPU support; some daemons crash/relaunch, and the project describes its security model as mostly switched off. Therefore, it is not evidence that porting to a non-Apple Android device is easy or that the same issues are absent.
-
-References:
-- [ios-sweet README](https://github.com/dipa-studio/ios-sweet), device, architecture, working-state and limitation tables.
-- [ios-sweet engineering notes](https://github.com/dipa-studio/ios-sweet/blob/main/NOTES.md), XNU timer, PSCI, CPU, MMU and platform adaptation notes.
-
-## What the latest 19H422 framework scan adds
-
-The recursive scan under the mounted 19H422 OS root visited 104,017 directories and 382,833 entries with no reported walk or stat errors. It found only the `ExtensionFoundation.framework` directory name under PrivateFrameworks, not the `ExtensionFoundation` executable. Sixteen other selected 20H392 GUI framework binary/bundle names had no match in that tree.
-
-These are userland filesystem inventory findings, not evidence about the T8010 XNU board profile. They help explain why the iOS 16 donor's GUI framework dependencies do not map one-to-one onto the stock iOS 15.8.8 target filesystem.
-
-## Project decision
-
-- Keep target hardware: iPhone9,1 / D10AP / T8010.
-- Keep userland research reference: iPhone10,3 / D22AP / iOS 16.7.16 / 20H392.
-- Keep the source lock for XNU 8796 as the current-generation baseline, but do not call it target-ready.
-- Add a distinct T8010 source-reference comparison before writing platform implementation.
-- Keep static metadata, source configuration, build result, and physical runtime evidence as separate proof levels.
-
-The physical iPhone 7 remains on iOS 12.1.4. No device, firmware, partition, security, or boot state was changed.
+- Hardware target: iPhone9,1 / D10AP / T8010.
+- Intended donor userland reference: iPhone10,3 / D22AP / iOS 16.7.16 / 20H392.
+- Pinned public XNU baseline: 8796.141.3; T8010 board profile absent.
+- Historical public T8010 profile: 7195.121.3.
+- First SpringBoard milestone: not reached; M7 has not started.
+- Physical iPhone 7 remains on iOS 12.1.4. No device, firmware, partition, security or boot state was changed.
