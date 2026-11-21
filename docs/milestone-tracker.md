@@ -527,3 +527,13 @@
   dependency-image comparison, and docs index. Next bounded host-side check:
   compare target/donor `MultitouchSupport` export metadata. No device or
   firmware state was accessed or changed.
+
+
+- 2026-11-20: Prepared the next M6 host-side comparison after the target/donor
+  libc++ cache-image lookup. Reviewed the project's pinned ipsw 3.1.749 source
+  at commit `a7dfadbcaca8375b424c12a68dae40767e5e07c1`: `dyld macho --symbols
+  -V` prints a `Dyld Exports` section when the cached Mach-O has a non-empty
+  export trie. Added a read-only plan and a command that saves both complete
+  logs while displaying only those sections. Export results have not yet been
+  collected; no byte-level comparison, ABI conclusion, runtime behavior, or
+  device operation is claimed. No cache files or binaries are committed.
