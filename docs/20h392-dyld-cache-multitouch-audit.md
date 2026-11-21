@@ -57,18 +57,42 @@ indices and target image indices belong to separate cache inventories;
 their numerical difference does not imply load order, priority, or
 compatibility.
 
-## UUID status and next metadata check
+## UUID status and follow-up `dyld image` result
 
 The supplied `ipsw dyld info --dylibs` text excerpt reports each image's
 index, version, and path, but it does not include the donor
 `MultitouchHID` Mach-O UUID. The donor UUID is therefore **not recorded
 or inferred** in this report.
 
-The documented `ipsw dyld image <cache> <image> -V` command prints an
-image's ID, full name, flags, UUID, cache segments, and dependency
-metadata. The next bounded check is to query the exact donor image path
-with that command and record the resulting UUID. Until then, the target
-UUID is known
+The user then queried the exact path with:
+
+```text
+ipsw dyld image "$DONOR_CACHE" "$IMAGE" -V
+```
+
+The supplied output reported the exact image path, VM Size
+`0x20e0c000`, loader flags
+`prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022`, a loader
+reference `index: 2556`, and dependency names including
+`MultitouchSupport.framework` and IOKit. It did **not** print an image
+UUID, nor the ID/Name/Flags/UUID block seen in the current upstream
+`ipsw dyld image` example.
+
+The loader reference index `2556` is recorded as a loader/closure
+reference only. It is not equated with the separate `dyld info --dylibs`
+image-list index `2557`; their relationship has not been established.
+The output is consistent with a prebuilt-loader/closure view rather than
+the image-array UUID record needed for this comparison. Several printed
+Swift/Objective-C section offsets and sizes are implausible (some values
+resemble ASCII fragments), so those section rows are excluded from
+interpretation pending independent validation. They are not evidence that
+the underlying cache image is corrupt.
+
+The next bounded metadata query is the donor equivalent of the target
+inventory that previously exposed UUID fields:
+`ipsw dyld info --dylibs --json "$DONOR_CACHE"`. The JSON output should
+be searched for the exact full image path and the complete matching
+record retained. Until that result is available, the target UUID is known
 (`304953E6-6B67-3CF1-B7CA-E011978210DE`) but the donor UUID comparison
 remains incomplete.
 
