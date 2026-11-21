@@ -1207,3 +1207,15 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   started. The physical iPhone 7 remains on iOS 12.1.4. The work is recorded
   in [PR #136](https://github.com/that-one-guy7/Project-Sweet-10/pull/136).
 
+- 2026-11-21: Ported the completed full-tree H9/T8010 textual consumer audit
+  onto a branch based on current main. The scanner covers all 12 historical
+  H9 feature macros across 3,508 XNU 7195 and 3,961 XNU 8796 candidate
+  source/build files; 23 locally resolvable include files were followed and
+  two SDK-style include names remain unresolved. Several generic CPU/VM/PMU
+  consumers persist in 8796, while three legacy macro names have no textual
+  matches in the scanned candidate files. This does not evaluate conditional
+  compilation, private/generated build inputs, hardware features, ABI, or
+  compatibility. The original pinned workflow passed on run 44864823137;
+  current-main CI is rerunning the scanner and tests. K2 remains open pending
+  manual per-feature migration review. See PR #137 when opened; no device or
+  firmware state was accessed or changed.
