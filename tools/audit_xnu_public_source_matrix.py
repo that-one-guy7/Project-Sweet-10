@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only audit of T8010/H9 presence across pinned public XNU releases.
+"""Read-only audit of T8010/H9 presence across ten pinned public XNU releases.
 
 This checks source structure only. It does not edit, build, or configure XNU,
 and it does not establish that any release supports iPhone9,1 hardware.
@@ -17,11 +17,15 @@ SNAPSHOTS = (
     ("xnu-8796.101.5", False),
     ("xnu-8796.141.3", False),
     ("xnu-12377.1.9", False),
+    ("xnu-10002.1.13", False),
+    ("xnu-10002.41.9", False),
+    ("xnu-10002.61.3", False),
+    ("xnu-10002.81.5", False),
 )
 
 
 def audit_public_matrix(roots):
-    """Return source-structure errors for the six pinned XNU source trees."""
+    """Return source-structure errors for the ten pinned XNU source trees."""
     roots = tuple(Path(root).resolve() for root in roots)
     if len(roots) != len(SNAPSHOTS):
         return [
@@ -42,7 +46,8 @@ def main(argv=None):
         print(
             "Usage: python3 tools/audit_xnu_public_source_matrix.py "
             "PATH_7195 PATH_8020 PATH_8019 PATH_8796_101 "
-            "PATH_8796_141 PATH_12377"
+            "PATH_8796_141 PATH_12377 PATH_10002_1_13 "
+            "PATH_10002_41_9 PATH_10002_61_3 PATH_10002_81_5"
         )
         return 2
 
@@ -55,10 +60,11 @@ def main(argv=None):
     print("PASS: xnu-7195.121.3 contains the historical T8010/H9 profile.")
     print(
         "PASS: xnu-8020.101.4, xnu-8019.80.24, xnu-8796.101.5, "
-        "xnu-8796.141.3, and xnu-12377.1.9 omit T8010/H9 at the audited paths."
+        "xnu-8796.141.3, xnu-12377.1.9, and all four audited "
+        "xnu-10002 tags omit T8010/H9 at the audited paths."
     )
     print(
-        "PASS: all six snapshots retain the MakeInc.kernel "
+        "PASS: all ten snapshots retain the MakeInc.kernel "
         "machine-configuration rejection guard."
     )
     print(
