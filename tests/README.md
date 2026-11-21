@@ -44,3 +44,12 @@ six-snapshot public XNU matrix: historical T8010/H9 presence in
 intermediate `xnu-8019.80.24`, early and selected `xnu-8796` snapshots,
 and later `xnu-12377.1.9`. This is a synthetic, host-only source-structure
 test; it does not compile XNU or establish device support.
+
+
+The `test_audit_h9_source_closure.py` synthetic tests cover H9 macro extraction,
+identifier-token reference scanning, H13 definition comparison, local include
+resolution, unresolved include reporting, and missing-source diagnostics. The
+`h9-source-closure.yml` workflow checks out the pinned historical XNU 7195 and
+candidate XNU 8796 source trees and uploads a JSON scan report. This remains a
+textual source inventory, not a preprocessor, compiler, kernel build, or device
+compatibility test.
