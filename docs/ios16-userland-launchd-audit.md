@@ -513,11 +513,22 @@ The complete path, index, version, UUID, and consumer cross-reference is in
 [the target GUI dependency cache report](iphone91-19h422-gui-dependency-cache-crossref.md)
 and its [machine-readable JSON](../research/iphone91-19h422-gui-dependency-cache-crossref.json).
 
-The next bounded target loader queries are for SpringBoard.framework,
-RunningBoard.framework, and RunningBoardServices.framework. The procedure is
-in [the target GUI framework loader capture plan](iphone91-19h422-gui-framework-loader-capture-plan.md).
+The target-side framework loader capture is now complete for
+SpringBoard.framework, RunningBoard.framework, and RunningBoardServices.framework:
+all three queries returned exit status 0. The recorded PrebuiltLoader reference
+indexes and dependency rows are in the
+[target GUI framework loader results](iphone91-19h422-gui-framework-loader-results.md).
+The target report keeps PrebuiltLoader reference indexes distinct from cache
+image-list indexes and excludes the malformed `Sections` fields from
+interpretation.
 
-**Interpretation boundary:** this is cache image-list membership only.
-It does not prove dependency resolution, file-system presence, signatures,
+The next comparison is to collect the same three exact framework install paths
+from the iPhone X 20H392 donor SystemOS cache. The host-side procedure is in the
+[20H392 GUI framework loader capture plan](20h392-gui-framework-loader-capture-plan.md).
+The target and donor caches belong to different device models and OS builds,
+so their differences must not be attributed to hardware alone.
+
+**Interpretation boundary:** cache image-list membership and PrebuiltLoader
+metadata do not prove dependency resolution, file-system presence, signatures,
 ABI, successful loading, process launch, provider attachment, or SpringBoard
 readiness. M6 remains in progress; M7 has not started.
