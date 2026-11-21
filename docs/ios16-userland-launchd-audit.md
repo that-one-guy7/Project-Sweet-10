@@ -449,3 +449,40 @@ useful static evidence is a target-native dependency crosswalk for
 `backboardd`, `runningboardd`, and SpringBoard against the 19H422 system and
 shared-cache inventories, while keeping any donor-only framework or provider
 requirement explicitly unverified for iPhone9,1. M7 has not started.
+
+
+## Target iPhone9,1 GUI-chain Mach-O direct dependencies (2026-11-21)
+
+The user supplied the host-side `file`, `llvm-objdump --macho
+--dylibs-used`, and `llvm-objdump --macho --rpaths` output for the
+three selected target executables. Ubuntu LLVM was version `18.1.3`; all
+three executables were identified as Mach-O 64-bit arm64 with flags
+`NOUNDEFS|DYLDLINK|TWOLEVEL|PIE`.
+
+| Executable | Target regular direct dependencies | Weak dependencies | Target rpath |
+|---|---:|---:|---|
+| `backboardd` | 42 | 1 named: `/usr/appleinternal/lib/liblinkguard.dylib` | none printed |
+| `runningboardd` | 6 | 0 | none printed |
+| `SpringBoard` | 4 | 0 | `@executable_path/Frameworks` |
+
+Compared with the previously recorded 20H392 donor output, the target
+`runningboardd` and SpringBoard direct install-name sets match exactly,
+including their respective rpath results. Target `backboardd` has 42
+regular install names in common with the donor's 45 regular entries. The
+three donor-only direct edges are CarKit, SystemWake, and SoftLinking.
+The named weak `liblinkguard.dylib` appears in both direct Mach-O
+inventories. The separate donor PrebuiltLoaderSet output still has an
+unnamed weak index `32767`; its identity is not assumed here.
+
+Full ordered target paths and the source comparison are recorded in
+[the target GUI-chain dependency results](iphone91-19h422-gui-macho-dependency-results.md)
+and the machine-readable
+[`research/iphone91-19h422-gui-macho-dependency-results.json`](../research/iphone91-19h422-gui-macho-dependency-results.json).
+
+This is direct load-command metadata, not a recursive dependency closure.
+The `arm64` file identification does not establish iOS 16 ABI compatibility,
+dyld resolution, code-signing validity, entitlements, IOKit provider
+attachment, or successful launch. M6 remains in progress; M7 has not started.
+The next static step is to cross-reference the exact install names against
+the target 19H422 dyld image inventory and mounted root, while checking the
+SpringBoard app-local rpath separately.
