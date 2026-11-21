@@ -169,26 +169,116 @@ target's SPI device, clocks, interrupts, DMA, power, or HID service graph.
 No driver is described here as drop-in or interchangeable. Runtime matching,
 plugin loading, touch-event delivery, and display operation remain untested.
 
-## Next bounded host-side comparison
+## Target-native loader dependency comparison
 
-The donor UUID lookup is complete. The 20H392 donor cache record is
-index `2557`, version `6140.3.0.0.0`, UUID
-`78E1FB55-113A-3500-9D2D-1D8E282BED45`, while the 19H422 target record
-is index `1948`, version `5100.27.0.0.0`, UUID
-`304953E6-6B67-3CF1-B7CA-E011978210DE`. The identifiers differ, but no
-raw cache image bytes have been separately extracted or compared.
+The target and donor caches both returned a PrebuiltLoaderSet record for
+the same full `MultitouchHID` install path. The user supplied both outputs.
+The command status for the 19H422 target was `0`.
 
-The next static task is to query the target-native 19H422 dyld image/loader
-record at the same full install path and inspect any dependency information
-the target cache format exposes. See the
-[target loader audit plan](iphone91-19h422-target-multitouch-loader-audit-plan.md).
-The donor and target remain different hardware generations; no cross-board
-compatibility conclusion follows from these cache records.
-The `CodeResources` output is not signature verification. Keep donor and
-target artifacts separate.
+| Field | 19H422 target (iPhone9,1 / T8010) | 20H392 donor (iPhone10,3 / T8015) |
+|---|---|---|
+| Cache image-list index | 1948 | 2557 |
+| Source version | `5100.27.0.0.0` | `6140.3.0.0.0` |
+| Image Mach-O UUID | `304953E6-6B67-3CF1-B7CA-E011978210DE` | `78E1FB55-113A-3500-9D2D-1D8E282BED45` |
+| Loader reference index | 1947 | 2556 |
+| VM Size | `0x2e9f4000` | `0x20e0c000` |
+| Loader flags | `prebuilt|in-cache-dylib|objc|never-unload` | `prebuilt|in-cache-dylib|objc|never-unload|ro-objc|pre-2022` |
+| Info flags | `initializers|regions=5` | `initializers|overridable|regions=5` |
+| Exports trie | off `0x025fee90`, size `0xf0d0` | off `0x0b346300`, size `0xfe18` |
+| Regions | 5 | 5 |
+| Reported dependencies | 13 (10 regular, 3 weak-link) | 14 (11 regular, 3 weak-link) |
 
-The exact XNU source revision corresponding to the donor KernelCache remains
-a separate source-provenance question. No device, firmware, partition,
-activation, security, or boot state was accessed or changed. No KernelCache,
-filesystem image, KEXT executable, plugin executable, or raw DeviceTree is
-committed to the repository.
+The two loader reference indices are reported separately from the cache
+image-list indices. In each cache the displayed loader reference index is
+one less than the corresponding one-based image-list index, but this
+comparison does not assign those separate fields a shared semantic meaning.
+
+### Dependency paths
+
+| Dependency family | Target 19H422 | Donor 20H392 |
+|---|---|---|
+| WirelessDiagnostics | regular — `WirelessDiagnostics.framework/WirelessDiagnostics` | regular — same path |
+| CoreAccessories | regular — `CoreAccessories.framework/CoreAccessories` | regular — same path |
+| CoreAnalytics | weak-link — `CoreAnalytics.framework/CoreAnalytics` | weak-link — same path |
+| Foundation | regular — `Foundation.framework/Foundation` | regular — same path |
+| MultitouchSupport | regular — `MultitouchSupport.framework/MultitouchSupport` | regular — same path |
+| IOKit | regular — `IOKit.framework/Versions/A/IOKit` | regular — `IOKit.framework/IOKit` |
+| ProtocolBuffer | weak-link — `ProtocolBuffer.framework/ProtocolBuffer` | weak-link — same path |
+| SymptomDiagnosticReporter | **Not listed** | regular — `SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter` |
+| libMobileGestalt | weak-link — `libMobileGestalt.dylib` | weak-link — same path |
+| libIOReport | regular — `libIOReport.dylib` | regular — same path |
+| libc++ | regular — `libc++.1.dylib` | regular — same path |
+| libSystem | regular — `libSystem.B.dylib` | regular — same path |
+| CoreFoundation | regular — `CoreFoundation.framework/CoreFoundation` | regular — same path |
+| libobjc | regular — `libobjc.A.dylib` | regular — same path |
+
+The target has 13 dependency rows versus 14 for the donor. Every target
+dependency family is also represented in the donor output. The donor has
+one additional printed dependency, regular
+`SymptomDiagnosticReporter.framework/SymptomDiagnosticReporter`.
+The IOKit family appears on both sides with different printed path forms;
+the path strings are retained exactly as supplied and are not declared
+equivalent by this report.
+
+This is a comparison of the dependency rows emitted for these two
+PrebuiltLoaderSet records. It does **not** prove that the donor-only
+framework is absent from the target filesystem or cache, that any image is
+successfully resolved at runtime, or that the plugin is loaded. A separate
+target cache inventory lookup is needed to establish whether a
+`SymptomDiagnosticReporter` image record exists elsewhere in the target
+cache.
+
+### Region records
+
+Both records report five regions and the same permission pattern
+(`r-x`, three `rw-`, and `r--`). They also report `Zero Fill=false`
+and `RO Data=false` for all five rows.
+
+Target 19H422 regions:
+
+| Region | File offset | File size | VM offset | Perms |
+|---:|---:|---:|---:|---|
+| 1 | `0x1bbbf000` | `0x0004e000` | `0x00000000` | `r-x` |
+| 2 | `0x071f6340` | `0x00009630` | `0x17267340` | `rw-` |
+| 3 | `0x0c006408` | `0x00000e20` | `0x1e077408` | `rw-` |
+| 4 | `0x08162138` | `0x000000c8` | `0x1a1d3138` | `rw-` |
+| 5 | `0x002ec000` | `0x0b9e0f19` | `0x23011000` | `r--` |
+
+Donor 20H392 regions:
+
+| Region | File offset | File size | VM offset | Perms |
+|---:|---:|---:|---:|---|
+| 1 | `0x024cc000` | `0x00058000` | `0x00000000` | `r-x` |
+| 2 | `0x027f0138` | `0x00009f38` | `0x05664138` | `rw-` |
+| 3 | `0x04ac9ab0` | `0x00000c00` | `0x0993dab0` | `rw-` |
+| 4 | `0x06106638` | `0x000000c8` | `0x0af7a638` | `rw-` |
+| 5 | `0x0005c000` | `0x13da4000` | `0x0d068000` | `r--` |
+
+These offsets and sizes are cache-specific mappings and must not be
+compared as though they were file offsets in standalone Mach-O files.
+The same region count and permission pattern do not establish identical
+memory contents or runtime behavior.
+
+### Parser caveat
+
+Both target and donor outputs contain a `Sections` block with extremely
+large values and offset fragments that resemble ASCII text. Those decoded
+section rows are excluded from interpretation pending independent parser
+validation. The user supplied successful exit codes and plausible
+PrebuiltLoaderSet headers/regions/dependency rows; the odd section output
+is not treated as proof of cache corruption.
+
+### Interpretation and next check
+
+The printed dependency sets are very similar: 13 target dependency families
+overlap with 13 donor dependency families, with the IOKit path-form
+difference noted above. The target output does not list the donor's
+`SymptomDiagnosticReporter` dependency. This is a concrete metadata
+difference in the loader records, not proof of a missing OS component or
+runtime failure.
+
+Next, search the existing target JSON cache image inventory for the
+reported dependency image names—especially
+`SymptomDiagnosticReporter`—and capture any target cache image paths,
+versions, and UUIDs. This is a bounded host-side lookup using the already
+generated JSON report; no device-side action is involved.
