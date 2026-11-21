@@ -103,17 +103,6 @@ comparison.
 
 
 
-## Matching donor and target filesystem plugin plists
-
-The donor's own 20H392 filesystem plugin plist is now verified. Its bundle
-identifier, type UUID, factory UUID, and factory function are identical to
-the 19H422 target plugin. Its version is 6140.3 and minimum OS is 16.7,
-versus 5100.27 and 15.8 in the target. The donor Info.plist is 1,126 bytes
-with SHA-256
-`6700b351288f1420754edcc8107a118b935d7ce250653f737ff448f9ddb7f3b1`.
-The complete comparison and evidence boundaries are recorded in the
-[20H392 donor plugin audit](20h392-multitouch-plugin-audit.md).
-
 ## Interpretation
 
 The comparison establishes three useful facts:
