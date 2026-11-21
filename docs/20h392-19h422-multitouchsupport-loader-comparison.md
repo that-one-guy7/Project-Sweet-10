@@ -152,10 +152,12 @@ This closes the cache image-list presence question only. It does not
 establish dependency resolution for the target MultitouchSupport loader,
 filesystem presence outside the cache, or runtime library loading.
 
-The next bounded host-side check is a static comparison of the target and
-donor `MultitouchSupport` exported-symbol metadata, followed by a
-careful comparison of relevant `MultitouchHID` metadata if parser output
-is reliable.
+The next bounded host-side check is documented in the
+[MultitouchSupport export audit plan](20h392-19h422-multitouchsupport-export-audit-plan.md).
+It uses the pinned `ipsw dyld macho --symbols -V` parser path to collect the
+`Dyld Exports` section from both caches. Compare names and flags first; keep
+addresses as cache-specific references. A later `MultitouchHID` comparison
+is contingent on reliable parser output.
 
 No binary, shared-cache file, filesystem image, firmware file, or device
 state is changed or committed by this documentation.
