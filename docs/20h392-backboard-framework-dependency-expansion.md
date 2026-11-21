@@ -158,3 +158,13 @@ BackBoardServices, and 4 regular dependencies for IOMobileFramebuffer. No
 weak-link entries appeared in these four blocks. See the
 [result inventory](20h392-backboard-framework-dependency-results.md) for
 the complete ordered lists and derived donor-side edges.
+
+
+## Target-side follow-up
+
+The donor-side four-framework results are now the comparator for the
+iPhone9,1 / 19H422 target-side collection. The corresponding target cache
+queries, required output fields, and comparison rules are defined in
+[the iPhone9,1 target BackBoard loader audit plan](iphone91-19h422-backboard-loader-audit-plan.md).
+Do not treat donor-only rows as target incompatibilities until the target
+queries and target cache image-list records are inspected.
