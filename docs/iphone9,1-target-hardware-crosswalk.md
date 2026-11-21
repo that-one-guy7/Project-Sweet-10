@@ -179,13 +179,16 @@ The target and donor plugin Info.plists have now been compared. The donor
 plist declares `CFBundleExecutable=MultitouchHID`; the inspected
 `CodeResources` plist exposes `files`, `files2`, `rules`, and `rules2`, with
 empty printed `files` and `files2` entries. No `MultitouchHID*` file or
-symlink was found in either searched mounted donor root. The target plugin
-directory listing contains only `Info.plist`; an additional home-directory
-search displayed no matches, but its exact command and coverage were not
-preserved, so a complete target-root search remains unconfirmed. Defer
-Mach-O comparison until actual executable files are located. The
-`CodeResources` output is not signature verification, and even matching
-Mach-O metadata would not prove successful loading.
+symlink was found in either searched mounted donor root. The complete
+read-only target filesystem DMG `098-68844-067.dmg` was also mounted at
+`$HOME/19H422-full-fs-mount` and searched for regular files and symlinks
+matching that name prefix; no paths were returned. The matching target
+Info.plist remains metadata-only evidence. The next static check is to
+inventory the 19H422 dyld shared-cache files and inspect their image-path
+list for a possible cache-backed plugin image. Defer Mach-O comparison until
+actual executable bytes are located. The `CodeResources` output is not
+signature verification, and even matching Mach-O metadata would not prove
+successful loading.
 
 The donor KernelCache reports XNU
 `8796.142.1.703.8~1/RELEASE_ARM64_T8015`. The repository's pinned public
