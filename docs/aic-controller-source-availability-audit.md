@@ -73,22 +73,37 @@ Pinned source links:
 - [Generic IOKit interrupt-controller interface](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOInterruptController.h)
 - [Generic IOKit interrupt-controller implementation](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOInterruptController.cpp)
 
-## Evidence of a separate AppleInterruptController component
+## Public-source references and target-native 19H422 KEXT evidence
 
 The public XNU 8796 source has two references to the name
-\`AppleInterruptController\`:
+`AppleInterruptController`:
 
-- \`bsd/dev/dtrace/fbt_blacklist.c\` lists
-  \`com.apple.driver.AppleInterruptController\` in the ARM driver blacklist.
-- \`tools/lldbmacros/scheduler.py\` reads a debugger object as
-  \`AppleInterruptController *\` and inspects its AIC base/interrupt state.
+- `bsd/dev/dtrace/fbt_blacklist.c` lists
+  `com.apple.driver.AppleInterruptController` in the ARM driver blacklist.
+- `tools/lldbmacros/scheduler.py` reads a debugger object as
+  `AppleInterruptController *` and inspects its AIC base/interrupt state.
 
 These are debugger and diagnostic references, not the implementation
-source. They suggest that the Apple kernel environment has a separate
-interrupt-controller driver component, but they do **not** prove that the
-same bundle is present in the iPhone7 19H422 KernelCache or that it matches
-the static \`aic,1\` node. The actual driver implementation is not present
-in the reviewed public XNU tree paths.
+source. The actual driver implementation is not present in the reviewed
+public XNU tree paths.
+
+The user's subsequent read-only filter of the iPhone9,1 / D10AP / iOS
+15.8.8 (19H422) target KernelCache KEXT JSON now resolves the former
+presence question. It contains bundle
+`com.apple.driver.AppleInterruptController`, version `1.0.0d1`,
+at `/System/Library/Extensions/AppleInterruptController.kext`.
+Its serialized personality has `IOClass = AppleInterruptController`,
+`IONameMatch = aic,1`, and
+`IOProviderClass = AppleARMIODevice`. The target DeviceTree separately
+records `/arm-io/aic` with `compatible = aic,1`, so an exact static
+match-property overlap is confirmed.
+
+This is target-native **19H422 metadata**, not 20H392 donor evidence.
+It does not establish that the provider/service attaches at runtime,
+that the KEXT works with XNU 8796, or that the personality describes the
+complete interrupt/timer contract. The version, personality, provider,
+and evidence limits are recorded in the
+[19H422 AIC and T8010 KEXT inventory](iphone91-19h422-aic-kext-inventory.md).
 
 References:
 
@@ -112,57 +127,52 @@ is available.
 
 ## What is still unknown
 
-- Whether the 19H422 KernelCache contains a bundle named
-  \`com.apple.driver.AppleInterruptController\`.
-- Whether that bundle's personalities match \`aic,1\` or another compatible
-  string, and which provider class it expects.
-- Whether \`AppleT8010\`, \`AppleT8010PMGR\`, \`AppleT8010CLPC\`, or another
-  target KEXT owns any part of the interrupt-controller or timer interface.
+- Whether the `AppleARMIODevice` provider is created and the
+  `AppleInterruptController` service actually attaches at runtime.
 - The complete target interrupt specifier format, IRQ namespace, trigger
   modes, priorities, affinity/routing and per-CPU delivery behavior.
 - The acknowledge/EOI path and relationship between the AIC timer node and
-  architectural \`CNTVCT_EL0\` / \`CNTV_TVAL_EL0\` handling.
-- A non-zero, runtime-supplied \`timebase-frequency\` and any
+  architectural `CNTVCT_EL0` / `CNTV_TVAL_EL0` handling.
+- A non-zero, runtime-supplied `timebase-frequency` and any
   SoC-specific timer callback requirements.
-- Whether the target's private Apple KEXT implementation is compatible with
-  the public XNU 8796 IOKit interfaces.
+- Whether the target's private Apple KEXT implementation is compatible
+  with the public XNU 8796 IOKit interfaces and KPI set.
+- Whether the corresponding KEXT and personalities exist in the
+  iPhone10,3 / D22AP / 20H392 donor KernelCache.
+- Exact Apple source/build provenance for the 19H422 and 20H392 shipped
+  KernelCaches.
 
 ## Next bounded host-side inspection
 
-The next useful artifact is the **target 19H422 KernelCache KEXT JSON
-filtered for**:
+The target-side KEXT JSON filter is now complete. The next bounded
+comparison is to query the **same selected AIC/T8010 bundles and personality
+fields in the iPhone X / D22AP / 20H392 donor KernelCache** and record
+present/absent/version/personality differences without merging the two
+KernelCaches' evidence.
 
-- \`AppleInterruptController\`
-- \`AppleARMPlatform\`
-- \`AppleT8010\`
-- \`AppleT8010PMGR\`
-- \`AppleT8010CLPC\`
-- \`AppleT8010SOCTuner\`
+For both releases, preserve only the relevant bundle identifiers,
+versions, personality names, `IONameMatch`, `IOProviderClass`, and
+`os_bundle_libraries` dependencies. Do not treat a matching plist
+personality as proof of binary ABI compatibility or runtime attachment.
+Do not upload KernelCache or proprietary KEXT binaries.
 
-For every matching record, preserve the bundle identifier, version,
-personality names, provider class, \`IONameMatch\`, and any
-\`IOProviderClass\` / interrupt-related properties that the existing JSON
-actually contains. An absent JSON field is not proof of absence from the
-KEXT binary or from runtime behavior. Do not dump unrelated private
-DeviceTree/NVRAM values or upload full KernelCache/firmware binaries.
-
-The repository already records the local read-only inventory command and
-the extracted KernelCache path in
-[the 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md).
-The next comparison should determine whether the candidate controller
-bundle and its personality are in the target-native KernelCache before
-any AIC implementation work is proposed.
+The completed target result is documented in
+[the 19H422 AIC and T8010 KEXT inventory](iphone91-19h422-aic-kext-inventory.md).
 
 ## Decision
 
-**No AIC driver implementation is ready to be written from the current
-public-source evidence.** The target's static AIC nodes/windows are known,
-and XNU's generic mapper is understood. The controller implementation and
-runtime interrupt/timer contract remain unverified. First inspect the
-target-native KernelCache personalities for the controller and platform
-bundles; then decide whether the next source task belongs in XNU
-platform-expert code, an IOKit controller component, or a separate
-vendor-specific driver boundary.
+**The target-native 19H422 KEXT presence question is resolved:** the
+KernelCache metadata contains `AppleInterruptController` and a personality
+matching `aic,1` through `AppleARMIODevice`. This does not supply the
+private driver implementation or its runtime contract. The public XNU 8796
+tree still provides generic AIC helpers and IOKit interfaces rather than
+the target controller implementation.
+
+The AIC and timer implementation remains blocked on IRQ decoding/routing,
+acknowledge/EOI behavior, timer source/frequency/callback requirements,
+provider attachment evidence, and compatibility with the selected XNU
+baseline. The static KEXT result is not sufficient to write or validate a
+target-specific controller driver.
 
 M6 remains in progress and M7/SpringBoard has not started. The physical
 iPhone 7 remains on iOS 12.1.4.
