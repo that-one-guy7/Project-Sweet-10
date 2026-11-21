@@ -34,7 +34,7 @@ This is evidence of a historical public configuration, not a complete iPhone 7 p
 
 The T8010 board configuration and build allowlist are both absent from 8019, 8796 and current public main. Therefore the evidence does **not** support the earlier idea that simply moving to current public XNU would restore T8010 support.
 
-The public-source transition places the removal somewhere after the 7195 ref and by the 8019 ref. This comparison does not identify the exact commit that removed it; that requires a separate history/blame investigation.
+The path-history endpoint for `board_config.h` at `xnu-8019.80.24` reports the first 8019 import in this path history as `xnu-8019.41.5` (commit `e6231be02a03711ca404e5121a151b24afbff733`, dated 2022-02-04 by the author metadata), whose parent is the public `xnu-7195.50.7.100.1` import (commit `bb611c8fecc755a0d8e56e2fa51513527c5b7a0e`). The T8010 block is already absent in the 8019.41.5 snapshot. This narrows the public snapshot boundary, but these are bulk source imports rather than a commit-by-commit development history; they do not identify the internal change that removed the profile.
 
 The absence from public XNU does not prove Apple never maintained T8010 support internally. Apple's shipped iPhone9,1 19H422 kernel metadata is separately recorded as `8020.241.44~1 / RELEASE_ARM64_T8010`, showing that Apple shipped a T8010-targeted kernel in the iOS 15 generation. Public source snapshots and Apple's complete private build inputs are not interchangeable.
 
