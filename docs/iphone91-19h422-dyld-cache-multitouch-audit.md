@@ -118,12 +118,19 @@ delivery, and SpringBoard behavior remain untested.
 
 ## Next bounded host-side comparison
 
-The 20H392 donor's SystemOS Cryptex dyld cache has already been inventoried
-separately. The next static check is to query that donor cache's
-`MultitouchHID` image record and compare its path, version, and UUID with
-the target 19H422 record above. Keep the A11/T8015 donor and A10/T8010
-target identities separate. Matching paths or plugin interface UUIDs do not
-establish binary compatibility or cross-board support.
+The donor comparison is now complete at the cache image-record level.
+The 20H392 donor record is image-list index `2557`, version
+`6140.3.0.0.0`, UUID
+`78E1FB55-113A-3500-9D2D-1D8E282BED45`; the 19H422 target record above
+is index `1948`, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`. Their build identifiers differ;
+this is not a byte-level comparison or compatibility verdict.
+
+The next host-side task is to inspect the target-native 19H422 loader/image
+record for the same full install path, including its dependency list if the
+cache format and parser expose one. The read-only command and the
+format-dependent output interpretation are documented in
+[the target loader audit plan](iphone91-19h422-target-multitouch-loader-audit-plan.md).
 
 No executable is to be copied to the device. No device, firmware, partition,
 activation, security, or boot state was accessed or changed. No proprietary

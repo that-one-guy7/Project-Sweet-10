@@ -171,23 +171,21 @@ plugin loading, touch-event delivery, and display operation remain untested.
 
 ## Next bounded host-side comparison
 
-The target and donor plugin Info.plists have now been compared. The donor
-plist declares `CFBundleExecutable=MultitouchHID`; its
-`CodeResources` plist reports top-level keys `files`, `files2`,
-`rules`, and `rules2`, with empty printed `files` and `files2`
-entries. No matching donor executable was found in either searched mounted
-donor root. The 19H422 dyld image inventory now contains
-`/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID`
-at index 1948, version `5100.27.0.0.0`, UUID
-`304953E6-6B67-3CF1-B7CA-E011978210DE`. The next bounded static task is
-to obtain the donor UUID. That UUID is now recorded as
-`78E1FB55-113A-3500-9D2D-1D8E282BED45` (image-list index 2557, version
-`6140.3.0.0.0`). The target UUID is
-`304953E6-6B67-3CF1-B7CA-E011978210DE` (index 1948, version
-`5100.27.0.0.0`). Their build identifiers differ; raw cache image bytes
-have not been extracted or compared.
+The donor UUID lookup is complete. The 20H392 donor cache record is
+index `2557`, version `6140.3.0.0.0`, UUID
+`78E1FB55-113A-3500-9D2D-1D8E282BED45`, while the 19H422 target record
+is index `1948`, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`. The identifiers differ, but no
+raw cache image bytes have been separately extracted or compared.
+
+The next static task is to query the target-native 19H422 dyld image/loader
+record at the same full install path and inspect any dependency information
+the target cache format exposes. See the
+[target loader audit plan](iphone91-19h422-target-multitouch-loader-audit-plan.md).
+The donor and target remain different hardware generations; no cross-board
+compatibility conclusion follows from these cache records.
 The `CodeResources` output is not signature verification. Keep donor and
-target artifacts separate; metadata does not prove runtime compatibility.
+target artifacts separate.
 
 The exact XNU source revision corresponding to the donor KernelCache remains
 a separate source-provenance question. No device, firmware, partition,
