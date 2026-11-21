@@ -409,22 +409,43 @@ is an iPhone9,1 target-native crosswalk, not indiscriminate expansion of
 generic donor frameworks. This remains static research only; M7 has not started.
 
 
-## Selected GUI-chain Program-path presence check (pending)
+## Selected GUI-chain Program-path presence check (completed 2026-11-21)
 
-The exact selected Program paths are now covered by a bounded host-side
-metadata inspector, `tools/inspect_launchd_program_paths.py`. It checks the
-nine GUI/platform job labels already compared in the target/donor launchd
-inventory: backboardd, runningboardd, SpringBoard, configd, notifyd,
-mediaserverd, wifid, bluetoothd, and mobileactivationd.
+The user supplied the generated read-only report from the target and donor
+mounted filesystem roots. All nine selected LaunchDaemon `Program` paths
+were found as regular filesystem objects in both datasets.
 
-The script checks the exact paths under the supplied already-mounted roots,
-plus up to two explicit repeated `root/` wrapper levels. It uses `lstat`
-and stops at symlinks; it never opens or executes program files. The detailed
-method and the exact command using the supplied mount roots are in
-[the Program-path inventory plan](launchd-program-path-presence-plan.md).
+| Dataset | Supplied roots | Found | Matched root | Wrapper depth |
+|---|---:|---:|---|---:|
+| Target 19H422 | 1 | 9/9 | `target_root_0` | 1 (`root/`) |
+| Donor 20H392 | 2 | 9/9 | `donor_root_0` | 2 (`root/root/`) |
 
-No actual path-presence result has been recorded yet because the mounted
-filesystem roots exist on the user's Ubuntu VM, not in the repository runner.
-The next evidence item is the generated JSON report. A regular-file result
-will remain only a filename/type observation, not binary, signature, ABI,
-loadability, or launch proof.
+All nine target paths matched at wrapper depth 1. All nine donor paths matched
+at depth 2 in `donor_root_0`; none matched the tested prefixes in
+`donor_root_1`. This is a difference in the supplied mount layouts, not proof
+that the second donor volume lacks those files or other services.
+
+The full result and per-job paths are recorded in
+[the actual Program-path presence results](launchd-program-path-presence-results.md)
+and the machine-readable summary at
+[`research/launchd-program-path-presence-results.json`](../research/launchd-program-path-presence-results.json).
+
+Provenance: the supplied report SHA-256 is
+`33dbb1e62ded690e0660c4fd76fd7b343e3155afa3ae3053475a17c105a202d9`.
+It references target launchd inventory SHA-256
+`539ae9992e6fb8395bf0354a2c3feb98cdae85933b40bb1a19a9a3e10c8270e3`
+and donor inventory SHA-256
+`86c9f900b2e3a02e78631a1bdc10929d493d13beb401183f4b289b93732f1d92`.
+
+**Interpretation boundary:** the scanner used `lstat` component by component,
+stopped at symlinks, and did not open, hash, execute, or inspect program
+contents. A regular-file result does not validate Mach-O format or architecture,
+signature, entitlements, ABI, dependencies, or loadability. It also does not
+prove launchd registration, process launch, runtime behavior, kernel
+compatibility, or SpringBoard readiness.
+
+The path-presence checklist item is complete. M6 remains in progress. The next
+useful static evidence is a target-native dependency crosswalk for
+`backboardd`, `runningboardd`, and SpringBoard against the 19H422 system and
+shared-cache inventories, while keeping any donor-only framework or provider
+requirement explicitly unverified for iPhone9,1. M7 has not started.
