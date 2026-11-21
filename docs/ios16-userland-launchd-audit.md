@@ -522,11 +522,28 @@ The target report keeps PrebuiltLoader reference indexes distinct from cache
 image-list indexes and excludes the malformed `Sections` fields from
 interpretation.
 
-The next comparison is to collect the same three exact framework install paths
-from the iPhone X 20H392 donor SystemOS cache. The host-side procedure is in the
-[20H392 GUI framework loader capture plan](20h392-gui-framework-loader-capture-plan.md).
-The target and donor caches belong to different device models and OS builds,
-so their differences must not be attributed to hardware alone.
+The matching 20H392 donor captures are now complete for all three exact
+framework paths; each query exited with status 0. Comparative findings and
+machine-readable rows are in the
+[20H392 / 19H422 GUI framework loader comparison](20h392-19h422-gui-framework-loader-comparison-results.md)
+and [JSON data](../research/20h392-19h422-gui-framework-loader-comparison.json).
+
+The clearest comparisons are:
+- RunningBoard: 20 shared names, two donor-only names, and three shared
+  paths whose regular/weak-link kinds change.
+- RunningBoardServices: all eight names are shared; Security and BaseBoard
+  switch edge kinds.
+- SpringBoard.framework: both records have 198 regular and 10 weak-link rows,
+  and the ten weak-link paths match; a full regular-path diff is not claimed.
+
+Selected donor paths were also checked against the 2,407-entry target cache
+image list. The donor ExtensionFoundation path is under `Frameworks`, while
+the target has a same-named image under `PrivateFrameworks`; PrivacyDisclosureCore
+has no matching target image-list record. These are cache-list observations,
+not filesystem or runtime results.
+
+The target and donor differ in both product generation and OS build, so
+observed differences cannot be attributed to hardware alone.
 
 **Interpretation boundary:** cache image-list membership and PrebuiltLoader
 metadata do not prove dependency resolution, file-system presence, signatures,
