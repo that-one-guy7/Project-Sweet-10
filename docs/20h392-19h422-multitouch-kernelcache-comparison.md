@@ -122,11 +122,15 @@ for regular files and symlinks whose case-insensitive names match
 search for that filename pattern within the mounted 19H422 filesystem DMG;
 it does not cover other IPSW components or unmounted/shared-cache images.
 
-Consequently, the shared plugin type/factory UUID metadata remains confirmed,
-but no donor or target plugin executable is currently available from the
-inspected directories for Mach-O inspection. This is an artifact-availability
-limitation, not evidence that the executable is absent from every IPSW
-component or every unmounted/shared-cache location. The mere presence of
+Consequently, the target's compiled plugin image is now confirmed as an
+entry in the 19H422 dyld shared-cache inventory (index 1948, version
+`5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`), despite no standalone
+`MultitouchHID*` file being returned by the complete filesystem search.
+The donor standalone executable remains unlocated in the two searched donor
+filesystem roots. The actual Mach-O bytes have not been separately extracted
+or compared. The dyld image entry is stronger than plist-only metadata but
+is not signature validation or runtime proof. The mere presence of
 `CodeResources` does not verify a code signature.
 
 ## Interpretation
@@ -162,13 +166,13 @@ plist declares `CFBundleExecutable=MultitouchHID`; its
 `CodeResources` plist reports top-level keys `files`, `files2`,
 `rules`, and `rules2`, with empty printed `files` and `files2`
 entries. No matching donor executable was found in either searched mounted
-donor root. The complete read-only 19H422 filesystem DMG
-(`098-68844-067.dmg`) has now been searched for regular files and symlinks
-matching `MultitouchHID*`; no paths were returned. No matching executable
-was found in either of the two searched donor mount roots either. The next
-bounded static task is to inventory the 19H422 dyld shared-cache files and
-inspect their image-path list for a possible cache-backed plugin image. A
-Mach-O comparison remains blocked until actual executable bytes are located.
+donor root. The 19H422 dyld image inventory now contains
+`/System/Library/Extensions/AppleMultitouchSPI.kext/PlugIns/MultitouchHID.plugin/MultitouchHID`
+at index 1948, version `5100.27.0.0.0`, UUID
+`304953E6-6B67-3CF1-B7CA-E011978210DE`. The next bounded static task is
+to query the separate 20H392 donor SystemOS dyld cache for the corresponding
+image path, version, and UUID. A binary comparison remains deferred until
+actual cache image bytes are separately obtained and statically inspected.
 The `CodeResources` output is not signature verification. Keep donor and
 target artifacts separate; metadata does not prove runtime compatibility.
 
