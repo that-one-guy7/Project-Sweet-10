@@ -1,0 +1,893 @@
+{
+  "schema": "project-sweet-10.gui-chain-dyld-image-crossref.v1",
+  "target_reference": {
+    "device": "iPhone9,1",
+    "board": "D10AP",
+    "soc": "A10/T8010",
+    "ios_build": "19H422",
+    "ios_version": "15.8.8"
+  },
+  "source": {
+    "archived_capture_name": "log.txt",
+    "archived_capture_sha256": "d2cb1fb9e75f1d2c477c1cb7c0561cd4ec2b220b19ba96d6828ee267a9a83f3b",
+    "archived_capture_size_bytes": 799576,
+    "raw_image_json_path": "$HOME/19H422-dyld-images.json",
+    "raw_image_json_reported_size_bytes": 132175259,
+    "extracted_array_key": "dylibs",
+    "parsed_image_record_count": 2407,
+    "unique_install_name_count": 2407,
+    "image_index_range": [
+      1,
+      2407
+    ]
+  },
+  "summary": {
+    "executable_count": 3,
+    "regular_dependency_rows": 52,
+    "regular_dependency_rows_matched": 52,
+    "unique_regular_dependency_paths": 44,
+    "unique_regular_paths_in_image_list": 44,
+    "unique_weak_dependency_paths": 1,
+    "unique_weak_paths_in_image_list": 0,
+    "unique_dependency_paths": 45,
+    "unique_dependency_paths_in_image_list": 44
+  },
+  "per_executable": {
+    "backboardd": {
+      "regular_dependency_rows": 42,
+      "regular_image_list_matches": 42,
+      "regular_not_in_image_list": [],
+      "weak_dependency_rows": 1,
+      "weak_image_list_matches": 0,
+      "weak_not_in_image_list": [
+        "/usr/appleinternal/lib/liblinkguard.dylib"
+      ],
+      "rpaths": []
+    },
+    "runningboardd": {
+      "regular_dependency_rows": 6,
+      "regular_image_list_matches": 6,
+      "regular_not_in_image_list": [],
+      "weak_dependency_rows": 0,
+      "weak_image_list_matches": 0,
+      "weak_not_in_image_list": [],
+      "rpaths": []
+    },
+    "SpringBoard": {
+      "regular_dependency_rows": 4,
+      "regular_image_list_matches": 4,
+      "regular_not_in_image_list": [],
+      "weak_dependency_rows": 0,
+      "weak_image_list_matches": 0,
+      "weak_not_in_image_list": [],
+      "rpaths": [
+        "@executable_path/Frameworks"
+      ]
+    }
+  },
+  "donor_only_backboardd_regular_edges": [
+    {
+      "path": "/System/Library/PrivateFrameworks/CarKit.framework/CarKit",
+      "image": {
+        "index": 130,
+        "name": "/System/Library/PrivateFrameworks/CarKit.framework/CarKit",
+        "version": "462.4.0.0.0",
+        "uuid": "2838C0E5-4D69-31A5-BD4A-E05C208D4A15",
+        "load_address": 6826070016
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/SystemWake.framework/SystemWake",
+      "image": {
+        "index": 2344,
+        "name": "/System/Library/PrivateFrameworks/SystemWake.framework/SystemWake",
+        "version": "567.5.0.0.0",
+        "uuid": "647E0318-0C3F-36A9-9225-8F297E54E27A",
+        "load_address": 8179974144
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+      "image": {
+        "index": 1430,
+        "name": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+        "version": "42.0.0.0.0",
+        "uuid": "4CF5E13F-3FDB-3CA6-98D4-88AFD1E35B64",
+        "load_address": 7827640320
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "/System/Library/Frameworks/AVFoundation.framework/AVFoundation",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 708,
+        "name": "/System/Library/Frameworks/AVFoundation.framework/AVFoundation",
+        "version": "2091.1.1.0.0",
+        "uuid": "C9045B58-4EAC-3C7B-A09C-18D6578E9815",
+        "load_address": 7497433088
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 4,
+        "name": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+        "version": "1866.100.1.0.0",
+        "uuid": "EEC1287D-059B-38C8-9BC1-58A0C8B1E6C2",
+        "load_address": 6445993984
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 15,
+        "name": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+        "version": "1557.7.1.0.0",
+        "uuid": "C99C6784-000C-3D9A-B7EF-AF28A0F1A28A",
+        "load_address": 6476996608
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/CoreMotion.framework/CoreMotion",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 75,
+        "name": "/System/Library/Frameworks/CoreMotion.framework/CoreMotion",
+        "version": "2667.4.3.1.0",
+        "uuid": "341A23BD-CCAD-3C1F-9008-42164FE124ED",
+        "load_address": 6656606208
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 5,
+        "name": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+        "version": "1165.83.0.0.0",
+        "uuid": "F0ACFB7C-6C39-36D7-BB9B-D0ADF76C845E",
+        "load_address": 6450442240
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/CoreText.framework/CoreText",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 28,
+        "name": "/System/Library/Frameworks/CoreText.framework/CoreText",
+        "version": "710.5.0.2.0",
+        "uuid": "33AA63BC-E745-3CF9-8CBB-195E696233E1",
+        "load_address": 6529900544
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "SpringBoard",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 12,
+        "name": "/System/Library/Frameworks/Foundation.framework/Foundation",
+        "version": "1866.100.1.0.0",
+        "uuid": "F9235FC7-EC4E-31C9-B56E-95CF10B07239",
+        "load_address": 6470189056
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 13,
+        "name": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+        "version": "2222.15.2.0.0",
+        "uuid": "786D7A4C-4D39-38C5-BCD7-2E7AC08B623E",
+        "load_address": 6473224192
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 71,
+        "name": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+        "version": "1955.140.2.0.0",
+        "uuid": "4AA27953-BAC7-3BCC-A036-2E0CA754907F",
+        "load_address": 6655262720
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/IOSurface.framework/IOSurface",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 369,
+        "name": "/System/Library/Frameworks/IOSurface.framework/IOSurface",
+        "version": "302.15.0.0.0",
+        "uuid": "12A86B9F-A356-3C17-831A-37F2B4B533AC",
+        "load_address": 7206813696
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/Metal.framework/Metal",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 193,
+        "name": "/System/Library/Frameworks/Metal.framework/Metal",
+        "version": "261.13.4.0.0",
+        "uuid": "E33EAE79-59DE-37E8-BA20-03A5BF3CC7AC",
+        "load_address": 6869819392
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 18,
+        "name": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+        "version": "964.34.0.0.0",
+        "uuid": "BFB37348-30C8-3723-84E1-7B04ACACC5BE",
+        "load_address": 6507835392
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/Security.framework/Security",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 45,
+        "name": "/System/Library/Frameworks/Security.framework/Security",
+        "version": "60158.141.1.700.8",
+        "uuid": "A2299834-68B3-3E3F-99F9-FEC44C972386",
+        "load_address": 6588760064
+      }
+    },
+    {
+      "path": "/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 7,
+        "name": "/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration",
+        "version": "1163.140.3.0.0",
+        "uuid": "324E7521-8781-343C-8A43-DEAB68EEACF1",
+        "load_address": 6452617216
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 879,
+        "name": "/System/Library/PrivateFrameworks/AggregateDictionary.framework/AggregateDictionary",
+        "version": "427.1.0.0.0",
+        "uuid": "CCA0340F-83B0-3D3F-A76C-6E15290E4B7C",
+        "load_address": 7578173440
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BackBoardHIDEventFoundation.framework/BackBoardHIDEventFoundation",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 588,
+        "name": "/System/Library/PrivateFrameworks/BackBoardHIDEventFoundation.framework/BackBoardHIDEventFoundation",
+        "version": "478.19.0.0.0",
+        "uuid": "A99AD801-5B39-347B-AAED-590362F01048",
+        "load_address": 7411367936
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BackBoardHIDEventProcessors.framework/BackBoardHIDEventProcessors",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 934,
+        "name": "/System/Library/PrivateFrameworks/BackBoardHIDEventProcessors.framework/BackBoardHIDEventProcessors",
+        "version": "478.19.0.0.0",
+        "uuid": "8E09BC84-3783-33FF-9674-57ECB993FF76",
+        "load_address": 7621259264
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 19,
+        "name": "/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices",
+        "version": "478.19.0.0.0",
+        "uuid": "35EE3FFB-EB35-38F4-ABFF-D695B8E3FB9F",
+        "load_address": 6510882816
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 31,
+        "name": "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+        "version": "567.5.0.0.0",
+        "uuid": "54602700-3B41-3EAA-9EE2-88F025D09D5F",
+        "load_address": 6531919872
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BiometricKit.framework/BiometricKit",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 357,
+        "name": "/System/Library/PrivateFrameworks/BiometricKit.framework/BiometricKit",
+        "version": "300.120.3.0.0",
+        "uuid": "E1F2B63C-379E-343A-ABCD-C258E82089F5",
+        "load_address": 7193829376
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/BoardServices.framework/BoardServices",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 222,
+        "name": "/System/Library/PrivateFrameworks/BoardServices.framework/BoardServices",
+        "version": "567.5.0.0.0",
+        "uuid": "15893FEF-16F8-30CD-A674-CFB3CB055D11",
+        "load_address": 7029014528
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/ButtonResolver.framework/ButtonResolver",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 957,
+        "name": "/System/Library/PrivateFrameworks/ButtonResolver.framework/ButtonResolver",
+        "version": "36.0.0.0.0",
+        "uuid": "A5F64E5C-F383-32B6-86D5-38EB2B225426",
+        "load_address": 7628124160
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/CoreAccessories.framework/CoreAccessories",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 343,
+        "name": "/System/Library/PrivateFrameworks/CoreAccessories.framework/CoreAccessories",
+        "version": "672.140.4.0.0",
+        "uuid": "7C035F3B-B050-3B16-99B8-1E75BBEFA7DF",
+        "load_address": 7174250496
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 262,
+        "name": "/System/Library/PrivateFrameworks/CoreAnalytics.framework/CoreAnalytics",
+        "version": "155.140.4.0.0",
+        "uuid": "742D05D9-7082-307B-A1AE-8D72120856CA",
+        "load_address": 7062745088
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 1013,
+        "name": "/System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness",
+        "version": "1212.120.4.0.0",
+        "uuid": "9ED042E4-63A7-3CBC-8FEE-42E207BE2B35",
+        "load_address": 7644045312
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/CrashReporterSupport.framework/CrashReporterSupport",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 171,
+        "name": "/System/Library/PrivateFrameworks/CrashReporterSupport.framework/CrashReporterSupport",
+        "version": "14264.0.0.0.0",
+        "uuid": "0F3972AA-D6CD-300A-91F7-C86489294ACC",
+        "load_address": 6856417280
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 72,
+        "name": "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+        "version": "2141.0.0.0.0",
+        "uuid": "971E8C97-07E1-3D64-A269-6E53395C4CEF",
+        "load_address": 6655983616
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 208,
+        "name": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+        "version": "5006.0.0.0.0",
+        "uuid": "BB434D86-0991-365F-BED3-C3923CF3073C",
+        "load_address": 6994776064
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/HangTracer.framework/HangTracer",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 644,
+        "name": "/System/Library/PrivateFrameworks/HangTracer.framework/HangTracer",
+        "version": "184.3.0.0.0",
+        "uuid": "9D8745ED-498F-3BDB-B94E-EABE422F6F80",
+        "load_address": 7477415936
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/Haptics.framework/Haptics",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 525,
+        "name": "/System/Library/PrivateFrameworks/Haptics.framework/Haptics",
+        "version": "29.0.0.0.0",
+        "uuid": "84EF8A51-856C-32BD-B9C2-67B5C0F08763",
+        "load_address": 7355060224
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 309,
+        "name": "/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer",
+        "version": "255.6.1.1.0",
+        "uuid": "F5FD666B-B216-3084-897D-BF00103F5F9D",
+        "load_address": 7144464384
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/ProgressUI.framework/ProgressUI",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 1326,
+        "name": "/System/Library/PrivateFrameworks/ProgressUI.framework/ProgressUI",
+        "version": "2141.0.0.0.0",
+        "uuid": "2C60BFFD-98FD-30BA-BAB0-D65B9AF55E62",
+        "load_address": 7777296384
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 553,
+        "name": "/System/Library/PrivateFrameworks/RunningBoard.framework/RunningBoard",
+        "version": "618.100.42.0.0",
+        "uuid": "68246786-1E83-3892-907F-123EE1F09C68",
+        "load_address": 7385722880
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 62,
+        "name": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+        "version": "618.100.42.0.0",
+        "uuid": "616B8ECB-90ED-38C5-9988-24AD07AE0CE9",
+        "load_address": 6622011392
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "SpringBoard",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 454,
+        "name": "/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard",
+        "version": "4251.53.0.0.0",
+        "uuid": "245B5F25-7DE1-329C-9107-87B37883CFB9",
+        "load_address": 7269445632
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/StudyLog.framework/StudyLog",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 532,
+        "name": "/System/Library/PrivateFrameworks/StudyLog.framework/StudyLog",
+        "version": "35.0.0.0.0",
+        "uuid": "55042E6B-DD94-35D8-89AA-BF33D4080D3A",
+        "load_address": 7360192512
+      }
+    },
+    {
+      "path": "/System/Library/PrivateFrameworks/WatchdogClient.framework/WatchdogClient",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 1522,
+        "name": "/System/Library/PrivateFrameworks/WatchdogClient.framework/WatchdogClient",
+        "version": "127.140.2.0.0",
+        "uuid": "3B22A5D3-6AF7-3D07-9562-6305FF7D0FBB",
+        "load_address": 7869440000
+      }
+    },
+    {
+      "path": "/usr/appleinternal/lib/liblinkguard.dylib",
+      "kind": "weak",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "weak"
+        }
+      ],
+      "image": null
+    },
+    {
+      "path": "/usr/lib/libAccessibility.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 17,
+        "name": "/usr/lib/libAccessibility.dylib",
+        "version": "2933.45.3.0.0",
+        "uuid": "4C8AF83E-24C3-3F01-A25A-991110625BC1",
+        "load_address": 6507692032
+      }
+    },
+    {
+      "path": "/usr/lib/libc++.1.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 150,
+        "name": "/usr/lib/libc++.1.dylib",
+        "version": "1300.36.0.0.0",
+        "uuid": "16BE14F2-A677-3DF1-984D-BBAB893EE3B9",
+        "load_address": 6841626624
+      }
+    },
+    {
+      "path": "/usr/lib/liblockdown.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 1694,
+        "name": "/usr/lib/liblockdown.dylib",
+        "version": "1188.120.4.0.0",
+        "uuid": "87DBB112-22B2-3118-881A-FB477A58FA16",
+        "load_address": 7962001408
+      }
+    },
+    {
+      "path": "/usr/lib/libMobileGestalt.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 88,
+        "name": "/usr/lib/libMobileGestalt.dylib",
+        "version": "1073.100.31.0.1",
+        "uuid": "71F82BAC-04CB-35C9-937B-7AC9989A0101",
+        "load_address": 6728138752
+      }
+    },
+    {
+      "path": "/usr/lib/libobjc.A.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "SpringBoard",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 148,
+        "name": "/usr/lib/libobjc.A.dylib",
+        "version": "841.13.0.0.0",
+        "uuid": "F1B36686-ED48-35EF-8896-0CEA8E9DA1C0",
+        "load_address": 6840971264
+      }
+    },
+    {
+      "path": "/usr/lib/libsp.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 1717,
+        "name": "/usr/lib/libsp.dylib",
+        "version": "61.0.0.0.0",
+        "uuid": "E4E34F5F-4290-33B2-AE53-94EB26E6C25D",
+        "load_address": 7970738176
+      }
+    },
+    {
+      "path": "/usr/lib/libSystem.B.dylib",
+      "kind": "regular",
+      "used_by": [
+        {
+          "executable": "backboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "runningboardd",
+          "kind": "regular"
+        },
+        {
+          "executable": "SpringBoard",
+          "kind": "regular"
+        }
+      ],
+      "image": {
+        "index": 658,
+        "name": "/usr/lib/libSystem.B.dylib",
+        "version": "1311.120.1.0.0",
+        "uuid": "EFE3ECA7-89AB-3B10-ADE7-C8527E93ED56",
+        "load_address": 7481782272
+      }
+    }
+  ]
+}
