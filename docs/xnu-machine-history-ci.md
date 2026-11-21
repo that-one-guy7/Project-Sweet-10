@@ -3,7 +3,7 @@
 ## Purpose
 
 This record turns the documented T8010/H9 source transition into a repeatable,
-read-only CI check. It compares three public Apple XNU snapshots and verifies
+read-only CI check. It now checks ten pinned public Apple XNU snapshots and verifies
 the source structures that distinguish the historical A10-era profile from
 the later machine lists. It does not create or enable a T8010 configuration.
 
@@ -87,10 +87,10 @@ interpreted as approval to copy H9 wholesale or to select T8010 in XNU 8796.
 - [XNU 8796.141.3 MakeInc.kernel](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/makedefs/MakeInc.kernel)
 
 
-## Expanded six-snapshot public-source matrix
+## Expanded ten-snapshot public-source matrix
 
 The original three-tree check established the first visible T8010/H9 source
-transition. The expanded check now includes six immutable public snapshots:
+transition. The expanded check now includes ten immutable public snapshots:
 
 | Role | Tag | T8010/H9 at audited paths? | Lock file |
 |---|---|---:|---|
@@ -100,6 +100,10 @@ transition. The expanded check now includes six immutable public snapshots:
 | Early Darwin 22 reference | `xnu-8796.101.5` | No | `xnu/history/xnu-8796.101.5.lock.json` |
 | Selected iOS 16-generation candidate | `xnu-8796.141.3` | No | `xnu/BASELINE.lock.json` |
 | Later public reference | `xnu-12377.1.9` | No | `xnu/history/xnu-12377.1.9.lock.json` |
+| Public XNU 10002 reference | `xnu-10002.1.13` | No | `xnu/history/xnu-10002.1.13.lock.json` |
+| Public XNU 10002 reference | `xnu-10002.41.9` | No | `xnu/history/xnu-10002.41.9.lock.json` |
+| Public XNU 10002 reference | `xnu-10002.61.3` | No | `xnu/history/xnu-10002.61.3.lock.json` |
+| Public XNU 10002 reference | `xnu-10002.81.5` | No | `xnu/history/xnu-10002.81.5.lock.json` |
 
 The additional public comparisons are deliberately references, not proposed
 baselines. In particular, the 19H422 target KernelCache reports
@@ -110,13 +114,13 @@ public tag `xnu-8796.141.3`. Neither tag is an Apple source-to-binary
 attestation. Product-specific build inputs and exact source revisions remain
 unresolved.
 
-The new `tools/audit_xnu_public_source_matrix.py` checks all six trees using
+The new `tools/audit_xnu_public_source_matrix.py` checks all ten trees using
 the same structural criteria as the existing three-tree audit: normal ARM64
 machine allowlist, T8010 compiler/board flag, board_config block, H9 header,
 and machine-selection rejection guard. Synthetic tests cover the expected
-matrix, unexpected T8010 reintroduction, missing guards, and incorrect
-snapshot counts. A dedicated GitHub Actions workflow checks out the pinned
-commits read-only and runs the matrix.
+matrix, unexpected T8010 reintroduction in the later public tags, missing
+guards, and incorrect snapshot counts. A dedicated GitHub Actions workflow
+checks out the ten pinned commits read-only and runs the matrix.
 
 A passing source matrix does not compile XNU, explain Apple's internal
 product-specific build inputs, or establish iPhone9,1 compatibility.
