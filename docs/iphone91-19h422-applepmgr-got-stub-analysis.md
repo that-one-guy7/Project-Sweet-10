@@ -314,3 +314,36 @@ The three class-name xrefs identify metaclass construction, not the
 
 All evidence remains host-side static inspection. No Apple binary was added
 to the repository, and the physical iPhone 7 remains on iOS 12.1.4.
+
+
+## EnableCPUCore superclass-pointer follow-up (2026-11-22)
+
+The user read ApplePMGR GOT offset `0x158` as
+`0xfffffff0079e4dd0`. Mapping that VA with `ipsw macho a2o` returned
+outer KernelCache offset `0x2690dd0`, section `__data`, segment
+`__PRELINK_DATA`. The load-command map places it inside the writable
+`__PRELINK_DATA` segment (file range `0x02690000–0x027e4000`;
+VM range `0xfffffff0079e4000–0xfffffff007b38000`). The user inspected
+the first `0x80` bytes at that file offset and all sixteen displayed
+64-bit words were zero.
+
+The pointer is the x2 argument to the OSMetaClass constructor in two
+EnableCPUCore registration sequences, so it remains a candidate
+superclass-metaclass pointer. The section mapping and zero sample do not
+identify the class. Do not infer a class name from the pointer's location
+or zero contents.
+
+The user also reported that `ipsw kernel cpp` scans of the complete
+target KernelCache and named class queries returned `no classes
+discovered`. The upstream CLI supports class and inheritance options,
+but its implementation emits that warning when no classes are available
+for display. This result does not establish class absence. See the
+[IPSW cpp CLI reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/kernel/cpp/)
+and [upstream command implementation](https://github.com/blacktop/ipsw/blob/26b65938cf4c9479cb5627d2d479492a1dcdd13e/cmd/ipsw/cmd/kernel/kernel_cpp.go).
+
+The next evidence collection is to record the local `ipsw` version and
+verbose scanner output, then identify the exact ApplePMGR/AppleT8010PMGR
+bundle identifier from the kernel's KEXT listing before trying a bundle-
+scoped scanner pass. The C++ hierarchy, EnableCPUCore callback, target
+instantiation, and hardware CPU-start behavior remain unresolved. No
+Apple binary is committed and the physical iPhone 7 remains on iOS 12.1.4.
