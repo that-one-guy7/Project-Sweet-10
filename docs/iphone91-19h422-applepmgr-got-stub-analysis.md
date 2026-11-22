@@ -272,7 +272,7 @@ test -f "$PRELINK" || {
 sha256sum "$PRELINK"
 
 strings -a -t x -n 5 "$PRELINK" | \
-  grep -Ei 'ApplePMGRFunctionEnableCPUCore|site\\.ApplePMGRFunctionEnableCPUCore|enableCPUCore|ApplePMGRFunction|CPUCore|IOPlatformFunction'
+  grep -Ei 'ApplePMGRFunctionEnableCPUCore|site\.ApplePMGRFunctionEnableCPUCore|enableCPUCore|ApplePMGRFunction|CPUCore|IOPlatformFunction'
 ~~~
 
 Paste the complete filtered output. The offsets will let us map the exact
