@@ -220,46 +220,39 @@ A separate sequence at `0xfffffff00598e5a4` sets x0 to
 target. These are additional registrations using the candidate shared
 superclass metadata pointer.
 
-**Interpretation boundary:** x1 is the name of the class being
-registered; x2 is the candidate superclass-metaclass argument. The
-identified subclass names do not themselves identify the parent. Because
-both AppleARMFunction classes and the previously identified
-`ApplePMGRFunctionEnableCPUCore` registration pass the same x2 pointer,
-`0xfffffff0079e4dd0` is increasingly well-supported as shared parent
-metadata. `AppleARMFunction` is a plausible candidate based on the
-two class names, but it remains a hypothesis until its own class-name
-string and metaclass-construction sequence are tied to the storage
-address `0xfffffff0079e4dd0`.
+**Interpretation boundary:** x1 names the class being registered;
+x2 is the superclass-metaclass argument under the
+`OSMetaClass(const char *, const OSMetaClass *, unsigned int)`
+constructor ABI. The exact `AppleARMFunction` string is now mapped to
+`0xfffffff0052e1e3c`, and the sequence at
+`0xfffffff005964fec` supplies x0 =
+`0xfffffff0079e4dd0` while x1 points to that string. The earlier
+`ApplePMGRFunctionEnableCPUCore` initializer passes the same pointer
+in x2. This strongly identifies `0xfffffff0079e4dd0` as the
+`AppleARMFunction` metaclass storage and `AppleARMFunction` as the
+direct superclass of `ApplePMGRFunctionEnableCPUCore` in the static
+metaclass-construction arguments.
 
-### Next static check: locate the candidate base-class name
+The AppleARMFunction initializer loads its own x2 from
+`0xfffffff006cdf7c0`; that class's parent remains unresolved. The
+shared callee at `0xfffffff005993844` should also be inspected directly
+to complete the local helper identification. The public XNU constructor
+implementation documents the argument contract and assigns
+`superClassLink = inSuperClass`
+([OSMetaClass.cpp](https://github.com/apple/darwin-xnu/blob/main/libkern/c%2B%2B/OSMetaClass.cpp)).
+This static evidence does not prove runtime KEXT loading, D10AP instance
+creation, an EnableCPUCore callback, CPU reset release, or iOS 16
+compatibility.
 
-Search for the exact class-name string (not just longer class names that
-contain this prefix):
-
-~~~sh
-strings -a -t x -n 5 "$KC" |
-  awk '$2 == "AppleARMFunction" || $2 == "site.AppleARMFunction"'
-~~~
-
-If a matching file offset is returned, convert that offset into a VM
-address with IPSW's documented offset-to-address command:
-
-~~~sh
-ipsw macho o2a "$KC" 0x<file-offset>
-~~~
-
-Also check whether the local symbol/disassembly annotation file has a
-class-qualified entry for the base class:
+### Next static check: verify the shared constructor helper
 
 ~~~sh
+grep -n -B8 -A36 '^0xfffffff005993844:' \
+  "$HOME/plk-text-exec.disass.txt"
+
 A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
-grep -in 'AppleARMFunction' "$A2S" | head -80
+grep -in 'OSMetaClass::OSMetaClass' "$A2S" | head -40
 ~~~
-
-The immediate objective is to find the metaclass-registration sequence
-whose x1 points to the exact `AppleARMFunction` class-name string and
-determine whether its x0 storage is `0xfffffff0079e4dd0`. Do not infer
-the parent class from the shared name prefix alone.
 
 For the already confirmed two child registrations, the following bounded
 disassembly completed and is repeatable:
