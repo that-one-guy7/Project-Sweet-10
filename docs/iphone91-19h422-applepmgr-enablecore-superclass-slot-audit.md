@@ -72,8 +72,9 @@ The x2 argument is therefore the superclass-metaclass argument under
 that signature. Combined with the mapped GOT value, the strongest
 supported statement is:
 
-**`0xfffffff0079e4dd0` is the candidate superclass-metaclass pointer
-passed to the `ApplePMGRFunctionEnableCPUCore` metaclass constructor.**
+**`0xfffffff0079e4dd0` is the `AppleARMFunction` metaclass storage and
+is passed as the superclass-metaclass pointer to the
+`ApplePMGRFunctionEnableCPUCore` metaclass constructor.**
 
 The all-zero on-disk bytes do not identify the object, but the later
 shared-prelink registration audit resolves its class identity: the
