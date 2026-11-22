@@ -18,9 +18,9 @@ of stubs, and final byte into __PLK_TEXT_EXEC. The prior 0x00f4f280
 extraction remains invalid and is not used here.
 
 The user supplied the first 64 bytes and first 100 lines of the corrected
-code dump, plus the displayed stub disassembly. The corrected dump's
-explicit whole-file stat size and SHA-256 were not included in that message,
-so those artifact-identification fields remain pending.
+code dump and its displayed stub disassembly. The user later supplied the
+whole-file sizes and SHA-256 identities for both the corrected executable
+dump and the GOT dump; see the GOT resolution addendum below.
 
 ## Stub format and GOT slot mapping
 
@@ -56,9 +56,9 @@ The user mapped these additional data addresses into the outer KernelCache:
 | 0xfffffff006f192d0 | 0x025a52d0 | __PLK_DATA_CONST |
 | 0xfffffff006f1c020 | 0x025a8020 | __PLK_DATA_CONST |
 
-These mappings establish locations, not the contents of the GOT entries.
-The resolved pointer values at 0x6f18f28, 0x6f18f30, 0x6f19080,
-0x6f19088, and 0x6f191f8 have not yet been supplied.
+The resolved GOT pointer values and their target symbols/sections are now
+recorded in the GOT resolution addendum below. The 0x200 entry points into
+__DATA.__common; its exact object/symbol identity remains unresolved.
 
 ## First routine: ApplePMGR metaclass-initialization candidate
 
@@ -91,11 +91,12 @@ candidate superclass metaclass pointer. The post-call store of
 0xfffffff006f1c020 is consistent with installing a vtable pointer into
 the metaclass object.
 
-This is not a confirmed symbol identification. The target function pointer
-stored in GOT slot 0xfffffff006f18f28 has not been read, and public XNU main
-is a structural comparison, not proof of the exact private 19H422 target
-implementation. This routine has not been proven to implement
-ApplePMGRFunctionEnableCPUCore.
+The GOT value at 0xfffffff006f18f28 resolves to
+__ZN11OSMetaClassC2EPKcPKS_j, confirming the OSMetaClass constructor call.
+The pointer passed in x2 remains an unidentified __DATA.__common object,
+so its superclass identity is unresolved. Public XNU main is structural
+corroboration, not proof of the exact private 19H422 implementation. This
+routine has not been proven to implement ApplePMGRFunctionEnableCPUCore.
 
 ## Second routine: ApplePMGR object-initialization candidate
 
@@ -112,12 +113,14 @@ A second routine begins at 0xfffffff0065b603c. The supplied excerpt shows it:
 
 The pointer 0xfffffff006f192d0 is inside generic PMGR's
 __DATA_CONST.__const region. Its placement and the store at object offset
-zero are consistent with a vtable-like pointer. The repeated three-argument
-calls resemble copy-helper calls, but the imported function is not yet known.
+zero are consistent with a vtable-like pointer. GOT resolution now confirms
+that the call through slot 0x208 targets IOPMGR::IOPMGR and the repeated
+three-argument calls through slot 0x378 target _memmove. The caller's
+receiver pointer still needs inspection before assigning a base-subobject
+versus embedded/member-object layout.
 
-This routine is an object-initialization candidate, but no exact C++ method
-name is assigned. It is not established as ApplePMGR::initDriver,
-ApplePMGR::enableCluster, or a CPU-start method.
+No exact ApplePMGR method name is assigned, and this routine has not been
+shown to be a CPU-start method.
 
 ## What this establishes about CPU-start research
 
@@ -135,38 +138,12 @@ callback, that the GOT dispatch target implements XNU IOPMGR::enableCPUCore,
 that the concrete target PMGR releases a secondary CPU from reset, or that
 XNU 8796 is ABI-compatible with this private 19H422 driver.
 
-## Next host-side check: read the GOT contents
+## GOT follow-up status
 
-First map the start and last byte of the GOT against the outer KernelCache:
-
-~~~sh
-ipsw macho a2o "$KC" 0xfffffff006f18e80
-ipsw macho a2o "$KC" 0xfffffff006f1927f
-~~~
-
-If both map into __PLK_DATA_CONST as expected, dump the 1,024-byte GOT
-region by virtual address and inspect the five relevant entries:
-
-~~~sh
-ipsw macho dump "$KC" 0xfffffff006f18e80 --size 1024 \
-  --output "$HOME/ApplePMGR.got.bin"
-
-stat -c 'Size: %s bytes' "$HOME/ApplePMGR.got.bin"
-sha256sum "$HOME/ApplePMGR.got.bin"
-
-# GOT-relative offsets: 0xa8, 0xb0, 0x200, 0x208, and 0x378.
-xxd -e -g8 -c8 "$HOME/ApplePMGR.got.bin" |
-  grep -E '^000000a8:|^000000b0:|^00000200:|^00000208:|^00000378:'
-~~~
-
-Keep this binary local; do not add it to GitHub. If pointer values are
-kernel virtual addresses, map each back into the same KernelCache with
-ipsw macho a2o. If they are zero, relative, or otherwise encoded, record
-the raw value first rather than guessing its meaning.
-
-Also capture the corrected executable dump's size and SHA-256. The
-supplied disassembly is useful, but the explicit whole-file identity
-was omitted.
+The GOT dump, five pointer reads, address mappings, and corrected
+executable-dump identity are complete. Their values and symbol resolutions
+are recorded in the GOT resolution addendum below. Both binary artifacts
+remain local to the user's Ubuntu environment and are not committed.
 
 ## Milestone status and limits
 
