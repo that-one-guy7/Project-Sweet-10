@@ -18,7 +18,7 @@ The target KernelCache identity is:
 The generic ApplePMGR prelink header is UUID
 `29A10C96-489B-3D22-8D81-974A570645C3`, source version
 `939.140.3.0.0`, with `__TEXT_EXEC` VM address
-`0xfffffff0065b6000`, reported file offset `0x00f4f280`, and size
+`0xfffffff0065b6000`, inner Mach-O `LC_SEGMENT_64.fileoff` `0x00f4f280`, and size
 `0x34a4c`. The header's symbol tables are stripped.
 
 ## CPU-related string evidence
@@ -85,7 +85,7 @@ The user extracted the reported `__TEXT_EXEC` range from the local KernelCache:
 
 | Field | Value |
 |---|---|
-| Reported file offset | `0x00f4f280` |
+| Inner Mach-O `LC_SEGMENT_64.fileoff` | `0x00f4f280` (not an outer-KernelCache offset) |
 | Reported size | `0x34a4c` / 215,628 bytes |
 | Extracted size | 215,628 bytes |
 | SHA-256 | `355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99` |
@@ -93,24 +93,39 @@ The user extracted the reported `__TEXT_EXEC` range from the local KernelCache:
 
 The supplied AArch64 objdump begins at VM
 `0xfffffff0065b6000`, but its first bytes render as readable diagnostic
-strings rather than an identifiable instruction sequence. The output is
-therefore **not accepted as a verified disassembly of ApplePMGR code**.
-Potential causes include a mismatched KernelCache input or an incorrect
-interpretation of the embedded KEXT's segment file offset; the present
-evidence does not distinguish them.
+strings rather than an identifiable instruction sequence. The full-container
+mapping checks now explain the discrepancy:
 
-The next host-side check is to compare the virtual-address mapping against
-the candidate file offset using the same KernelCache file:
+| Check | Result |
+|---|---|
+| `ipsw macho a2o "$KC" 0xfffffff0065b6000` | offset `0x01c42000`, section `__text`, segment `__PLK_TEXT_EXEC` |
+| `ipsw macho o2a "$KC" 0x00f4f280` | address `0xfffffff0058c3280`, section `__text`, segment `__PRELINK_TEXT` |
+
+Therefore the 215,628-byte artifact extracted at `0x00f4f280` is **not**
+the outer-KernelCache bytes backing ApplePMGR's `__TEXT_EXEC` start address.
+Its SHA-256 (`355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99`)
+is retained only to identify that mistaken extraction; its diagnostic strings
+and disassembly must not be attributed to ApplePMGR executable code. The
+correct mapped outer-container offset for the segment's starting virtual
+address is `0x01c42000`. The inner KEXT's `LC_SEGMENT_64.fileoff` values are
+not absolute outer-KernelCache offsets.
+
+The next preferred read-only check is to use IPSW's fileset-aware KEXT
+extractor, documented for modern `MH_FILESET` KernelCaches:
 
 ```sh
-ipsw macho a2o "$KC" 0xfffffff0065b6000
-ipsw macho o2a "$KC" 0x00f4f280
+mkdir -p "$HOME/ApplePMGR-kexts"
+ipsw kernel extract "$KC" com.apple.driver.ApplePMGR --imports \
+  -o "$HOME/ApplePMGR-kexts"
+PMGR="$HOME/ApplePMGR-kexts/com.apple.driver.ApplePMGR"
+file "$PMGR"
+sha256sum "$PMGR"
+ipsw macho info "$PMGR" --loads
 ```
 
-Also verify that `$KC` is the expected 44,924,928-byte target KernelCache
-with the SHA-256 recorded above before treating either mapping as authoritative.
-No further code-segment interpretation should be based on the current
-`0x00f4f280` extraction until this check is complete.
+Verify `$KC` against the target KernelCache SHA-256 recorded above (the user
+has now confirmed the expected hash and size). Keep the extracted binary
+local; do not add it to the repository.
 
 ## Milestone impact
 
