@@ -140,8 +140,10 @@ section, or an initialized runtime object.
 
 Because the pointer is loaded into x2 for the previously identified
 `OSMetaClass(const char *, const OSMetaClass *, unsigned int)` call, it is
-the candidate superclass-metaclass pointer for
-`ApplePMGRFunctionEnableCPUCore`. Its class identity remains unknown.
+the superclass-metaclass pointer for `ApplePMGRFunctionEnableCPUCore`.
+The later shared-prelink initializer identifies the storage at this
+address as the `AppleARMFunction` metaclass; see the confirmed hierarchy
+section below.
 The third initialization sequence's x0 value
 `0xfffffff007ae14c0` separately maps to file offset `0x278d4c0` in
 `__PRELINK_DATA.__data`; no bytes at that second address were supplied.
@@ -168,11 +170,12 @@ The user ran the requested disassembly search against the corrected
 215,628-byte generic ApplePMGR executable segment. The pipeline returned
 no matching lines for page `0xfffffff0079e4000`. This means the supplied
 generic ApplePMGR executable dump did not expose a direct ADRP/page
-reference to the candidate superclass-metaclass storage. It does not
-establish that the address is unused: the owning class initializer may be
-in another prelinked component, or the reference may be indirect.
+reference to the AppleARMFunction metaclass storage. It does not
+establish that the address is unused: the owning class initializer is
+in another prelinked component, as the later shared-section reference
+analysis demonstrates.
 
-### Shared prelink references and class-name resolution (2026-11-22)
+### Shared prelink references and confirmed superclass identity (2026-11-22)
 
 The user confirmed local tool versions:
 
@@ -183,100 +186,107 @@ The user confirmed local tool versions:
 The broad shared `__PLK_TEXT_EXEC` disassembly previously aborted near
 `0xfffffff0059928b0` with the
 `get_sreg_qualifier_from_value` assertion. This matches
-[Binutils PR 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595).
-The report describes the same AArch64 disassembler assertion, and a
-downstream patch specifically backported removal of the operand-qualifier
-assertions into a Binutils 2.42 recipe
+[Binutils PR 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595);
+a downstream patch backported a fix to a Binutils 2.42 recipe
 ([2.42 backport](https://patchwork.yoctoproject.org/project/oe-core/patch/20240524201214.3858538-2-mark.hatle%40amd.com/)).
-The user's exact local trigger is not independently reproduced; the
-observed behavior is consistent with that disassembler defect and is not
-evidence that the KernelCache is corrupt.
+The broad scan remains incomplete; the bounded disassembly windows
+recorded below completed successfully.
 
-The user mapped the two name-string addresses:
+The user mapped the class-name strings in the outer KernelCache:
 
-| VA | Outer KernelCache file offset | Section | String |
+| VA | File offset | Section | String |
 |---|---:|---|---|
 | `0xfffffff0052ea1a4` | `0x9761a4` | `__PRELINK_TEXT.__text` | `AppleARMFunctionSlowAdaptiveClocking` |
 | `0xfffffff0052ea1fc` | `0x9761fc` | `__PRELINK_TEXT.__text` | `AppleARMFunctionSlowAdaptiveClockingAggressor` |
+| `0xfffffff0052e1e3c` | `0x96de3c` | `__PRELINK_TEXT.__text` | `AppleARMFunction` |
+| `0xfffffff0052e1e4d` | `0x96de4d` | `__PRELINK_TEXT.__text` | `site.AppleARMFunction` |
 
-The 256-byte local string window at VA `0xfffffff0052ea180`
-reported the first string at window offset `0x24` and the second at
-`0x7c`, matching those VAs.
+The user mapped the final two offsets with
+`ipsw macho o2a`. The local `.a2s` grep did not find
+`AppleARMFunction`; that is a symbol-cache non-match, not evidence
+against the raw strings or direct code references.
 
 A bounded disassembly of
-`0xfffffff00598e060–0xfffffff00598e190` completed successfully. It
-confirms the registration-shaped sequences without reaching the recorded
-Binutils abort point. Together with the earlier surrounding output:
+`0xfffffff00598e060–0xfffffff00598e190` and the supplied surrounding
+output show these registrations:
 
-| Call-site VA | Class-name string | x2 argument | w3 size | Common call target |
+| Call-site VA(s) | x1 class name | x2 superclass metadata | w3 size | Call target |
 |---|---|---|---:|---|
 | `0xfffffff00598dd14` / `0xfffffff00598dde4` | `AppleARMFunctionSlowAdaptiveClocking` | `0xfffffff0079e4dd0` | `0x40` | `0xfffffff005993844` |
 | `0xfffffff00598e07c` / `0xfffffff00598e14c` | `AppleARMFunctionSlowAdaptiveClockingAggressor` | `0xfffffff0079e4dd0` | `0x38` | `0xfffffff005993844` |
 
-A separate sequence at `0xfffffff00598e5a4` sets x0 to
-`0xfffffff0079e57c0`, x1 to
-`AppleARMFunctionSlowAdaptiveClocking`, x2 to
-`0xfffffff0079e4dd0`, and w3 to `0x40` before the same call
-target. These are additional registrations using the candidate shared
-superclass metadata pointer.
+A further registration sequence at `0xfffffff00598e5a4` uses
+static class storage x0=`0xfffffff0079e57c0`, the
+SlowAdaptiveClocking class name in x1, x2=`0xfffffff0079e4dd0`,
+and w3=`0x40`.
 
-**Interpretation boundary:** x1 is the name of the class being
-registered; x2 is the candidate superclass-metaclass argument. The
-identified subclass names do not themselves identify the parent. Because
-both AppleARMFunction classes and the previously identified
-`ApplePMGRFunctionEnableCPUCore` registration pass the same x2 pointer,
-`0xfffffff0079e4dd0` is increasingly well-supported as shared parent
-metadata. `AppleARMFunction` is a plausible candidate based on the
-two class names, but it remains a hypothesis until its own class-name
-string and metaclass-construction sequence are tied to the storage
-address `0xfffffff0079e4dd0`.
+### Exact AppleARMFunction metaclass initializer
 
-### Next static check: locate the candidate base-class name
+The user found the exact base-class strings:
 
-Search for the exact class-name string (not just longer class names that
-contain this prefix):
+- `AppleARMFunction`: file offset `0x96de3c`, VA
+  `0xfffffff0052e1e3c`.
+- `site.AppleARMFunction`: file offset `0x96de4d`, VA
+  `0xfffffff0052e1e4d`.
 
-~~~sh
-strings -a -t x -n 5 "$KC" |
-  awk '$2 == "AppleARMFunction" || $2 == "site.AppleARMFunction"'
-~~~
+The shared-section disassembly contains three references using
+`ADD #0xe3c` for the exact class name. The decisive initializer is
+at `0xfffffff005964fe4–0xfffffff005965004`:
 
-If a matching file offset is returned, convert that offset into a VM
-address with IPSW's documented offset-to-address command:
+```asm
+0xfffffff005964fe4: adrp x19, 0xfffffff0079e4000
+0xfffffff005964fe8: add  x19, x19, #0xdd0
+0xfffffff005964fec: adrp x1, 0xfffffff0052e1000
+0xfffffff005964ff0: add  x1, x1, #0xe3c
+0xfffffff005964ff4: adrp x2, 0xfffffff006cdf000
+0xfffffff005964ff8: ldr  x2, [x2, #0x7c0]
+0xfffffff005964ffc: mov  x0, x19
+0xfffffff005965000: mov  w3, #0x28
+0xfffffff005965004: bl   0xfffffff005993844
+```
 
-~~~sh
-ipsw macho o2a "$KC" 0x<file-offset>
-~~~
+This sequence sets x0 to `0xfffffff0079e4dd0`, x1 to the exact
+`AppleARMFunction` class-name string, w3 to `0x28`, and calls the
+previously identified `OSMetaClass` constructor stub. Thus
+`0xfffffff0079e4dd0` is the metaclass storage for
+`AppleARMFunction`. Two additional constructor-shaped sequences at
+`0xfffffff0059642e8` and `0xfffffff0059643b8` use the same
+class-name string and class-size value.
 
-Also check whether the local symbol/disassembly annotation file has a
-class-qualified entry for the base class:
+The earlier generic ApplePMGR audit established that the
+`ApplePMGRFunctionEnableCPUCore` registrations pass the same
+`0xfffffff0079e4dd0` value in x2, the superclass argument, after
+loading it from generic ApplePMGR GOT slot `0x158`. That value maps
+to outer KernelCache offset `0x2690dd0` in writable
+`__PRELINK_DATA.__data`; the zero-filled on-disk sample at that
+address did not identify the object, but the independent
+`AppleARMFunction` initializer now does.
 
-~~~sh
-A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
-grep -in 'AppleARMFunction' "$A2S" | head -80
-~~~
+**Resolved static hierarchy:** the shared pointer is
+`AppleARMFunction` metaclass storage. The registrations therefore
+establish `AppleARMFunction` as the superclass of
+`ApplePMGRFunctionEnableCPUCore`,
+`AppleARMFunctionSlowAdaptiveClocking`, and
+`AppleARMFunctionSlowAdaptiveClockingAggressor` in this 19H422
+KernelCache.
 
-The immediate objective is to find the metaclass-registration sequence
-whose x1 points to the exact `AppleARMFunction` class-name string and
-determine whether its x0 storage is `0xfffffff0079e4dd0`. Do not infer
-the parent class from the shared name prefix alone.
+This is metaclass-construction evidence, not proof that the EnableCPUCore
+class is instantiated for D10AP, that its callback is present or invoked,
+that a concrete `IOPMGR::enableCPUCore` override releases a CPU, or that
+the kernel boots. The complete broad shared-segment disassembly remains
+partial because of the Binutils 2.42 assertion.
 
-For the already confirmed two child registrations, the following bounded
-disassembly completed and is repeatable:
+The next static question is to determine whether the registered
+`ApplePMGRFunctionEnableCPUCore` class has a recoverable callback
+implementation and how its registration data refers to it. Keep the
+work local and read-only; class registration alone does not establish
+runtime behavior.
 
-~~~sh
-aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
-  --adjust-vma=0xfffffff005948000 \
-  --start-address=0xfffffff00598e060 \
-  --stop-address=0xfffffff00598e190 \
-  "$HOME/ApplePMGR.plk-text-exec.bin"
-~~~
+See the dedicated
+[EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
 
-Keep all Apple binary artifacts local and uncommitted. The broad 20.5 MB
-disassembly remains incomplete under Binutils 2.42; no claim of a complete
-full-segment scan is made.
 
-See the dedicated [EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
+
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:
