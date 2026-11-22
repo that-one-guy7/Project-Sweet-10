@@ -288,29 +288,33 @@ T8010 PMGR implementation fulfills XNU's `IOPMGR::enableCPUCore`
 contract, demonstrate secondary-CPU reset release, or prove ABI
 compatibility between the 19H422 target kernel and the 20H392 donor.
 
-### Next host-side check: identify the EnableCPUCore superclass pointer
+### Completed host-side check: resolve GOT[0x158]
 
-The user supplied three direct code references to
-`ApplePMGRFunctionEnableCPUCore`. All three pass the class-name pointer,
-class size `0x38`, and an argument to the `OSMetaClass` constructor.
-The first two load the second argument through GOT VA
-`0xfffffff006f18fd8`, which is relative offset `0x158` in the
-`ApplePMGR.got.bin` dump. The next step is to read that 64-bit value and
-map it against the same hash-verified 19H422 KernelCache. The third
-initialization sequence passes `x19` and places its metaclass object at
-`0xfffffff007ae14c0`.
+The user read the value at GOT offset `0x158` as
+`0xfffffff0079e4dd0`. The same address maps to file offset
+`0x2690dd0`, section `__PRELINK_DATA.__data`. The containing segment
+is writable (`rw-/rw-`) and spans file offsets
+`0x02690000–0x027e4000`, virtual addresses
+`0xfffffff0079e4000–0xfffffff007b38000`. The user's 0x80-byte
+hexdump beginning at file offset `0x2690dd0` contains only zero words.
 
-~~~sh
-xxd -e -g8 -c8 -s 0x158 -l 8 "$HOME/ApplePMGR.got.bin"
-ipsw macho a2o "$KC" 0xfffffff007ae14c0
-~~~
+This confirms the location and section of the GOT target, but it does not
+identify the class represented by the object. Since the pointer is passed
+in x2 to the `OSMetaClass` constructor, it remains the candidate
+superclass-metaclass pointer for `ApplePMGRFunctionEnableCPUCore`.
+Do not label it `ApplePMGRFunction`, `IOPlatformFunction`, or another
+class without a separate constructor/string/xref match.
 
-Do not label the GOT pointer as a particular superclass until its value is
-known. The filtered output did not show a direct `ADD #0x34b` reference
-to the `site.ApplePMGRFunctionEnableCPUCore` string; that does not rule
-out references through read-only data or indirect registration structures.
-The three class-name xrefs identify metaclass construction, not the
-`callFunction` callback or actual CPU-start behavior.
+The mapped third-sequence address `0xfffffff007ae14c0` is at outer
+KernelCache offset `0x278d4c0`, also in `__PRELINK_DATA.__data`.
+No contents at that second address were supplied.
+
+The user also tried `ipsw kernel cpp "$KC"` and class-filtered
+inheritance queries; each returned `no classes discovered`. This is a
+tool non-discovery result, not evidence that the class or its parent is
+absent. The empty grep of the local `.a2s` file for the GOT page and
+offset is likewise inconclusive. Full results and the next static
+reference check are in the [EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
 
 All evidence remains host-side static inspection. No Apple binary was added
 to the repository, and the physical iPhone 7 remains on iOS 12.1.4.

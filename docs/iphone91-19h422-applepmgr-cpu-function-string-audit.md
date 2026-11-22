@@ -116,20 +116,74 @@ filtered code-reference output did not show a direct immediate construction
 of that site-string address. It does not rule out a pointer stored in
 read-only data, generated tables, or another indirect registration path.
 
-### Next static check
+### Superclass-slot result (2026-11-22)
 
-Read the raw 64-bit value from GOT offset `0x158`, then map it if it is
-a kernel virtual address. Also map the static class-metaclass object
-address passed in `x0` by the third sequence:
+The user read the 64-bit value at ApplePMGR GOT offset `0x158`:
 
-~~~sh
-xxd -e -g8 -c8 -s 0x158 -l 8 "$HOME/ApplePMGR.got.bin"
-ipsw macho a2o "$KC" 0xfffffff007ae14c0
-~~~
+```
+00000158: fffffff0079e4dd0
+```
 
-Do not assign the superclass name until the raw GOT value has been
-identified. Keep the Apple binary and GOT dump local.
+The raw pointer therefore resolves to VA `0xfffffff0079e4dd0`. The same
+value was mapped against the target 19H422 KernelCache:
 
+- File offset: `0x2690dd0`
+- Segment/section: `__PRELINK_DATA.__data`
+- Segment permissions: `rw-/rw-`
+- Segment VM range: `0xfffffff0079e4000–0xfffffff007b38000`
+- Segment file range: `0x02690000–0x027e4000`
+
+The user then read 0x80 bytes from file offset `0x2690dd0`; all sixteen
+reported 64-bit words were zero. This is an on-disk observation about this
+range, not proof that it is a particular class object, a true zero-fill
+section, or an initialized runtime object.
+
+Because the pointer is loaded into x2 for the previously identified
+`OSMetaClass(const char *, const OSMetaClass *, unsigned int)` call, it is
+the candidate superclass-metaclass pointer for
+`ApplePMGRFunctionEnableCPUCore`. Its class identity remains unknown.
+The third initialization sequence's x0 value
+`0xfffffff007ae14c0` separately maps to file offset `0x278d4c0` in
+`__PRELINK_DATA.__data`; no bytes at that second address were supplied.
+
+The user also ran `ipsw kernel cpp "$KC"` and two class-filtered
+inheritance queries. All three returned `no classes discovered`. This
+means the tool did not recover a class list or inheritance chain from this
+input. It does **not** show that the classes are absent. The inspected
+upstream IPSW implementation opens the Mach-O and runs its C++ scanner,
+then emits this warning when its display set is empty:
+[kernel_cpp.go](https://github.com/blacktop/ipsw/blob/26b65938cf4c9479cb5627d2d479492a1dcdd13e/cmd/ipsw/cmd/kernel/kernel_cpp.go).
+No IPSW version string was included in the user's output, so this source
+inspection is explanatory rather than proof of the exact local binary version.
+
+A separate grep for `fffffff006f18000` and `#0xfd8` in the local
+`.a2s` text returned no matches. That empty search is not evidence that
+the earlier AArch64 call-site instructions are absent; the exact three
+class-name references were previously supplied from the corrected generic
+ApplePMGR executable disassembly.
+
+### Next host-side check
+
+The current unresolved question is which class owns the static metaclass
+storage at `0xfffffff0079e4dd0`. Start by checking whether the already
+extracted generic ApplePMGR executable contains an ADRP reference to the
+target data page:
+
+```sh
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff0065b6000 \
+  "$HOME/ApplePMGR.text-exec.bin" |
+  grep -B 6 -A 10 -i '0xfffffff0079e4000'
+```
+
+If a page reference appears, inspect its adjacent instructions for an
+`ADD` using offset `0xdd0`, or a load/store through the computed
+address. A no-match result only means this executable dump did not show a
+direct page reference; the initializer could be elsewhere or use an
+indirect data structure. Do not assign a class name from the GOT pointer
+alone. Keep all Apple binary artifacts local.
+
+See the dedicated [EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:
