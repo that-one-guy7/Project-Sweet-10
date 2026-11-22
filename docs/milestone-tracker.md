@@ -29,6 +29,8 @@
 
 ## Change log
 
+- 2026-11-22: Added a bounded generic ApplePMGR CPU-function string audit from the user-supplied target 19H422 prelink `__TEXT` strings. The output contains `ApplePMGRFunctionEnableCPUCore` and `site.ApplePMGRFunctionEnableCPUCore`, plus `getPhysicalClusterID`, `getClusterPowerState`, virtual `enableCluster`, and `_cpuIdle`/`_cpuIdleTimer`/`_cpuIdleInit`. This is a concrete CPU-core-control lead in the generic PMGR bundle, not proof that the function object is bound to XNU `IOPMGR::enableCPUCore()`, is instantiated on D10AP, or releases a secondary core. The attempted 215,628-byte `__TEXT_EXEC` extraction (SHA-256 `355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99`) starts with readable diagnostic strings under the supplied disassembly, so its source offset is explicitly marked unverified pending independent address-to-file mapping. No Apple binary was added; M2/M4 remain open, M7 has not started, and the physical iPhone 7 remains on iOS 12.1.4.
+
 - 2026-11-22: Extended the generic ApplePMGR target 19H422 audit with the
   user's parsed Mach-O load-command map. The KEXT has UUID
   29A10C96-489B-3D22-8D81-974A570645C3 and source version 939.140.3.0.0;
