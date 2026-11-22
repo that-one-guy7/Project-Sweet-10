@@ -287,6 +287,24 @@ See the dedicated
 
 
 
+### Historical A10 AppleARMFunction symbol precedent
+
+The third-party `iometa` symbol inventory for the iOS 12.0 A10 release
+lists `AppleARMFunction::initWithTargetDataAndSymbol` and
+`AppleARMFunction::callFunction`, and separately lists the
+`ApplePMGRFunctionEnableCPUCore` class. It also lists
+`ApplePMGR::enableCPUCores(unsigned int, bool)`. The inventory does
+not enumerate separate method entries below the
+`ApplePMGRFunctionEnableCPUCore` class heading.
+
+This older A10 inventory is useful as historical context for the
+`AppleARMFunction` dispatch model, but it is not the target 19H422
+binary and cannot establish that the target class inherits the same
+callback implementation or that the older `enableCPUCores` symbol maps
+to XNU's `IOPMGR::enableCPUCore` virtual method. See the
+[callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md)
+for the evidence boundary and next static check.
+
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:
