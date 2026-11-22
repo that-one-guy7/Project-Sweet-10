@@ -181,3 +181,80 @@ All evidence above is host-side static inspection of the target-native
 19H422 KernelCache. No Apple binary is committed, no binary is executed,
 and no device, firmware, partition, or boot state is accessed or changed.
 The physical iPhone 7 remains on iOS 12.1.4.
+
+## GOT resolution addendum (2026-11-22)
+
+This addendum supersedes the earlier statements above that the GOT pointer
+contents and corrected executable-dump identity were still pending. The
+user supplied both local artifact identities and the disassembly/address
+mapping results below.
+
+### Local artifact identities
+
+| Artifact | Size | SHA-256 |
+|---|---:|---|
+| Correct ApplePMGR executable segment | 215,628 bytes | `fd5ca1551e1019e6dd979f245d34eb60802f607c1802fcf7044dac3c556dbd3a` |
+| Generic ApplePMGR GOT dump | 1,024 bytes | `dfb327ae28453ef489e5da46bc073726e65696cc9e588e8fd4caf1320f1d4d75` |
+
+Both binary artifacts remain local to the user's Ubuntu environment.
+
+### Resolved GOT values
+
+| GOT offset | Pointer value | Disassembler symbol / section | Outer KernelCache offset |
+|---:|---|---|---:|
+| `0xa8` | `0xfffffff0076dde78` | `__ZN11OSMetaClassC2EPKcPKS_j` (`OSMetaClass` constructor), `__TEXT_EXEC.__text` | `0x6d9e78` |
+| `0xb0` | `0xfffffff0076de600` | `__ZN11OSMetaClassD2Ev` (`OSMetaClass` destructor), `__TEXT_EXEC.__text` | `0x6da600` |
+| `0x200` | `0xfffffff00789bee8` | `__DATA.__common`; exact object/symbol identity unresolved | `0x897ee8` |
+| `0x208` | `0xfffffff00776326c` | `__ZN6IOPMGRC2EPK11OSMetaClass` (`IOPMGR` constructor), `__TEXT_EXEC.__text` | `0x75f26c` |
+| `0x378` | `0xfffffff007180890` | `_memmove`, `__TEXT_EXEC.__hib_text` | `0x17c890` |
+
+### Updated interpretation
+
+1. **ApplePMGR metaclass initialization is now symbol-confirmed.** The
+   first ApplePMGR routine calls the target at GOT slot `0xa8`, which is
+   `OSMetaClass::OSMetaClass`. The caller supplies the `ApplePMGR` string
+   in x1, the pointer from GOT slot `0x200` in x2, and `0x34e98` in w3.
+   This matches the constructor's class-name, superclass-pointer, and
+   class-size argument positions. The pointer value
+   `0xfffffff00789bee8` is in `__DATA.__common`, but its exact symbol and
+   superclass identity have not been established. The post-call store of
+   `0xfffffff006f1c020` remains consistent with a metaclass vtable write.
+
+2. **The ApplePMGR object-initialization routine calls an IOPMGR
+   constructor.** Its call through GOT slot `0x208` resolves to
+   `IOPMGR::IOPMGR(const OSMetaClass *)`. The supplied target disassembly
+   writes 1 at object offset 8, stores the IOPMGR vtable pointer at object
+   offset 0, and returns. The caller's x0 value at
+   `0xfffffff0065b6060` must still be inspected before deciding whether
+   this receiver is a base subobject or an embedded/member object.
+
+3. **The fixed-size copy calls are confirmed as `_memmove`.** The three
+   calls through GOT slot `0x378` resolve to `_memmove` at
+   `0xfffffff007180890`, in `__TEXT_EXEC.__hib_text`.
+
+4. The `0xb0` entry resolves to `OSMetaClass::~OSMetaClass()`, but the
+   supplied caller excerpt does not identify a call site using this stub.
+   Do not assign it to a specific cleanup path yet.
+
+### What this does not establish
+
+The GOT results identify constructor/destructor/copy-helper targets. They
+do not identify `ApplePMGRFunctionEnableCPUCore`, prove that the concrete
+T8010 PMGR implementation fulfills XNU's `IOPMGR::enableCPUCore`
+contract, demonstrate secondary-CPU reset release, or prove ABI
+compatibility between the 19H422 target kernel and the 20H392 donor.
+
+### Next host-side check
+
+Inspect the receiver setup immediately before the IOPMGR-constructor call
+at `0xfffffff0065b6060`:
+
+~~~sh
+ipsw macho disass "$KC" --vaddr 0xfffffff0065b603c --count 100
+~~~
+
+Record the x0 value or pointer arithmetic immediately before the call.
+Do not infer base-class layout from the constructor symbol alone.
+
+All evidence remains host-side static inspection. No Apple binary was added
+to the repository, and the physical iPhone 7 remains on iOS 12.1.4.
