@@ -162,26 +162,53 @@ the earlier AArch64 call-site instructions are absent; the exact three
 class-name references were previously supplied from the corrected generic
 ApplePMGR executable disassembly.
 
-### Next host-side check
+### Wider executable-reference check (2026-11-22)
 
-The current unresolved question is which class owns the static metaclass
-storage at `0xfffffff0079e4dd0`. Start by checking whether the already
-extracted generic ApplePMGR executable contains an ADRP reference to the
-target data page:
+The user ran the requested disassembly search against the corrected
+215,628-byte generic ApplePMGR executable segment. The pipeline returned
+no matching lines for page `0xfffffff0079e4000`. This means the supplied
+generic ApplePMGR executable dump did not expose a direct ADRP/page
+reference to the candidate superclass-metaclass storage. It does not
+establish that the address is unused: the owning class initializer may be
+in another prelinked component, or the reference may be indirect.
 
-```sh
+### Next host-side check: shared prelink executable segment
+
+The target KernelCache load-command map previously supplied by the user
+identifies a larger shared executable segment:
+
+| Property | Value |
+|---|---|
+| Segment | `__PLK_TEXT_EXEC` |
+| File range | `0x00fd4000–0x02364000` |
+| VM range | `0xfffffff005948000–0xfffffff006cd8000` |
+| Size | `0x01390000` / 20,512,768 bytes |
+
+Search this wider prelinked executable range for code that references the
+page containing `0xfffffff0079e4dd0`. IPSW documents
+`ipsw macho dump <macho> <address> --size <bytes> --output <file>`
+for writing a virtual-address range to a local file:
+[IPSW macho dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/).
+
+~~~sh
+ipsw macho dump "$KC" 0xfffffff005948000 \
+  --size 20512768 \
+  --output "$HOME/ApplePMGR.plk-text-exec.bin"
+
+stat -c 'Size: %s bytes' "$HOME/ApplePMGR.plk-text-exec.bin"
+sha256sum "$HOME/ApplePMGR.plk-text-exec.bin"
+
 aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
-  --adjust-vma=0xfffffff0065b6000 \
-  "$HOME/ApplePMGR.text-exec.bin" |
-  grep -B 6 -A 10 -i '0xfffffff0079e4000'
-```
+  --adjust-vma=0xfffffff005948000 \
+  "$HOME/ApplePMGR.plk-text-exec.bin" |
+  grep -B 8 -A 12 -i '0xfffffff0079e4000'
+~~~
 
-If a page reference appears, inspect its adjacent instructions for an
-`ADD` using offset `0xdd0`, or a load/store through the computed
-address. A no-match result only means this executable dump did not show a
-direct page reference; the initializer could be elsewhere or use an
-indirect data structure. Do not assign a class name from the GOT pointer
-alone. Keep all Apple binary artifacts local.
+The expected dump size is 20,512,768 bytes. Keep the dump local; do not
+commit or upload the Apple binary. If a page reference appears, inspect
+the nearby instructions for an `ADD #0xdd0` or load/store to the exact
+candidate object. If there are no matches, report that result without
+claiming that the object or class is absent.
 
 See the dedicated [EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
 ## Interpretation boundary

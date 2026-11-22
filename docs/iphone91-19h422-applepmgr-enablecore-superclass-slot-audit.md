@@ -114,26 +114,41 @@ The user's local IPSW version was not included, so this source reference
 explains the inspected upstream implementation rather than proving the
 exact local binary revision.
 
-## Next static check
+## Wider executable-reference check
 
-The next question is which class initializer owns the storage at
-`0xfffffff0079e4dd0`. Start with a narrow reference check against the
-already extracted generic ApplePMGR executable segment:
+The user searched the corrected generic ApplePMGR executable dump for
+page `0xfffffff0079e4000`; the command returned no matching lines.
+This is a negative result limited to that one 215,628-byte executable
+segment, not evidence that the metaclass object or its owning class is
+absent. The initializer may be emitted in another prelinked component.
+
+The next read-only check is to inspect the shared
+`__PLK_TEXT_EXEC` segment from the hash-identified 19H422 KernelCache.
+Its load-command range is file offset `0x00fd4000–0x02364000`,
+VM address `0xfffffff005948000–0xfffffff006cd8000`, and size
+`0x01390000` (20,512,768 bytes). IPSW's current
+[macho dump command](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
+supports dumping a Mach-O virtual-address range to a local file.
 
 ```sh
+ipsw macho dump "$KC" 0xfffffff005948000 \
+  --size 20512768 \
+  --output "$HOME/ApplePMGR.plk-text-exec.bin"
+
+stat -c 'Size: %s bytes' "$HOME/ApplePMGR.plk-text-exec.bin"
+sha256sum "$HOME/ApplePMGR.plk-text-exec.bin"
+
 aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
-  --adjust-vma=0xfffffff0065b6000 \
-  "$HOME/ApplePMGR.text-exec.bin" |
-  grep -B 6 -A 10 -i '0xfffffff0079e4000'
+  --adjust-vma=0xfffffff005948000 \
+  "$HOME/ApplePMGR.plk-text-exec.bin" |
+  grep -B 8 -A 12 -i '0xfffffff0079e4000'
 ```
 
-If a reference to page `0xfffffff0079e4000` appears, inspect nearby
-instructions for an `ADD` using `#0xdd0` or a load/store through
-the computed address. Such a sequence may reveal the constructor that
-initializes this metaclass storage and the class-name string passed to
-it. A no-match result only means the inspected ApplePMGR executable
-contains no obvious direct page reference; the initializer may be in
-another prelinked component or may use an indirect data structure.
+The expected dump size is 20,512,768 bytes. If any references appear,
+inspect for an adjacent `ADD #0xdd0` or a load/store through the
+computed address. A no-match result across this larger segment would
+still not prove object absence; it would only narrow the direct-code-
+reference search. Keep the extracted Apple binary local and uncommitted.
 
 No runtime class hierarchy, callback implementation, D10AP function
 instantiation, IOPMGR CPU-start override, secondary-core release, IRQ
