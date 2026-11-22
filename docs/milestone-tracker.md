@@ -1289,3 +1289,21 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   CPU-core-enable callback or prove secondary-core release. M2 and M4
   remain open; M7/SpringBoard has not started. The iPhone 7 remains on
   iOS 12.1.4; no device or firmware state was changed.
+
+- 2026-11-22: The user repeated the ApplePMGR metaclass and IOPMGR
+  constructor disassemblies using an alternate IPSW symbol-cache path
+  against the target 19H422 KernelCache. The requested location could not
+  be written from the repository working directory, so IPSW fell back to
+  `/tmp/F8C46FA5-B1B4-3B20-90F5-991680E21437.a2s`. The following
+  disassembly reported loading 5,647 symbols from that temporary cache and
+  reproduced `IOPMGR::gMetaClass` and `IOPMGR::IOPMGR` annotations. The
+  user's SHA-256 check reconfirmed the input KernelCache identity as
+  `7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`.
+  A later `stat` found that the temporary cache no longer existed, so no
+  cache file hash is available. This strengthens the symbol-label
+  corroboration but does not identify the ApplePMGR CPU-core-enable
+  callback or prove secondary-core release. The next read-only task is to
+  capture exact offsets for `ApplePMGRFunctionEnableCPUCore` and related
+  strings in the extracted generic ApplePMGR prelink header. M2 and M4
+  remain open; M7/SpringBoard has not started. The iPhone 7 remains on
+  iOS 12.1.4; no device or firmware state was changed.
