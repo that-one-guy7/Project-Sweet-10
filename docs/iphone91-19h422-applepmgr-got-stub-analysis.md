@@ -191,7 +191,7 @@ bytes remain independently useful evidence even if a label later changes.
 |---:|---|---|---:|
 | `0xa8` | `0xfffffff0076dde78` | `__ZN11OSMetaClassC2EPKcPKS_j` (`OSMetaClass` constructor), `__TEXT_EXEC.__text` | `0x6d9e78` |
 | `0xb0` | `0xfffffff0076de600` | `__ZN11OSMetaClassD2Ev` (`OSMetaClass` destructor), `__TEXT_EXEC.__text` | `0x6da600` |
-| `0x200` | `0xfffffff00789bee8` | `__DATA.__common`; exact object/symbol identity unresolved | `0x897ee8` |
+| `0x200` | `0xfffffff00789bee8` | `__DATA.__common`; local `.a2s` annotation `__ptr.__ZN6IOPMGR10gMetaClassE` (`IOPMGR::gMetaClass`), fresh-cache verification pending | `0x897ee8` |
 | `0x208` | `0xfffffff00776326c` | `__ZN6IOPMGRC2EPK11OSMetaClass` (`IOPMGR` constructor), `__TEXT_EXEC.__text` | `0x75f26c` |
 | `0x378` | `0xfffffff007180890` | `_memmove`, `__TEXT_EXEC.__hib_text` | `0x17c890` |
 
@@ -202,18 +202,27 @@ bytes remain independently useful evidence even if a label later changes.
    `OSMetaClass::OSMetaClass`. The caller supplies the `ApplePMGR` string
    in x1, the pointer from GOT slot `0x200` in x2, and `0x34e98` in w3.
    This matches the constructor's class-name, superclass-pointer, and
-   class-size argument positions. The pointer value
-   `0xfffffff00789bee8` is in `__DATA.__common`, but its exact symbol and
-   superclass identity have not been established. The post-call store of
-   `0xfffffff006f1c020` remains consistent with a metaclass vtable write.
+   class-size argument positions. The disassembly's symbol-cache annotation
+   for the value loaded from GOT slot `0x200` is
+   `__ptr.__ZN6IOPMGR10gMetaClassE` (`IOPMGR::gMetaClass`). This points to
+   IOPMGR as ApplePMGR's declared superclass in the metaclass constructor
+   call. The post-call store of `0xfffffff006f1c020` remains consistent
+   with a metaclass vtable write. Treat the annotation as provisional until
+   a fresh `.a2s` cache is generated from the exact hash-identified 19H422
+   KernelCache.
 
 2. **The ApplePMGR object-initialization routine calls an IOPMGR
    constructor.** Its call through GOT slot `0x208` resolves to
-   `IOPMGR::IOPMGR(const OSMetaClass *)`. The supplied target disassembly
-   writes 1 at object offset 8, stores the IOPMGR vtable pointer at object
-   offset 0, and returns. The caller's x0 value at
-   `0xfffffff0065b6060` must still be inspected before deciding whether
-   this receiver is a base subobject or an embedded/member object.
+   `IOPMGR::IOPMGR(const OSMetaClass *)`. In the caller at
+   `0xfffffff0065b603c`, x0 is saved to x19 at `0xfffffff0065b604c`,
+   but is not overwritten before the call at `0xfffffff0065b6060`.
+   The additions at `0x6058` and `0x605c` write only x20 and x21.
+   Therefore the IOPMGR constructor receives the original incoming object
+   pointer in x0, not an adjusted interior pointer. Combined with the
+   `IOPMGR::gMetaClass` superclass annotation in the metaclass initializer,
+   this strongly supports ApplePMGR deriving from IOPMGR with its IOPMGR
+   base subobject at offset zero. A fresh-cache regeneration is still
+   required to independently confirm the symbol annotations.
 
 3. **The fixed-size copy calls are confirmed as `_memmove`.** The three
    calls through GOT slot `0x378` resolve to `_memmove` at
@@ -233,15 +242,31 @@ compatibility between the 19H422 target kernel and the 20H392 donor.
 
 ### Next host-side check
 
-Inspect the receiver setup immediately before the IOPMGR-constructor call
-at `0xfffffff0065b6060`:
+The receiver setup is now visible in the supplied 100-instruction excerpt.
+The remaining symbol-provenance check is to create a new cache at a distinct
+path from the hash-identified 19H422 KernelCache, rather than reusing the
+existing `.a2s` file. IPSW documents that `macho disass` creates an
+image-wide `.a2s` cache and that `--cache` selects its path:
+https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/disass/
 
 ~~~sh
-ipsw macho disass "$KC" --vaddr 0xfffffff0065b603c --count 100
+FRESH_A2S="$HOME/kernelcache.release.iPhone9,1_3.fresh-verify.a2s"
+
+ipsw macho disass "$KC" --cache "$FRESH_A2S" \
+  --vaddr 0xfffffff0065b6194 --count 16
+
+ipsw macho disass "$KC" --cache "$FRESH_A2S" \
+  --vaddr 0xfffffff00776326c --count 12
+
+stat -c 'Size: %s bytes' "$FRESH_A2S"
+sha256sum "$FRESH_A2S"
 ~~~
 
-Record the x0 value or pointer arithmetic immediately before the call.
-Do not infer base-class layout from the constructor symbol alone.
+Use a new filename that does not already exist. The first command builds
+the alternate cache from the supplied `$KC`; the second reuses that same
+fresh cache. Compare the emitted `IOPMGR::gMetaClass` and
+`IOPMGR::IOPMGR` annotations with the existing output. Keep the cache
+local; do not upload it or the Apple binaries to GitHub.
 
 All evidence remains host-side static inspection. No Apple binary was added
 to the repository, and the physical iPhone 7 remains on iOS 12.1.4.
