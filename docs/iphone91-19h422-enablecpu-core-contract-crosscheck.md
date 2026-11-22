@@ -157,10 +157,15 @@ classes, including `ApplePMGRFunctionClockGate::callFunction`,
 The supplied filtered output did **not** include a matching
 `ApplePMGRFunctionEnableCPUCore::callFunction`,
 `ApplePMGRFunctionEnableCPUCore::initWithTargetDataAndSymbol`,
+`AppleARMFunction::callFunction`,
+`AppleARMFunction::initWithTargetDataAndSymbol`,
 `ApplePMGR::enableCPUCore`, or
 `ApplePMGR::enableCPUCores` string. This is a scoped string-inventory
-non-match in the extracted generic ApplePMGR header, not proof that the
-methods, inherited dispatch, or indirect call targets are absent.
+non-match in the extracted generic ApplePMGR header. The base
+`AppleARMFunction` implementation may be represented in a different
+prelinked component; this scan does not include every KEXT. The result is
+not proof that methods, inherited dispatch, or indirect call targets are
+absent.
 
 ### AppleT8010PMGR
 
