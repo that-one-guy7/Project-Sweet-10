@@ -1430,3 +1430,27 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   for constructor correlation. M2/M4 remain open; M7/SpringBoard has
   not started. The physical iPhone 7 remains on iOS 12.1.4; no device
   or firmware state was changed.
+
+- 2026-11-22: Resolved the superclass identity for the target 19H422
+  generic ApplePMGR function registrations using the user's host-side
+  shared-prelink disassembly. The exact `AppleARMFunction` string is at
+  KernelCache file offset `0x96de3c` / VA
+  `0xfffffff0052e1e3c`; `site.AppleARMFunction` is at
+  `0x96de4d` / VA `0xfffffff0052e1e4d`. The decisive initializer at
+  `0xfffffff005964fe4–0xfffffff005965004` sets x0 to
+  `0xfffffff0079e4dd0`, x1 to the exact `AppleARMFunction` string,
+  w3 to `0x28`, and calls the already identified OSMetaClass
+  constructor stub at `0xfffffff005993844`. This identifies
+  `0xfffffff0079e4dd0` as AppleARMFunction metaclass storage. The
+  previously recorded `ApplePMGRFunctionEnableCPUCore`,
+  `AppleARMFunctionSlowAdaptiveClocking`, and
+  `AppleARMFunctionSlowAdaptiveClockingAggressor` registrations pass
+  that same address in x2, confirming their static superclass identity
+  as `AppleARMFunction`. This is class-registration evidence only:
+  D10AP runtime instantiation, the EnableCPUCore callback, a concrete
+  `IOPMGR::enableCPUCore` override, secondary-core release, IRQ
+  delivery, iOS 16 compatibility, boot, and SpringBoard remain
+  unverified. M2/M4 remain open; M7/SpringBoard has not started. The
+  physical iPhone 7 remains on iOS 12.1.4; no device, firmware,
+  partition, or boot state was accessed or changed.
+
