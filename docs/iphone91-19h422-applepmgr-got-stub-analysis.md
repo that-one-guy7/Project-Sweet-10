@@ -177,21 +177,30 @@ Both binary artifacts remain local to the user's Ubuntu environment.
 
 ### Resolved GOT values
 
-**Symbol-cache qualification:** the supplied disassembly output reports that
-`ipsw` loaded 5,647 symbols from the local
-`kernelcache.release.iPhone9,1_3.a2s` cache file. The labels below are
-therefore symbol-cache labels assigned to target addresses; they are not
-evidence that the stripped KernelCache itself contains a populated native
-symbol table. The exact provenance/build match of that `.a2s` file should
-be checked separately before treating these labels as final symbol
-provenance. The addresses, section mappings, raw GOT values, and instruction
-bytes remain independently useful evidence even if a label later changes.
+**Symbol-cache qualification:** the original disassembly loaded 5,647
+symbols from the local `kernelcache.release.iPhone9,1_3.a2s` file. A
+separate disassembly was then run with a distinct `--cache` path against
+the same `$KC` input. IPSW could not create its temporary file from the
+repository working directory, so it fell back to
+`/tmp/F8C46FA5-B1B4-3B20-90F5-991680E21437.a2s`; the following disassembly
+reported loading 5,647 symbols from that temporary cache and reproduced
+the `IOPMGR::gMetaClass` and `IOPMGR::IOPMGR` annotations. The user
+independently rechecked the input KernelCache SHA-256 as
+`7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`.
+A later `stat`/hash attempt found the temporary cache no longer present,
+so its size and SHA-256 cannot be recorded. The regenerated output
+therefore independently reproduces the labels against the hash-identified
+19H422 input, but the cache artifact itself was not retained for
+byte-level provenance. These remain disassembler-cache labels, not native
+symbols embedded in the stripped generic ApplePMGR KEXT. The addresses,
+section mappings, raw GOT values, and instruction bytes are independent
+evidence.
 
 | GOT offset | Pointer value | Disassembler symbol / section | Outer KernelCache offset |
 |---:|---|---|---:|
 | `0xa8` | `0xfffffff0076dde78` | `__ZN11OSMetaClassC2EPKcPKS_j` (`OSMetaClass` constructor), `__TEXT_EXEC.__text` | `0x6d9e78` |
 | `0xb0` | `0xfffffff0076de600` | `__ZN11OSMetaClassD2Ev` (`OSMetaClass` destructor), `__TEXT_EXEC.__text` | `0x6da600` |
-| `0x200` | `0xfffffff00789bee8` | `__DATA.__common`; local `.a2s` annotation `__ptr.__ZN6IOPMGR10gMetaClassE` (`IOPMGR::gMetaClass`), fresh-cache verification pending | `0x897ee8` |
+| `0x200` | `0xfffffff00789bee8` | `__DATA.__common`; reproduced by the transient alternate cache as `__ptr.__ZN6IOPMGR10gMetaClassE` (`IOPMGR::gMetaClass`); cache file not retained | `0x897ee8` |
 | `0x208` | `0xfffffff00776326c` | `__ZN6IOPMGRC2EPK11OSMetaClass` (`IOPMGR` constructor), `__TEXT_EXEC.__text` | `0x75f26c` |
 | `0x378` | `0xfffffff007180890` | `_memmove`, `__TEXT_EXEC.__hib_text` | `0x17c890` |
 
@@ -221,8 +230,8 @@ bytes remain independently useful evidence even if a label later changes.
    pointer in x0, not an adjusted interior pointer. Combined with the
    `IOPMGR::gMetaClass` superclass annotation in the metaclass initializer,
    this strongly supports ApplePMGR deriving from IOPMGR with its IOPMGR
-   base subobject at offset zero. A fresh-cache regeneration is still
-   required to independently confirm the symbol annotations.
+   base subobject at offset zero. The separate transient-cache run reproduced the same symbol annotations;
+   the file itself was unavailable for a later size/hash check.
 
 3. **The fixed-size copy calls are confirmed as `_memmove`.** The three
    calls through GOT slot `0x378` resolve to `_memmove` at
@@ -240,33 +249,37 @@ T8010 PMGR implementation fulfills XNU's `IOPMGR::enableCPUCore`
 contract, demonstrate secondary-CPU reset release, or prove ABI
 compatibility between the 19H422 target kernel and the 20H392 donor.
 
-### Next host-side check
+### Next host-side check: locate the CPU-core-enable string precisely
 
-The receiver setup is now visible in the supplied 100-instruction excerpt.
-The remaining symbol-provenance check is to create a new cache at a distinct
-path from the hash-identified 19H422 KernelCache, rather than reusing the
-existing `.a2s` file. IPSW documents that `macho disass` creates an
-image-wide `.a2s` cache and that `--cache` selects its path:
-https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/disass/
+The fresh-cache output reproduced the two IOPMGR annotations, but the
+transient `.a2s` file no longer exists and could not be hashed. The user's
+current KernelCache SHA-256 matches the recorded 19H422 source identity.
+
+The next useful static task is to collect exact file offsets for the
+CPU-core-enable identifiers in the already extracted generic ApplePMGR
+prelink header. Its base VM address is
+`0xfffffff005666d80`, so string offsets from this extracted header can be
+converted to candidate virtual addresses by adding that base. Run:
 
 ~~~sh
-FRESH_A2S="$HOME/kernelcache.release.iPhone9,1_3.fresh-verify.a2s"
+PRELINK="$HOME/ApplePMGR.prelink-text.bin"
 
-ipsw macho disass "$KC" --cache "$FRESH_A2S" \
-  --vaddr 0xfffffff0065b6194 --count 16
+test -f "$PRELINK" || {
+  echo "Missing $PRELINK"
+  exit 1
+}
 
-ipsw macho disass "$KC" --cache "$FRESH_A2S" \
-  --vaddr 0xfffffff00776326c --count 12
+sha256sum "$PRELINK"
 
-stat -c 'Size: %s bytes' "$FRESH_A2S"
-sha256sum "$FRESH_A2S"
+strings -a -t x -n 5 "$PRELINK" | \
+  grep -Ei 'ApplePMGRFunctionEnableCPUCore|site\.ApplePMGRFunctionEnableCPUCore|enableCPUCore|ApplePMGRFunction|CPUCore|IOPlatformFunction'
 ~~~
 
-Use a new filename that does not already exist. The first command builds
-the alternate cache from the supplied `$KC`; the second reuses that same
-fresh cache. Compare the emitted `IOPMGR::gMetaClass` and
-`IOPMGR::IOPMGR` annotations with the existing output. Keep the cache
-local; do not upload it or the Apple binaries to GitHub.
+Paste the complete filtered output. The offsets will let us map the exact
+string locations and plan a targeted static-reference check against the
+generic ApplePMGR executable segment. A string occurrence alone does not
+identify a callback or prove secondary-CPU release. Keep the extracted
+Apple binary local; share only the offsets and text output.
 
 All evidence remains host-side static inspection. No Apple binary was added
 to the repository, and the physical iPhone 7 remains on iOS 12.1.4.
