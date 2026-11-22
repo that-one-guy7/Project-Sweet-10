@@ -116,15 +116,25 @@ This is expected for the legacy prelinked 19H422 KernelCache: IPSW documents
 KEXT extraction for modern `MH_FILESET` images only ([kernel guide](https://blacktop.github.io/ipsw/docs/guides/kernel/)).
 Do not repeat that command for this target.
 
-The verified outer-container mapping places the `__TEXT_EXEC` start VA at
-`0x01c42000`. Before extraction, map the section boundary addresses
-`0xfffffff0065ea583`, `0xfffffff0065ea584`, and the last segment byte
-`0xfffffff0065eaa4b` using `ipsw macho a2o "$KC" <address>`. Once the
-four address mappings confirm one contiguous executable region, use
-`ipsw macho dump "$KC" 0xfffffff0065b6000 --size 215628 --output
-"$HOME/ApplePMGR.text-exec.bin"` to dump by virtual address instead of
-manually treating the inner load-command fileoff as a container offset.
-The [Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
+The user has now confirmed all four boundary mappings. They place the
+segment start at outer offset `0x01c42000`, the last `__text` byte at
+`0x01c76583`, the first `__stubs` byte at `0x01c76584`, and the final
+segment byte at `0x01c76a4b`. All map to `__PLK_TEXT_EXEC`; text and stubs
+are contiguous and the total range matches `0x34a4c`.
+
+The next host-only command is the virtual-address dump:
+
+```sh
+ipsw macho dump "$KC" 0xfffffff0065b6000 \\
+  --size 215628 \\
+  --output "$HOME/ApplePMGR.text-exec.bin"
+
+stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
+sha256sum "$HOME/ApplePMGR.text-exec.bin"
+file "$HOME/ApplePMGR.text-exec.bin"
+```
+
+Expected size: 215,628 bytes. The [Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
 documents address-based dumping to a file. Keep the artifact local.
 
 ## Milestone impact
