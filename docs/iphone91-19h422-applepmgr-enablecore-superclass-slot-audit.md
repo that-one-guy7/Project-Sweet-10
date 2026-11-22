@@ -114,83 +114,87 @@ The user's local IPSW version was not included, so this source reference
 explains the inspected upstream implementation rather than proving the
 exact local binary revision.
 
-## Shared prelink cross-references and disassembler abort
+## Shared prelink registrations and resolved class-name strings
 
-The user successfully dumped the shared `__PLK_TEXT_EXEC` range
-(file offsets `0x00fd4000–0x02364000`, VM range
-`0xfffffff005948000–0xfffffff006cd8000`, size 20,512,768 bytes).
-The AArch64 disassembly emitted useful lines but did not complete. GNU
-`objdump` aborted near `0xfffffff0059928b0` with:
+The user confirmed local tool versions:
 
-```
-opcodes/aarch64-dis.c:251: get_sreg_qualifier_from_value:
-Assertion `value <= 0x4 && aarch64_get_qualifier_standard_value (qualifier) == value' failed.
-```
+- IPSW `3.1.749`, build commit
+  `a7dfadbcaca8375b424c12a68dae40767e5e07c1`
+- GNU `aarch64-linux-gnu-objdump` / Binutils `2.42`
 
-This exact assertion signature matches the AArch64 disassembler abort
-reported as [Binutils bug 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595).
-The user's installed Binutils version was not included; the exact local
-version and trigger are therefore unknown. Treat the shared-segment
-disassembly as partial, not as a complete scan.
+The broad shared `__PLK_TEXT_EXEC` disassembly previously aborted near
+`0xfffffff0059928b0` with the
+`get_sreg_qualifier_from_value` assertion. The signature matches
+[Binutils PR 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595);
+a downstream patch specifically backported the fix to a Binutils 2.42
+recipe ([2.42 backport](https://patchwork.yoctoproject.org/project/oe-core/patch/20240524201214.3858538-2-mark.hatle%40amd.com/)).
+This is consistent with a disassembler bug, not evidence that the target
+KernelCache is corrupt.
 
-Before the abort, the user-supplied output contains several registration-
-shaped sequences that set x2 to `0xfffffff0079e4dd0` and call
-`0xfffffff005993844` with a class-name pointer in x1 and class size
-in w3. Two examples:
+The user mapped both x1 string pointers to actual class names:
 
-- At `0xfffffff00598e07c`, x1 is constructed as
-  `0xfffffff0052ea1fc`, x2 as `0xfffffff0079e4dd0`, w3 is
-  `0x38`, then the code calls `0xfffffff005993844`.
-- At `0xfffffff00598e14c`, the same class-name pointer, x2 value,
-  class size, and call target are used.
-- At `0xfffffff00598dd14` and `0xfffffff00598dde4`, x1 is
-  `0xfffffff0052ea1a4`, x2 is `0xfffffff0079e4dd0`, and
-  w3 is `0x40`.
-- At `0xfffffff00598e5a4`, x0 is explicitly set to
-  `0xfffffff0079e57c0`, x1 to `0xfffffff0052ea1a4`, and x2
-  to `0xfffffff0079e4dd0`, with class size `0x40`.
+| String VA | File offset | String |
+|---|---:|---|
+| `0xfffffff0052ea1a4` | `0x9761a4` | `AppleARMFunctionSlowAdaptiveClocking` |
+| `0xfffffff0052ea1fc` | `0x9761fc` | `AppleARMFunctionSlowAdaptiveClockingAggressor` |
 
-The argument arrangement is consistent with further OSMetaClass-style
-registrations. x1 is the class-name string of the class being registered;
-x2 is the candidate superclass-metaclass pointer. The two class-name
-strings have not been extracted, so these results do not yet identify
-the class at `0xfffffff0079e4dd0`. They support its use as a common
-parent metadata object by multiple registrations, including the
-previously identified `ApplePMGRFunctionEnableCPUCore` registration.
+Both map into `__PRELINK_TEXT.__text`. The local 256-byte string
+window confirms the strings at offsets `0x24` and `0x7c` from
+window base `0xfffffff0052ea180`.
 
-### Next checks
+The bounded disassembly of
+`0xfffffff00598e060–0xfffffff00598e190` completed successfully.
+Together with the supplied surrounding output, it confirms:
 
-Record local tool versions, map the two class-name string addresses, and
-extract a small window containing both strings:
+| Call-site VA | x1 class name | x2 | w3 class size | Call target |
+|---|---|---|---:|---|
+| `0xfffffff00598dd14` / `0xfffffff00598dde4` | `AppleARMFunctionSlowAdaptiveClocking` | `0xfffffff0079e4dd0` | `0x40` | `0xfffffff005993844` |
+| `0xfffffff00598e07c` / `0xfffffff00598e14c` | `AppleARMFunctionSlowAdaptiveClockingAggressor` | `0xfffffff0079e4dd0` | `0x38` | `0xfffffff005993844` |
 
-```sh
-ipsw version
-aarch64-linux-gnu-objdump --version
+A further sequence at `0xfffffff00598e5a4` supplies static class
+storage x0=`0xfffffff0079e57c0`, the
+`AppleARMFunctionSlowAdaptiveClocking` name in x1,
+`0xfffffff0079e4dd0` in x2, and class size `0x40`.
 
-ipsw macho a2o "$KC" 0xfffffff0052ea1fc
-ipsw macho a2o "$KC" 0xfffffff0052ea1a4
+These findings support the candidate pointer's use as shared
+superclass-metaclass metadata across the two AppleARMFunction classes
+and the previously identified `ApplePMGRFunctionEnableCPUCore`
+registration. The class represented by the pointer remains unknown.
+`AppleARMFunction` is a plausible parent-name hypothesis, not a
+confirmed identity: it must be tied to a constructor sequence whose
+x1 points to the exact `AppleARMFunction` string and whose x0 is
+`0xfffffff0079e4dd0`.
 
-ipsw macho dump "$KC" 0xfffffff0052ea180 \
-  --size 256 \
-  --output "$HOME/ApplePMGR-classname-window.bin"
+### Next check
 
-strings -a -t x -n 4 "$HOME/ApplePMGR-classname-window.bin"
-```
+~~~sh
+strings -a -t x -n 5 "$KC" |
+  awk '$2 == "AppleARMFunction" || $2 == "site.AppleARMFunction"'
 
-For a bounded recheck of the two `0x598e...` sites, stay below the
-known abort address:
+ipsw macho o2a "$KC" 0x<file-offset>
 
-```sh
+A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
+grep -in 'AppleARMFunction' "$A2S" | head -80
+~~~
+
+The first command looks for the exact base-class strings, avoiding
+substring matches on the two longer subclass names. Map any returned
+file offset with `ipsw macho o2a`, then correlate the resulting VA
+with a bounded disassembly window. The `.a2s` lookup is supplemental;
+absence from that text file does not prove the class is absent.
+
+The bounded disassembly already completed successfully:
+
+~~~sh
 aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
   --adjust-vma=0xfffffff005948000 \
   --start-address=0xfffffff00598e060 \
   --stop-address=0xfffffff00598e190 \
   "$HOME/ApplePMGR.plk-text-exec.bin"
-```
+~~~
 
-This short range is intended to avoid the recorded abort point; it does
-not fix Binutils or make the full-segment disassembly complete. The
-local Apple binary stays outside GitHub.
+Keep Apple binary artifacts local. The broad shared-segment disassembly
+remains incomplete under Binutils 2.42.
 
 No runtime class hierarchy, callback implementation, D10AP function
 instantiation, IOPMGR CPU-start override, secondary-core release, IRQ

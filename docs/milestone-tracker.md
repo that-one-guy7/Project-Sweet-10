@@ -1403,3 +1403,30 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   `0xfffffff00598e060–0xfffffff00598e190`. M2/M4 remain open;
   M7/SpringBoard has not started. The iPhone 7 remains on iOS 12.1.4;
   no device or firmware state was changed.
+
+
+- 2026-11-22: User confirmed IPSW 3.1.749
+  (`a7dfadbcaca8375b424c12a68dae40767e5e07c1`) and GNU Binutils
+  2.42. The previously observed AArch64 disassembler assertion matches
+  Binutils PR 31595; a downstream patch backported the fix to the
+  Binutils 2.42 recipe. The local broad disassembly is still partial,
+  but a bounded disassembly of
+  `0xfffffff00598e060–0xfffffff00598e190` completed successfully.
+  The user mapped x1 class-name pointers to
+  `AppleARMFunctionSlowAdaptiveClocking` at
+  `0xfffffff0052ea1a4` / file offset `0x9761a4`, and
+  `AppleARMFunctionSlowAdaptiveClockingAggressor` at
+  `0xfffffff0052ea1fc` / file offset `0x9761fc`. Constructor-shaped
+  sequences register these classes with candidate superclass metadata
+  pointer `0xfffffff0079e4dd0`, using class sizes `0x40` and
+  `0x38`, respectively. A separate sequence at
+  `0xfffffff00598e5a4` passes static class storage
+  `0xfffffff0079e57c0`, the SlowAdaptiveClocking class-name pointer,
+  and the same candidate superclass pointer. This supports common
+  superclass metadata but does not prove the parent class's name.
+  `AppleARMFunction` is a plausible hypothesis only; the next check
+  searches for the exact `AppleARMFunction` /
+  `site.AppleARMFunction` string and maps any occurrence back to a VA
+  for constructor correlation. M2/M4 remain open; M7/SpringBoard has
+  not started. The physical iPhone 7 remains on iOS 12.1.4; no device
+  or firmware state was changed.
