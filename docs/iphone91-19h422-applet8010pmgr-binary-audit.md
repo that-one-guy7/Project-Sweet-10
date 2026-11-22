@@ -470,6 +470,8 @@ Keep these artifacts local. Stub decoding and pointer mapping can narrow
 the import and metadata relationships, but stripped symbols and runtime
 registration still prevent a CPU-start conclusion at this stage.
 
+See the detailed follow-up [generic ApplePMGR GOT and stub analysis](iphone91-19h422-applepmgr-got-stub-analysis.md), which maps the imported-call stubs used by the first two routines in the corrected executable excerpt.
+
 ## Relationship to project milestones
 
 - **M1:** adds detail to the already-completed static hardware/KEXT inventory.
