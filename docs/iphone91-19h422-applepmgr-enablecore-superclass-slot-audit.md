@@ -236,12 +236,14 @@ here.
 
 ### Next static research question
 
-The superclass identity is resolved. The next useful static question is
-whether the `ApplePMGRFunctionEnableCPUCore` class has an identifiable
-callback implementation and how its registration data refers to that
-callback. Keep that analysis confined to local, read-only examination of
-the hash-identified KernelCache; class registration alone does not
-establish runtime behavior.
+The superclass identity is resolved, but the callback remains unknown.
+The public XNU interface comparison and historical A10 symbol precedent
+are recorded in the
+[EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
+The next static task is to compare the target generic ApplePMGR and
+AppleT8010PMGR string inventories, then correlate exact method strings
+with class metadata. Class registration alone does not establish runtime
+behavior.
 
 
 The bounded disassembly already completed successfully:

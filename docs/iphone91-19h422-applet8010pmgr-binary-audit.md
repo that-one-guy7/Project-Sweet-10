@@ -318,31 +318,38 @@ The action values `90000` and `600` are recorded verbatim. Their units,
 call-site interpretation, and runtime effects have not been established and
 must not be labelled milliseconds or treated as measured delays.
 
-### Pinned XNU 8796 IOPMGR interface contract
+### Cross-tag XNU IOPMGR interface contract
 
-The public `xnu-8796.141.3` source makes the unresolved CPU-start question
-more specific:
+The public XNU `IOPMGR` interface and default fallback were compared at
+`xnu-7195.121.3`, `xnu-8796.141.3`, and
+`xnu-8020.101.4`. All three snapshots declare the same two overloads
+of `enableCPUCore`: the two-argument form takes a logical CPU ID and
+physical entry address; the legacy one-argument form is deprecated.
+The documented two-argument contract is to release a secondary core from
+reset and enable external IRQ delivery.
 
-- `IOPMGR.h` describes `IOPMGR` as the base class for power managers such
-  as `ApplePMGR`.
-- Its two-argument `enableCPUCore(cpu_id, entry_pa)` contract is to release
-  a secondary CPU from reset and enable external IRQ delivery. The physical
-  reset-vector argument is not necessarily honored by every platform.
-- The older one-argument overload is deprecated.
-- In `IOPMGR.cpp`, the default two-argument implementation falls back to
-  the one-argument overload; the base one-argument implementation panics
-  with "enableCPUCore is unimplemented".
+In all three snapshots, the base two-argument implementation falls back
+to the one-argument overload, and the base one-argument implementation
+panics as unimplemented. Therefore a concrete platform service must
+supply the required override; the base implementation is not a working
+CPU-start implementation.
 
-Pinned source references:
-[`IOPMGR.h`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOPMGR.h#L38-L63)
-and
-[`IOPMGR.cpp`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOPMGR.cpp#L33-L46).
+The public `AppleARMSMP.cpp` source routes secondary CPU start through
+`gPMGR->enableCPUCore`. The 7195 and 8020.101.4 physical path passes
+the physical address of `LowResetVectorBase`; the 8796 source retains a
+virtual-platform conditional around reset-vector handling.
 
-This describes the public 8796 interface and default fallback, not the
-private implementation in the 19H422 ApplePMGR/AppleT8010PMGR binaries.
-The target binary audit must still determine which concrete class supplies
-the required overrides. The source contract also does not prove that the
-20H392 donor kernel uses the same exact ApplePMGR implementation.
+Pinned sources:
+- [7195.121.3 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/iokit/IOKit/IOPMGR.h), [IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/iokit/Kernel/IOPMGR.cpp), [AppleARMSMP.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-7195.121.3/iokit/Kernel/arm/AppleARMSMP.cpp)
+- [8796.141.3 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOPMGR.h), [IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOPMGR.cpp), [AppleARMSMP.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/arm/AppleARMSMP.cpp)
+- [8020.101.4 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/IOKit/IOPMGR.h), [IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/Kernel/IOPMGR.cpp), [AppleARMSMP.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/Kernel/arm/AppleARMSMP.cpp)
+
+The 8020.101.4 snapshot is an earlier public source version from the
+same XNU 8020 line, not the exact source revision for the target
+KernelCache's reported `8020.241.44~1` version. This
+cross-tag API comparison does not identify the private 19H422
+ApplePMGR/AppleT8010PMGR override. See the focused
+[EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
 
 ### Next static check
 

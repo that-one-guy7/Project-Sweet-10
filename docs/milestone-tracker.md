@@ -1454,3 +1454,23 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   physical iPhone 7 remains on iOS 12.1.4; no device, firmware,
   partition, or boot state was accessed or changed.
 
+- 2026-11-22: Cross-checked the public IOPMGR CPU-start contract across
+  `xnu-7195.121.3`, `xnu-8796.141.3`, and
+  `xnu-8020.101.4`. All three snapshots retain the same two-overload
+  `enableCPUCore` interface. The two-argument contract describes release
+  of a secondary CPU from reset and enabling external IRQ delivery; the
+  base implementation falls back to the legacy one-argument method, whose
+  base implementation panics if not overridden. Public AppleARMSMP source
+  routes secondary CPU start through `gPMGR->enableCPUCore`; the 7195
+  and 8020.101.4 physical path passes the physical address of
+  `LowResetVectorBase`, while the 8796 source includes a
+  virtual-platform conditional. A historical third-party iOS 12.0 A10
+  symbol inventory lists `AppleARMFunction::callFunction`,
+  `initWithTargetDataAndSymbol`, `ApplePMGRFunctionEnableCPUCore`,
+  and `ApplePMGR::enableCPUCores`; this is historical context only and
+  does not identify the 19H422 callback. The private target override,
+  function callback dispatch, secondary-core release, and runtime
+  attachment remain unverified. M2/M4 remain open; M7/SpringBoard has
+  not started. The physical iPhone 7 remains on iOS 12.1.4; no device,
+  firmware, partition, or boot state was accessed or changed.
+
