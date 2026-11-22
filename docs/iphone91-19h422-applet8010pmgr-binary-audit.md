@@ -260,9 +260,13 @@ for that starting virtual address is `0x01c42000`. The earlier table's
 `KernelCache offset` label was therefore incorrect and has been replaced
 with `LC fileoff`. The previous `ApplePMGR.text-exec.bin` extraction at
 `0x00f4f280` came from a different mapped address and must not be treated as
-ApplePMGR executable code. The `__TEXT_EXEC.__stubs`, `__DATA`, and
-`__DATA_CONST` inner `fileoff` values have not yet been independently mapped
-to outer-container offsets either.
+ApplePMGR executable code. The `__text`/`__stubs` boundary mappings are now independently confirmed:
+all four tested virtual addresses map into `__PLK_TEXT_EXEC` at outer offsets
+`0x01c42000`, `0x01c76583`, `0x01c76584`, and `0x01c76a4b`. The last
+`__text` byte and first `__stubs` byte map to consecutive file offsets,
+and the final byte agrees with the full `0x34a4c` segment size. The `__DATA`
+and `__DATA_CONST` inner `fileoff` values remain unmapped to outer-container
+offsets.
 
 The fileset-aware extraction route is not supported by this target. The user
 tried `ipsw kernel extract` and received:
@@ -277,9 +281,9 @@ prelinked Mach-O using `__PRELINK_*` regions. Do not retry that command on
 this same KernelCache. See the [IPSW kernel guide](https://blacktop.github.io/ipsw/docs/guides/kernel/).
 
 For this legacy layout, continue with the outer-KernelCache virtual-address
-mapper and `ipsw macho dump`. Before extracting the segment, map its start,
-text/stub boundary, and last byte independently. The next command block
-lists those exact address checks.
+mapper and `ipsw macho dump`. The user has now mapped the segment start,
+last `__text` byte, first `__stubs` byte, and last segment byte. The verified
+results demonstrate one contiguous executable range.
 
 The `__DATA_CONST` segment contains `__got` (`0x400` bytes),
 `__mod_init_func` (`0x18`), `__mod_term_func` (`0x18`),
@@ -345,30 +349,21 @@ the required overrides. The source contract also does not prove that the
 The user has confirmed that the target KernelCache is 44,924,928 bytes
 with SHA-256
 `7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`.
-The initial `__TEXT_EXEC` VA maps to outer offset `0x01c42000`. Now verify
-all four boundaries before any extraction:
+The four user-supplied `ipsw macho a2o` results are:
 
-| Purpose | Virtual address |
-|---|---|
-| First byte of `__TEXT_EXEC` / `__text` | `0xfffffff0065b6000` |
-| Last byte of `__text` | `0xfffffff0065ea583` |
-| First byte of `__stubs` | `0xfffffff0065ea584` |
-| Last byte of `__TEXT_EXEC` | `0xfffffff0065eaa4b` |
+| Purpose | Virtual address | Outer KernelCache offset |
+|---|---|---|
+| First byte of `__TEXT_EXEC` / `__text` | `0xfffffff0065b6000` | `0x01c42000` |
+| Last byte of `__text` | `0xfffffff0065ea583` | `0x01c76583` |
+| First byte of `__stubs` | `0xfffffff0065ea584` | `0x01c76584` |
+| Last byte of `__TEXT_EXEC` | `0xfffffff0065eaa4b` | `0x01c76a4b` |
 
-Run:
+All four map to `__PLK_TEXT_EXEC`. The `__text` and `__stubs` sections
+are contiguous: `0x01c76583` is immediately followed by `0x01c76584`.
+The mapped range is `0x34a4c` bytes, matching the load-command size.
 
-```sh
-ipsw macho a2o "$KC" 0xfffffff0065b6000
-ipsw macho a2o "$KC" 0xfffffff0065ea583
-ipsw macho a2o "$KC" 0xfffffff0065ea584
-ipsw macho a2o "$KC" 0xfffffff0065eaa4b
-```
-
-The four results should identify the same outer executable segment and
-show contiguous offsets consistent with the reported section sizes. Do not
-assume or manually calculate the missing offsets until those results are
-checked. If the boundaries agree, use IPSW's virtual-address-based dump
-rather than confusing an embedded KEXT's `LC_SEGMENT_64.fileoff` with an
+The next command uses IPSW's documented virtual-address-based Mach-O dump;
+it avoids treating the embedded KEXT's inner `LC_SEGMENT_64.fileoff` as an
 outer-container offset:
 
 ```sh
@@ -379,14 +374,19 @@ ipsw macho dump "$KC" 0xfffffff0065b6000 \\
 stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
 sha256sum "$HOME/ApplePMGR.text-exec.bin"
 file "$HOME/ApplePMGR.text-exec.bin"
+
+# Only after confirming the file is exactly 215,628 bytes:
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \\
+  --adjust-vma=0xfffffff0065b6000 \\
+  "$HOME/ApplePMGR.text-exec.bin" | sed -n '1,100p'
 ```
 
 The `macho dump` command accepts a virtual address and writes the selected
 bytes to a file; see the [IPSW Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/).
 Keep any extracted Apple binary local; do not add it to the repository.
-Only after confirming the size and first bytes should it be disassembled.
-Stripped symbols, indirect calls, and class metadata still require careful
-interpretation. A missing string is not proof a method is absent.
+The expected size is 215,628 bytes. Stripped symbols, indirect calls, and
+class metadata still require careful interpretation. A missing string is
+not proof a method is absent.
 
 ## Relationship to project milestones
 
