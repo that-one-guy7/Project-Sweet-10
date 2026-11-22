@@ -140,8 +140,10 @@ section, or an initialized runtime object.
 
 Because the pointer is loaded into x2 for the previously identified
 `OSMetaClass(const char *, const OSMetaClass *, unsigned int)` call, it is
-the candidate superclass-metaclass pointer for
-`ApplePMGRFunctionEnableCPUCore`. Its class identity remains unknown.
+the superclass-metaclass pointer for `ApplePMGRFunctionEnableCPUCore`.
+The later shared-prelink initializer identifies the storage at this
+address as the `AppleARMFunction` metaclass; see the confirmed hierarchy
+section below.
 The third initialization sequence's x0 value
 `0xfffffff007ae14c0` separately maps to file offset `0x278d4c0` in
 `__PRELINK_DATA.__data`; no bytes at that second address were supplied.
@@ -168,9 +170,10 @@ The user ran the requested disassembly search against the corrected
 215,628-byte generic ApplePMGR executable segment. The pipeline returned
 no matching lines for page `0xfffffff0079e4000`. This means the supplied
 generic ApplePMGR executable dump did not expose a direct ADRP/page
-reference to the candidate superclass-metaclass storage. It does not
-establish that the address is unused: the owning class initializer may be
-in another prelinked component, or the reference may be indirect.
+reference to the AppleARMFunction metaclass storage. It does not
+establish that the address is unused: the owning class initializer is
+in another prelinked component, as the later shared-section reference
+analysis demonstrates.
 
 ### Shared prelink references and confirmed superclass identity (2026-11-22)
 
