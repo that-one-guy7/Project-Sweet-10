@@ -1511,3 +1511,13 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   executed; the physical iPhone 7 remains on iOS 12.1.4 and was not
   accessed or changed.
 
+- 2026-11-22: The user dumped the verified AppleT8010PMGR executable
+  segment by virtual address. The 14,984-byte size assertion passed;
+  SHA-256 is `95cb5769c9425c0a6755de602f1e0872959b7fa910da642aa791c5e5f3fc5e52`. The first 180 lines of adjusted AArch64
+  disassembly contain calls into the local `__stubs` region, including
+  repeated calls to `0xfffffff0068af92c` with constant argument pairs.
+  Stub targets and semantics remain unresolved, so this is not evidence
+  of a CPU-start implementation. The next static task is to inspect the
+  complete stub region and incoming branch/call references. No Apple
+  binary is committed; the physical iPhone 7 remains on iOS 12.1.4 and
+  was not accessed or changed.

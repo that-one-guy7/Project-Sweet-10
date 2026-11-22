@@ -394,6 +394,33 @@ The next step is a fresh virtual-address-based dump from
 AArch64 disassembly. The exact command is recorded in the
 [EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
 
+### Verified executable-segment dump and first disassembly (2026-11-22)
+
+The user completed a virtual-address-based dump from
+`0xfffffff0068ac000`. The 14,984-byte size assertion passed.
+SHA-256:
+`95cb5769c9425c0a6755de602f1e0872959b7fa910da642aa791c5e5f3fc5e52`.
+
+The user supplied the first 180 lines of address-adjusted AArch64
+disassembly. The excerpt shows direct calls into local
+`__stubs` addresses, including
+`0xfffffff0068af8f0`, `0xfffffff0068afa10`,
+`0xfffffff0068afa28`, `0xfffffff0068af8d8`, and
+`0xfffffff0068af92c`. At `0xfffffff0068ac200`, repeated calls to
+the latter use constant argument pairs `(0,0)`, `(1,1)`,
+`(8,2)`, `(39,3)`, `(12,4)`, `(10,5)`, and `(11,6)`,
+with `x3` and `x4` zero in the supplied excerpt. The opening
+sequence also forms a reference to VA `0xfffffff00584f9b0` and
+loads through `0xfffffff006f73f10`.
+
+These observations do not identify the stub destinations or the
+purpose of the argument pairs. The raw-binary disassembler's
+`.data` label does not reclassify the original executable segment.
+The concrete private CPU-start implementation and the target
+`IOPMGR::enableCPUCore` override remain unverified. See the
+[EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md)
+for the bounded observations and next static inspection.
+
 ### Completed generic ApplePMGR executable mapping
 
 The user has confirmed that the target KernelCache is 44,924,928 bytes
