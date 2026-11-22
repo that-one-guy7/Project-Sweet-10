@@ -1474,3 +1474,25 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   not started. The physical iPhone 7 remains on iOS 12.1.4; no device,
   firmware, partition, or boot state was accessed or changed.
 
+- 2026-11-22: The user supplied paired generic ApplePMGR and
+  AppleT8010PMGR `strings` scans from the hash-identified iPhone9,1 /
+  19H422 KernelCache. Generic ApplePMGR contains
+  `ApplePMGRFunctionEnableCPUCore` and its `site.` identifier, but
+  the filtered output has no matching class-specific
+  `callFunction` / `initWithTargetDataAndSymbol` signature and no
+  `ApplePMGR::enableCPUCore` / `enableCPUCores` method string.
+  The same header explicitly lists
+  `ApplePMGRFunctionCPUIdle::callFunction` and several other function
+  class signatures. AppleT8010PMGR's listed methods cover initialization,
+  clocks/voltage, CPU performance states/counters, energy accumulation,
+  and ACC/AOP registers; the filtered output has no named
+  `enableCPUCore`, `enableCPUCores`, or reset method. These are
+  printable-string non-matches, not proof the methods are absent.
+  The next static checkpoint is to verify the outer-KernelCache mapping
+  of AppleT8010PMGR's `__TEXT_EXEC` boundaries
+  (`0xfffffff0068ac000`–`0xfffffff0068afa87`); do not use its inner
+  Mach-O `fileoff` as an outer offset. The private callback, concrete
+  XNU IOPMGR override, CPU release, and runtime attachment remain
+  unverified. M2/M4 remain open; M7/SpringBoard has not started. The
+  physical iPhone 7 remains on iOS 12.1.4 and was not accessed or changed.
+

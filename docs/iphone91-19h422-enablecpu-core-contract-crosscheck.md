@@ -124,6 +124,87 @@ the 19H422 EnableCPUCore class inherits that implementation unchanged,
 that its callback invokes `ApplePMGR::enableCPUCores`, or that the
 method maps to XNU's `IOPMGR::enableCPUCore`.
 
+## Target 19H422 string-inventory follow-up (2026-11-22)
+
+The user supplied a second read-only `strings -a -t x -n 5` scan of the
+two extracted target KEXT `__TEXT` regions. The generic ApplePMGR
+prelink-header artifact has SHA-256
+`4764017feef6d87c1f8a524bf04ec1148817d61fd482639e252325fd0300f43f`.
+The AppleT8010PMGR prelink-header artifact has SHA-256
+`c903d96cb70e04cd7f8d48a096800af2853504e480e23e9bd87a1faef3303221`.
+
+### Generic ApplePMGR
+
+The output contains the following relevant class/function strings:
+
+| Offset in extracted header | String |
+|---:|---|
+| `0xa4e6` | `ApplePMGRFunctionCPUIdle` |
+| `0xa4ff` | `site.ApplePMGRFunctionCPUIdle` |
+| `0xa51d` | `virtual IOReturn ApplePMGRFunctionCPUIdle::callFunction(void *, void *, void *)` |
+| `0xa5ac` | `ApplePMGRFunctionEnableCPUCore` |
+| `0xa5cb` | `site.ApplePMGRFunctionEnableCPUCore` |
+
+The same scan returns explicit method-name signatures for other function
+classes, including `ApplePMGRFunctionClockGate::callFunction`,
+`ApplePMGRFunctionROSC::callFunction`,
+`ApplePMGRFunctionEnableTouchClock::initWithTargetDataAndSymbol`,
+`ApplePMGRFunctionISPRefClock::initWithTargetDataAndSymbol`,
+`ApplePMGRFunctionVideoRefClock::initWithTargetDataAndSymbol`,
+`ApplePMGRFunctionPLLOffMode::initWithTargetDataAndSymbol`, and
+`ApplePMGRFunctionUSBClock::initWithTargetDataAndSymbol`.
+
+The supplied filtered output did **not** include a matching
+`ApplePMGRFunctionEnableCPUCore::callFunction`,
+`ApplePMGRFunctionEnableCPUCore::initWithTargetDataAndSymbol`,
+`AppleARMFunction::callFunction`,
+`AppleARMFunction::initWithTargetDataAndSymbol`,
+`ApplePMGR::enableCPUCore`, or
+`ApplePMGR::enableCPUCores` string. This is a scoped string-inventory
+non-match in the extracted generic ApplePMGR header. The base
+`AppleARMFunction` implementation may be represented in a different
+prelinked component; this scan does not include every KEXT. The result is
+not proof that methods, inherited dispatch, or indirect call targets are
+absent.
+
+### AppleT8010PMGR
+
+The supplied output includes explicit T8010 method strings for
+initialization, voltage/clock control, CPU performance-state translation
+and selection, performance counters, CPU energy accumulators, ACC
+register access, and AOP global-register access. Representative entries
+include:
+
+- `AppleT8010PMGR::initDriver`
+- `AppleT8010PMGR::setPerfStateCPU`
+- `AppleT8010PMGR::setPerfState`
+- `AppleT8010PMGR::enableCPUPerfCounters`
+- `AppleT8010PMGR::enableCPUEnergyAccumulators`
+- `AppleT8010PMGR::setCPUCoreEnergyAccumulator`
+- `AppleT8010PMGR::getCPUCoreEnergyAccumulator`
+
+The supplied filtered output did not contain a named
+`AppleT8010PMGR::enableCPUCore`,
+`AppleT8010PMGR::enableCPUCores`, or reset routine. This is again only
+a method-name string non-match. It does not exclude an inherited method,
+a differently named implementation, a function pointer, or code without
+a retained diagnostic/signature string.
+
+### Combined interpretation
+
+The string evidence confirms that the EnableCPUCore function class is
+named and registered in generic ApplePMGR, while the T8010-specific
+string inventory prominently describes CPU performance and energy
+management. It does not yet show which code path services the
+EnableCPUCore function, nor which concrete class implements the XNU
+`IOPMGR::enableCPUCore` virtual method.
+
+The iOS 12.0 A10 symbol inventory's
+`ApplePMGR::enableCPUCores(unsigned int, bool)` remains a historical
+lead only. Its plural method name and two-argument signature are not
+enough to equate it with the public XNU singular
+`IOPMGR::enableCPUCore(unsigned int, uint64_t)` interface.
+
 ## What remains unproven
 
 1. Whether `ApplePMGRFunctionEnableCPUCore` overrides or inherits
@@ -139,21 +220,31 @@ method maps to XNU's `IOPMGR::enableCPUCore`.
 
 ## Next read-only host-side check
 
-Inspect the extracted target KEXT string inventories side by side. This
-does not execute either binary or access the phone:
+The generic and T8010 string scans above are complete. The next useful
+target-native artifact is a correctly mapped disassembly of the
+`AppleT8010PMGR` executable segment. Its embedded Mach-O header reports:
+
+- `__TEXT_EXEC` base: `0xfffffff0068ac000`
+- `__text` size: `0x38b4`
+- `__stubs` start: `0xfffffff0068af8b4`
+- `__TEXT_EXEC` total size: `0x3a88` (14,984 bytes)
+
+The old extraction treated an inner Mach-O `LC_SEGMENT_64.fileoff` as
+an outer KernelCache offset; the outer mapping has not been verified.
+First, map the four boundary addresses against the full local 19H422
+KernelCache:
 
 ~~~sh
-strings -a -t x -n 5 "$HOME/ApplePMGR.prelink-text.bin" |
-  grep -Ei 'AppleARMFunction|ApplePMGRFunctionEnableCPUCore|ApplePMGRFunctionCPUIdle|callFunction|initWithTargetDataAndSymbol|enableCPUCore|enableCPUCores'
-
-strings -a -t x -n 5 "$HOME/Project-Sweet-10/AppleT8010PMGR.prelink-text.bin" |
-  grep -Ei 'AppleT8010PMGR::|enableCPUCore|enableCPUCores|CPU.*Core|reset'
+ipsw macho a2o "$KC" 0xfffffff0068ac000
+ipsw macho a2o "$KC" 0xfffffff0068af8b3
+ipsw macho a2o "$KC" 0xfffffff0068af8b4
+ipsw macho a2o "$KC" 0xfffffff0068afa87
 ~~~
 
-Report an empty result as a string-inventory non-match only. The next
-step after that inventory is to correlate any exact class/method-name
-strings with the already mapped metaclass and `__DATA_CONST` metadata;
-do not infer a callback address or vtable slot from names alone.
+Paste the mapping results before extracting or disassembling this
+segment. Do not assume the embedded KEXT's inner `fileoff` values are
+outer-container offsets. This is static host-side inspection only; leave
+the physical iPhone on iOS 12.1.4.
 
 All Apple binaries remain local analysis artifacts and are not included
 in this document. No binary is executed, no device/firmware state is

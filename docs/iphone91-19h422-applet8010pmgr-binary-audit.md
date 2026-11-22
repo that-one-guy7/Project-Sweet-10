@@ -351,7 +351,25 @@ cross-tag API comparison does not identify the private 19H422
 ApplePMGR/AppleT8010PMGR override. See the focused
 [EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
 
-### Next static check
+### Follow-up T8010PMGR method-string inventory (2026-11-22)
+
+The user supplied a filtered `strings -a -t x -n 5` scan of the
+4,603-byte extracted AppleT8010PMGR `__TEXT` header (SHA-256
+`c903d96cb70e04cd7f8d48a096800af2853504e480e23e9bd87a1faef3303221`).
+It returned named routines for driver initialization, voltage/clock
+control, CPU performance-state handling, performance counters, CPU
+energy accumulators, ACC register access, and AOP global-register access.
+It did not return a named `AppleT8010PMGR::enableCPUCore`,
+`AppleT8010PMGR::enableCPUCores`, or reset routine.
+
+This narrows the string inventory but does not prove the T8010 driver
+lacks an override: a method can be inherited, differently named, called
+through a function pointer, or have no retained printable signature.
+The generic ApplePMGR scan likewise found the EnableCPUCore class-name
+strings but no matching class-specific callback signature. See the
+[EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
+
+### Completed generic ApplePMGR executable mapping
 
 The user has confirmed that the target KernelCache is 44,924,928 bytes
 with SHA-256
