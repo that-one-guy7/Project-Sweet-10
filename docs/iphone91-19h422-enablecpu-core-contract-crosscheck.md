@@ -59,9 +59,9 @@ The same public `IOPMGR` interface was checked at:
   machine profile.
 - `xnu-8796.141.3` — pinned public candidate used in the 20H392 donor
   baseline investigation.
-- `xnu-8020.101.4` — public XNU 8020 source snapshot, close to but not
-  identical to the target KernelCache's reported
-  `8020.241.44~1` version.
+- `xnu-8020.101.4` — an earlier public snapshot from the same XNU 8020
+  line, but not the exact source revision for the target KernelCache's
+  reported `8020.241.44~1` version.
 
 Across all three checked tags, `IOPMGR.h` declares the same overloads:
 
