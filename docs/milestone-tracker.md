@@ -29,6 +29,9 @@
 
 ## Change log
 
+- 2026-11-22: Recorded the four user-supplied outer-container boundary mappings for generic ApplePMGR `__TEXT_EXEC`. Start VA `0xfffffff0065b6000` maps to `0x01c42000`; last `__text` byte `0xfffffff0065ea583` maps to `0x01c76583`; first `__stubs` byte `0xfffffff0065ea584` maps to `0x01c76584`; final segment byte `0xfffffff0065eaa4b` maps to `0x01c76a4b`. All mappings identify `__PLK_TEXT_EXEC`; text and stubs are contiguous, and the complete byte count equals `0x34a4c` / 215,628. The next step is to dump by virtual address with `ipsw macho dump`, then verify output size/hash before disassembly. No binary is added to Git; no device or firmware state changed, and the iPhone 7 remains on iOS 12.1.4.
+
+
 - 2026-11-22: Recorded the user's failed `ipsw kernel extract` attempt on the verified 19H422 target KernelCache. The tool reports `kernelcache type is not MH_FILESET (KEXT extraction not supported yet)`; this matches IPSW documentation limiting KEXT extraction to modern `MH_FILESET` KernelCaches. Removed that unsupported recommendation from the PMGR audit. The next read-only path maps the `__TEXT_EXEC` start, end-of-text, start-of-stubs, and final segment byte with `ipsw macho a2o`; only if those offsets confirm a contiguous range should it be dumped by virtual address using `ipsw macho dump`. No device or firmware state changed; the physical iPhone 7 remains on iOS 12.1.4.
 
 
