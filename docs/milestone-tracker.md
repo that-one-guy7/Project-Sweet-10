@@ -29,13 +29,20 @@
 
 ## Change log
 
+- 2026-11-22: Corrected the generic ApplePMGR embedded-segment offset interpretation after the user mapped both directions against the hash-verified 19H422 KernelCache. `ipsw macho a2o` maps VM `0xfffffff0065b6000` to outer offset `0x01c42000` in `__PLK_TEXT_EXEC`, while `ipsw macho o2a` maps inner fileoff `0x00f4f280` to a different address (`0xfffffff0058c3280`) in `__PRELINK_TEXT`. The 215,628-byte extraction at `0x00f4f280` is not accepted as ApplePMGR code. Updated both PMGR audits and the readiness gate; the next host-side check is the fileset-aware `ipsw kernel extract` path. Also downgraded the earlier T8010 segment fileoffs to inner Mach-O values pending their own outer-container mapping. No device or firmware state changed; the physical iPhone 7 remains on iOS 12.1.4.
+
+
 - 2026-11-22: Added a bounded generic ApplePMGR CPU-function string audit from the user-supplied target 19H422 prelink `__TEXT` strings. The output contains `ApplePMGRFunctionEnableCPUCore` and `site.ApplePMGRFunctionEnableCPUCore`, plus `getPhysicalClusterID`, `getClusterPowerState`, virtual `enableCluster`, and `_cpuIdle`/`_cpuIdleTimer`/`_cpuIdleInit`. This is a concrete CPU-core-control lead in the generic PMGR bundle, not proof that the function object is bound to XNU `IOPMGR::enableCPUCore()`, is instantiated on D10AP, or releases a secondary core. The attempted 215,628-byte `__TEXT_EXEC` extraction (SHA-256 `355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99`) starts with readable diagnostic strings under the supplied disassembly, so its source offset is explicitly marked unverified pending independent address-to-file mapping. No Apple binary was added; M2/M4 remain open, M7 has not started, and the physical iPhone 7 remains on iOS 12.1.4.
 
 - 2026-11-22: Extended the generic ApplePMGR target 19H422 audit with the
   user's parsed Mach-O load-command map. The KEXT has UUID
   29A10C96-489B-3D22-8D81-974A570645C3 and source version 939.140.3.0.0;
-  its separate `__TEXT_EXEC` segment is at KernelCache offset 0x00f4f280
-  (size 0x34a4c), and `__DATA_CONST` is at 0x018b2100 (size 0x6c88).
+  its `__TEXT_EXEC` load command reports inner fileoff 0x00f4f280 (size
+  0x34a4c), while the full-KernelCache address mapper places VM
+  0xfffffff0065b6000 at outer offset 0x01c42000. Reverse-mapping
+  0x00f4f280 returns 0xfffffff0058c3280 in __PRELINK_TEXT; the inner
+  fileoff must not be treated as an outer-container offset. The __DATA_CONST
+  0x018b2100 value remains an inner fileoff pending its own mapping.
   The symbol tables are stripped. Cross-referenced the pinned public
   xnu-8796.141.3 IOPMGR interface: `enableCPUCore` is documented as
   releasing a secondary CPU from reset and enabling external IRQ delivery;

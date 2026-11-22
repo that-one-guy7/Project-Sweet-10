@@ -100,19 +100,18 @@ therefore had to be extracted from the original KernelCache as well.
 
 The Mach-O segment inspection recorded:
 
-| Segment / section | Virtual address | Size | Original KernelCache file offset |
+| Segment / section | Virtual address | Size | Inner Mach-O LC fileoff (outer-container mapping not yet checked) |
 |---|---:|---:|---:|
 | `__TEXT_EXEC` | `0xfffffff0068ac000` | `0x3a88` | `0x0105cd00` |
 | `__TEXT_EXEC.__text` | `0xfffffff0068ac000` | `0x38b4` | `0x0105cd00` |
 | `__TEXT_EXEC.__stubs` | `0xfffffff0068af8b4` | `0x1d4` | `0x010605b4` |
 
-The user extracted the complete `__TEXT_EXEC` segment as a 14,984-byte
-raw code-segment file and produced an AArch64 disassembly using
-`aarch64-linux-gnu-objdump` with the segment's virtual address as the
-adjusted VMA. The extracted code segment is not a standalone Mach-O file.
-The first disassembly excerpt begins at `0xfffffff0068ac000`; it contains
-valid AArch64 instructions but does not by itself identify a named driver
-method.
+An earlier host extraction treated the reported inner Mach-O `fileoff` as
+an absolute offset in the outer KernelCache. The resulting 14,984-byte file
+was instruction-decodable, but the virtual-address-to-container-offset
+mapping for this T8010 segment has not been independently verified. Until
+that address/file mapping is checked against the full 19H422 KernelCache,
+the extracted bytes should not be treated as confirmed AppleT8010PMGR code.
 
 ## Static method-name and diagnostic-string inventory
 
@@ -237,12 +236,39 @@ ARM64 `MH_KEXT_BUNDLE` with 10 load commands. The user-supplied
 | `__TEXT` | VM `0xfffffff005666d80`; size `0xbf7f`; extracted header starts at file offset `0` |
 | `__TEXT.__const` | size `0x300`; header-relative offset `0x660` |
 | `__TEXT.__cstring` | size `0xb61f`; header-relative offset `0x960` |
-| `__TEXT_EXEC` | VM `0xfffffff0065b6000`; KernelCache offset `0x00f4f280`; size `0x34a4c` |
-| `__TEXT_EXEC.__text` | size `0x34584`; KernelCache offset `0x00f4f280` |
-| `__TEXT_EXEC.__stubs` | size `0x4c8`; KernelCache offset `0x00f83804` |
-| `__DATA` | VM `0xfffffff007ae12c0`; KernelCache offset `0x0247a540`; size `0x4d0` |
-| `__DATA_CONST` | VM `0xfffffff006f18e80`; KernelCache offset `0x018b2100`; size `0x6c88` |
+| `__TEXT_EXEC` | VM `0xfffffff0065b6000`; LC fileoff `0x00f4f280`; size `0x34a4c` |
+| `__TEXT_EXEC.__text` | size `0x34584`; LC fileoff `0x00f4f280` |
+| `__TEXT_EXEC.__stubs` | size `0x4c8`; LC fileoff `0x00f83804` |
+| `__DATA` | VM `0xfffffff007ae12c0`; LC fileoff `0x0247a540`; size `0x4d0` |
+| `__DATA_CONST` | VM `0xfffffff006f18e80`; LC fileoff `0x018b2100`; size `0x6c88` |
 | `__LINKEDIT` | zero file size in the reported load command |
+
+### Outer-KernelCache address mapping correction
+
+The user verified the segment address against the full 19H422 KernelCache
+using the bidirectional `ipsw macho` mapping commands:
+
+| Check | Result |
+|---|---|
+| `ipsw macho a2o "$KC" 0xfffffff0065b6000` | offset `0x01c42000`, section `__text`, segment `__PLK_TEXT_EXEC` |
+| `ipsw macho o2a "$KC" 0x00f4f280` | address `0xfffffff0058c3280`, section `__text`, segment `__PRELINK_TEXT` |
+
+The two results prove that the inner KEXT load-command value `0x00f4f280`
+is **not** the absolute file offset in the outer KernelCache for virtual
+address `0xfffffff0065b6000`. The correct outer-container offset reported
+for that starting virtual address is `0x01c42000`. The earlier table's
+`KernelCache offset` label was therefore incorrect and has been replaced
+with `LC fileoff`. The previous `ApplePMGR.text-exec.bin` extraction at
+`0x00f4f280` came from a different mapped address and must not be treated as
+ApplePMGR executable code. The `__TEXT_EXEC.__stubs`, `__DATA`, and
+`__DATA_CONST` inner `fileoff` values have not yet been independently mapped
+to outer-container offsets either.
+
+Before carving any raw range, verify the end and stub-boundary mappings, or
+prefer IPSW's fileset-aware KEXT extractor. Its kernel guide documents
+`ipsw kernel extract` for extracting a named KEXT from a modern `MH_FILESET`
+KernelCache, with `--imports` available for resolving imported names:
+<https://blacktop.github.io/ipsw/docs/guides/kernel/>.
 
 The `__DATA_CONST` segment contains `__got` (`0x400` bytes),
 `__mod_init_func` (`0x18`), `__mod_term_func` (`0x18`),
@@ -257,10 +283,12 @@ dysymbol table has zero local, external, and undefined symbol entries. The
 zero-sized `__LINKEDIT` and stripped symbol tables mean the code cannot be
 resolved by ordinary symbol names from this extracted KEXT header.
 
-As with the T8010 bundle, these load-command file offsets refer to the
-original 19H422 KernelCache, not offsets inside the extracted `__TEXT`
-header file. In particular, the executable bytes are not contiguous with
-the 49,023-byte header artifact.
+The values printed as `off=` in these embedded KEXT load commands are inner
+Mach-O `fileoff` fields. They must not be relabelled as absolute offsets in
+the outer KernelCache unless independently verified with the full-container
+address mapper. The `__TEXT_EXEC` mapping above demonstrates this distinction.
+The executable segment is also separate from, and not contiguous with, the
+49,023-byte extracted `__TEXT` header artifact.
 
 By comparison, the T8010-specific bundle record advertises
 `IOClass=AppleT8010PMGR` and `IONameMatch=pmgr1,t8010`. Both personality
@@ -303,16 +331,26 @@ the required overrides. The source contract also does not prove that the
 
 ### Next static check
 
-The header has now been parsed, so the next read-only host check is to
-extract the separate `__TEXT_EXEC` segment from the original 19H422
-KernelCache using file offset `0x00f4f280` and size `0x34a4c`.
-The `__TEXT` artifact can also be searched locally for strings naming the
-`IOPMGR` CPU methods. Keep both extracted files local; do not add the
-proprietary binary data to the repository.
+The next host-only check should use the fileset-aware extractor instead of
+reinterpreting the embedded KEXT's `LC_SEGMENT_64.fileoff` as a container
+offset:
 
-This can reveal candidate method strings and permit instruction-level review,
-but stripped symbols, indirect calls, and class metadata still require
-careful interpretation. A missing string is not proof a method is absent.
+```sh
+mkdir -p "$HOME/ApplePMGR-kexts"
+ipsw kernel extract "$KC" com.apple.driver.ApplePMGR --imports \
+  -o "$HOME/ApplePMGR-kexts"
+PMGR="$HOME/ApplePMGR-kexts/com.apple.driver.ApplePMGR"
+file "$PMGR"
+sha256sum "$PMGR"
+ipsw macho info "$PMGR" --loads
+```
+
+Keep the extracted Apple binary local; do not add it to the repository.
+If extraction succeeds, the standalone KEXT load commands can be inspected
+without manually guessing how the inner `fileoff` values relate to the
+outer KernelCache. Stripped symbols, indirect calls, and class metadata
+still require careful interpretation. A missing string is not proof a
+method is absent.
 
 ## Relationship to project milestones
 
