@@ -130,12 +130,16 @@ prologues. The first routine references a string pointer at
 The second routine stores `0xfffffff006f192d0` and copies several fixed-size
 regions from text/data-const addresses.
 
-Several branch/call targets in this excerpt (`0xfffffff0065ea680`,
-`0xfffffff0065ea68c`, `0xfffffff0065ea860`, and `0xfffffff0065ea980`)
-are inside the `__stubs` VM range, not direct named methods. No C++ method
-name has yet been assigned to either routine. The supplied message omitted
-the current dump's explicit `stat` and SHA-256 results, so capture those
-along with the stub and reference inspections next:
+Stub decoding shows that those branch/call targets load eight-byte
+function pointers from __DATA_CONST.__got. The caller at
+0xfffffff0065b6000 passes the literal ApplePMGR, a GOT-loaded pointer, and
+0x34e98 before calling the stub at 0xfffffff0065ea680; this closely matches
+the public XNU OSMetaClass constructor argument pattern, but the actual GOT
+import target remains unresolved. The later routine calls stubs at
+0xfffffff0065ea860 and 0xfffffff0065ea980; their imported functions are also
+unresolved. Do not assign exact C++ names or CPU-start behavior from these
+patterns alone. The next checks capture the corrected executable dump's
+hash and read the relevant GOT slots:
 
 ```sh
 stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
