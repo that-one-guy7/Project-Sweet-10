@@ -1343,3 +1343,27 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   read the raw GOT[0x158] pointer and map it before assigning a superclass
   identity. M2/M4 remain open; M7/SpringBoard has not started. The iPhone 7
   remains on iOS 12.1.4; no device or firmware state was changed.
+
+
+- 2026-11-22: The user resolved generic ApplePMGR GOT offset `0x158`
+  to pointer `0xfffffff0079e4dd0`. `ipsw macho a2o` maps it to
+  outer KernelCache file offset `0x2690dd0`, section
+  `__PRELINK_DATA.__data`; the segment is writable and spans
+  `0x02690000–0x027e4000`. The user supplied a 0x80-byte hexdump at
+  that file offset containing only zero words. This confirms the pointer
+  target's location, but not the class identity or runtime contents. The
+  address is still only the candidate superclass-metaclass pointer passed
+  in x2 to the OSMetaClass constructor for
+  `ApplePMGRFunctionEnableCPUCore`. The third metaclass-init address
+  `0xfffffff007ae14c0` independently maps to
+  `__PRELINK_DATA.__data` at file offset `0x278d4c0`; no bytes from
+  that location were supplied. The local `ipsw kernel cpp` whole-cache
+  scan and both filtered inheritance queries reported
+  `no classes discovered`; this is scanner non-discovery, not proof
+  that the named classes are absent. The attempted grep in the local
+  `.a2s` file for the GOT page/offset returned no matches and is
+  inconclusive. The next static task is to check the corrected generic
+  ApplePMGR executable disassembly for references to page
+  `0xfffffff0079e4000` and inspect any adjacent offset-`0xdd0`
+  access. M2/M4 remain open; M7/SpringBoard has not started. The iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was changed.
