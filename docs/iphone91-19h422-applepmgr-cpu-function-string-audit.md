@@ -317,9 +317,12 @@ found:
 - `ApplePMGRFunctionEnableCPUCore` at `0xa5ac` and its `site.`
   string at `0xa5cb`.
 - No matching EnableCPUCore `callFunction` or
-  `initWithTargetDataAndSymbol` signature in the supplied filtered
-  output. No matching generic `ApplePMGR::enableCPUCore` or
-  `ApplePMGR::enableCPUCores` method string was returned either.
+  `initWithTargetDataAndSymbol` signature, nor an
+  `AppleARMFunction::callFunction` / `initWithTargetDataAndSymbol`
+  signature, in the supplied generic ApplePMGR header scan. No matching
+  generic `ApplePMGR::enableCPUCore` or `ApplePMGR::enableCPUCores`
+  method string was returned either. The AppleARMFunction base methods
+  may be represented in a different prelinked component.
 
 The scan does include call/initializer signatures for several other
 ApplePMGR function classes. This makes the EnableCPUCore non-match worth
