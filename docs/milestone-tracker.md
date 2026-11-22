@@ -29,6 +29,21 @@
 
 ## Change log
 
+- 2026-11-22: Added the generic ApplePMGR GOT/stub analysis from the user's
+  corrected executable and stub disassembly. The stubs use ADRP/LDR/BR
+  indirection through __DATA_CONST.__got; calls in the excerpt select GOT
+  offsets 0xa8, 0xb0, 0x208, and 0x378, while the first routine separately
+  loads a pointer from offset 0x200. The first routine passes the string
+  ApplePMGR, a GOT-loaded pointer, and 0x34e98 before an indirect call,
+  matching the argument pattern of public XNU OSMetaClass construction.
+  This makes an ApplePMGR metaclass initializer the leading interpretation,
+  but the slot target and exact target method name remain unconfirmed.
+  A later routine has a vtable-like pointer store and copy-shaped calls but
+  is not assigned a symbol. The next task is to inspect the GOT pointer
+  values; corrected dump SHA-256 remains pending. No binary added, no device
+  or firmware state accessed, iPhone 7 remains on iOS 12.1.4.
+
+
 - 2026-11-22: Recorded the corrected generic ApplePMGR virtual-address dump excerpt supplied by the user. The first 64 bytes and first 100 disassembly lines begin with plausible AArch64 function prologues at VM `0xfffffff0065b6000` and `0xfffffff0065b603c`. The first routine forms a pointer to `0xfffffff005668102` in the extracted prelink `__TEXT` header, reads via `0xfffffff006f19080`, and stores `0xfffffff006f1c020`; the next routine stores `0xfffffff006f192d0` and copies fixed-size regions. Several calls/branches target `0xfffffff0065ea680`, `0xfffffff0065ea68c`, `0xfffffff0065ea860`, and `0xfffffff0065ea980`, all within the confirmed `__stubs` range. No function names or CPU-start implementation are assigned. The user has not yet supplied the corrected dump's explicit size/hash; next static checks decode the stubs, inspect the referenced string, and map the data-const pointers. No binary is added to Git; no device or firmware state changed.
 
 
