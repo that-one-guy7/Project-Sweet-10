@@ -288,37 +288,29 @@ T8010 PMGR implementation fulfills XNU's `IOPMGR::enableCPUCore`
 contract, demonstrate secondary-CPU reset release, or prove ABI
 compatibility between the 19H422 target kernel and the 20H392 donor.
 
-### Next host-side check: locate the CPU-core-enable string precisely
+### Next host-side check: identify the EnableCPUCore superclass pointer
 
-The fresh-cache output reproduced the two IOPMGR annotations, but the
-transient `.a2s` file no longer exists and could not be hashed. The user's
-current KernelCache SHA-256 matches the recorded 19H422 source identity.
-
-The next useful static task is to collect exact file offsets for the
-CPU-core-enable identifiers in the already extracted generic ApplePMGR
-prelink header. Its base VM address is
-`0xfffffff005666d80`, so string offsets from this extracted header can be
-converted to candidate virtual addresses by adding that base. Run:
+The user supplied three direct code references to
+`ApplePMGRFunctionEnableCPUCore`. All three pass the class-name pointer,
+class size `0x38`, and an argument to the `OSMetaClass` constructor.
+The first two load the second argument through GOT VA
+`0xfffffff006f18fd8`, which is relative offset `0x158` in the
+`ApplePMGR.got.bin` dump. The next step is to read that 64-bit value and
+map it against the same hash-verified 19H422 KernelCache. The third
+initialization sequence passes `x19` and places its metaclass object at
+`0xfffffff007ae14c0`.
 
 ~~~sh
-PRELINK="$HOME/ApplePMGR.prelink-text.bin"
-
-test -f "$PRELINK" || {
-  echo "Missing $PRELINK"
-  exit 1
-}
-
-sha256sum "$PRELINK"
-
-strings -a -t x -n 5 "$PRELINK" | \
-  grep -Ei 'ApplePMGRFunctionEnableCPUCore|site\.ApplePMGRFunctionEnableCPUCore|enableCPUCore|ApplePMGRFunction|CPUCore|IOPlatformFunction'
+xxd -e -g8 -c8 -s 0x158 -l 8 "$HOME/ApplePMGR.got.bin"
+ipsw macho a2o "$KC" 0xfffffff007ae14c0
 ~~~
 
-Paste the complete filtered output. The offsets will let us map the exact
-string locations and plan a targeted static-reference check against the
-generic ApplePMGR executable segment. A string occurrence alone does not
-identify a callback or prove secondary-CPU release. Keep the extracted
-Apple binary local; share only the offsets and text output.
+Do not label the GOT pointer as a particular superclass until its value is
+known. The filtered output did not show a direct `ADD #0x34b` reference
+to the `site.ApplePMGRFunctionEnableCPUCore` string; that does not rule
+out references through read-only data or indirect registration structures.
+The three class-name xrefs identify metaclass construction, not the
+`callFunction` callback or actual CPU-start behavior.
 
 All evidence remains host-side static inspection. No Apple binary was added
 to the repository, and the physical iPhone 7 remains on iOS 12.1.4.

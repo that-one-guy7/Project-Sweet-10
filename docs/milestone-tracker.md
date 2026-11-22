@@ -1324,3 +1324,22 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   ApplePMGR executable disassembly for references to the page containing
   these strings. M2/M4 remain open; M7/SpringBoard has not started. The
   iPhone 7 remains on iOS 12.1.4; no device or firmware state was changed.
+
+- 2026-11-22: The user supplied an AArch64 disassembly filter of references
+  to the prelink page containing `ApplePMGRFunctionEnableCPUCore`.
+  Three instruction pairs at `0xfffffff0065dae00/dae04`,
+  `0xfffffff0065daed0/daed4`, and
+  `0xfffffff0065ddf04/ddf08` construct the exact class-name VA
+  `0xfffffff00567132c` in x1. Each sequence sets the OSMetaClass class-size
+  argument to `0x38` and calls the already identified OSMetaClass
+  constructor stub at `0xfffffff0065ea680`. Two sequences load x2 through
+  GOT VA `0xfffffff006f18fd8` (GOT offset `0x158`); the third passes
+  x2=x19 and x0=`0xfffffff007ae14c0`. This is direct evidence of
+  metaclass initialization/registration for the named class, not its
+  callFunction callback or proof of D10AP runtime instantiation. The first
+  pass did not show a direct immediate reference to the adjacent
+  `site.ApplePMGRFunctionEnableCPUCore` string at VA
+  `0xfffffff00567134b`; indirect/data references remain possible. Next
+  read the raw GOT[0x158] pointer and map it before assigning a superclass
+  identity. M2/M4 remain open; M7/SpringBoard has not started. The iPhone 7
+  remains on iOS 12.1.4; no device or firmware state was changed.

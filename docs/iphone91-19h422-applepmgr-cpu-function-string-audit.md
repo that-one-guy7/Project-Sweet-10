@@ -83,6 +83,53 @@ the observed string inventory only; it does not prove that the
 EnableCPUCore class lacks an implementation, inherits a default handler,
 or is not instantiated.
 
+## Static executable cross-references (2026-11-22)
+
+The user supplied the first-pass AArch64 disassembly lines for all
+instructions matching the `0xfffffff005671000` page. Three instruction
+pairs construct the exact `ApplePMGRFunctionEnableCPUCore` string
+address `0xfffffff00567132c`:
+
+| ADRP / ADD sequence | Instructions |
+|---|---|
+| `0xfffffff0065dae00` / `0xfffffff0065dae04` | `ADRP x1, 0xfffffff005671000`; `ADD x1, x1, #0x32c` |
+| `0xfffffff0065daed0` / `0xfffffff0065daed4` | `ADRP x1, 0xfffffff005671000`; `ADD x1, x1, #0x32c` |
+| `0xfffffff0065ddf04` / `0xfffffff0065ddf08` | `ADRP x1, 0xfffffff005671000`; `ADD x1, x1, #0x32c` |
+
+Each sequence then sets the class-size argument `w3 = 0x38` and calls
+`0xfffffff0065ea680`, the stub previously resolved through GOT slot
+`0xa8` to the `OSMetaClass` constructor.
+
+The first two sequences load their `x2` argument through
+`LDR x2, [0xfffffff006f18000 + 0xfd8]`, i.e. GOT VA
+`0xfffffff006f18fd8` (offset `0x158` from the generic ApplePMGR GOT
+base `0xfffffff006f18e80`). The third sequence supplies `x2 = x19`
+and `x0 = 0xfffffff007ae14c0` before calling the same constructor.
+The class-name reference, class-size argument, and OSMetaClass call
+strongly identify these as metaclass initialization/registration sequences
+for `ApplePMGRFunctionEnableCPUCore`; they do not identify its
+`callFunction` callback or prove that the site is instantiated on D10AP.
+
+The first-pass output contains no adjacent `ADD #0x34b` reference to the
+`site.ApplePMGRFunctionEnableCPUCore` string. This only means that this
+filtered code-reference output did not show a direct immediate construction
+of that site-string address. It does not rule out a pointer stored in
+read-only data, generated tables, or another indirect registration path.
+
+### Next static check
+
+Read the raw 64-bit value from GOT offset `0x158`, then map it if it is
+a kernel virtual address. Also map the static class-metaclass object
+address passed in `x0` by the third sequence:
+
+~~~sh
+xxd -e -g8 -c8 -s 0x158 -l 8 "$HOME/ApplePMGR.got.bin"
+ipsw macho a2o "$KC" 0xfffffff007ae14c0
+~~~
+
+Do not assign the superclass name until the raw GOT value has been
+identified. Keep the Apple binary and GOT dump local.
+
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:
