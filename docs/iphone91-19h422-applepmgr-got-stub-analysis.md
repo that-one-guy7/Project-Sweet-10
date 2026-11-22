@@ -177,6 +177,16 @@ Both binary artifacts remain local to the user's Ubuntu environment.
 
 ### Resolved GOT values
 
+**Symbol-cache qualification:** the supplied disassembly output reports that
+`ipsw` loaded 5,647 symbols from the local
+`kernelcache.release.iPhone9,1_3.a2s` cache file. The labels below are
+therefore symbol-cache labels assigned to target addresses; they are not
+evidence that the stripped KernelCache itself contains a populated native
+symbol table. The exact provenance/build match of that `.a2s` file should
+be checked separately before treating these labels as final symbol
+provenance. The addresses, section mappings, raw GOT values, and instruction
+bytes remain independently useful evidence even if a label later changes.
+
 | GOT offset | Pointer value | Disassembler symbol / section | Outer KernelCache offset |
 |---:|---|---|---:|
 | `0xa8` | `0xfffffff0076dde78` | `__ZN11OSMetaClassC2EPKcPKS_j` (`OSMetaClass` constructor), `__TEXT_EXEC.__text` | `0x6d9e78` |
