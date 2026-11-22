@@ -131,7 +131,7 @@ The code and stubs establish that:
   ApplePMGRFunctionEnableCPUCore, cluster-control, and CPU-idle strings.
 
 They do not establish that the metaclass function is the CPU-core-enable
-callback, that the GOT dispatch target implements XNU IOPMR::enableCPUCore,
+callback, that the GOT dispatch target implements XNU IOPMGR::enableCPUCore,
 that the concrete target PMGR releases a secondary CPU from reset, or that
 XNU 8796 is ABI-compatible with this private 19H422 driver.
 
