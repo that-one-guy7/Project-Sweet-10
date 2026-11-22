@@ -75,10 +75,11 @@ supported statement is:
 **`0xfffffff0079e4dd0` is the candidate superclass-metaclass pointer
 passed to the `ApplePMGRFunctionEnableCPUCore` metaclass constructor.**
 
-The class name represented by that pointer is not yet known. The all-zero
-on-disk bytes do not identify it. Do not infer that its name is
-`ApplePMGRFunction`, `IOPlatformFunction`, or another plausible base
-class from naming conventions alone.
+The all-zero on-disk bytes do not identify the object, but the later
+shared-prelink registration audit resolves its class identity: the
+metaclass initializer for `AppleARMFunction` uses this exact address as
+its destination storage (`x0`). See the confirmed registration evidence
+below. Do not infer the identity from zero-filled file bytes alone.
 
 The third sequence separately passes x0 =
 `0xfffffff007ae14c0`. The user mapped this address to file offset
@@ -156,32 +157,91 @@ storage x0=`0xfffffff0079e57c0`, the
 `AppleARMFunctionSlowAdaptiveClocking` name in x1,
 `0xfffffff0079e4dd0` in x2, and class size `0x40`.
 
-These findings support the candidate pointer's use as shared
-superclass-metaclass metadata across the two AppleARMFunction classes
-and the previously identified `ApplePMGRFunctionEnableCPUCore`
-registration. The class represented by the pointer remains unknown.
-`AppleARMFunction` is a plausible parent-name hypothesis, not a
-confirmed identity: it must be tied to a constructor sequence whose
-x1 points to the exact `AppleARMFunction` string and whose x0 is
-`0xfffffff0079e4dd0`.
+The two subclass registrations and the earlier
+`ApplePMGRFunctionEnableCPUCore` registration all pass
+`0xfffffff0079e4dd0` as x2, the superclass argument. The user then
+located the exact `AppleARMFunction` class-name string and its own
+metaclass initializer in the shared prelink text, resolving the pointer's
+identity.
 
-### Next check
+### Exact AppleARMFunction string locations
 
-~~~sh
-strings -a -t x -n 5 "$KC" |
-  awk '$2 == "AppleARMFunction" || $2 == "site.AppleARMFunction"'
+| String | KernelCache file offset | Virtual address | Section |
+|---|---:|---:|---|
+| `AppleARMFunction` | `0x96de3c` | `0xfffffff0052e1e3c` | `__PRELINK_TEXT.__text` |
+| `site.AppleARMFunction` | `0x96de4d` | `0xfffffff0052e1e4d` | `__PRELINK_TEXT.__text` |
 
-ipsw macho o2a "$KC" 0x<file-offset>
+The user mapped both offsets with `ipsw macho o2a` against the
+same hash-identified 19H422 KernelCache. The empty `.a2s` grep is
+only a symbol-cache non-match; it does not negate the raw strings or
+the disassembly evidence.
 
-A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
-grep -in 'AppleARMFunction' "$A2S" | head -80
-~~~
+### AppleARMFunction metaclass initializer
 
-The first command looks for the exact base-class strings, avoiding
-substring matches on the two longer subclass names. Map any returned
-file offset with `ipsw macho o2a`, then correlate the resulting VA
-with a bounded disassembly window. The `.a2s` lookup is supplemental;
-absence from that text file does not prove the class is absent.
+The decisive sequence at
+`0xfffffff005964fe4–0xfffffff005965004` is:
+
+```asm
+0xfffffff005964fe4: adrp x19, 0xfffffff0079e4000
+0xfffffff005964fe8: add  x19, x19, #0xdd0
+0xfffffff005964fec: adrp x1, 0xfffffff0052e1000
+0xfffffff005964ff0: add  x1, x1, #0xe3c
+0xfffffff005964ff4: adrp x2, 0xfffffff006cdf000
+0xfffffff005964ff8: ldr  x2, [x2, #0x7c0]
+0xfffffff005964ffc: mov  x0, x19
+0xfffffff005965000: mov  w3, #0x28
+0xfffffff005965004: bl   0xfffffff005993844
+```
+
+The address arithmetic gives x19 =
+`0xfffffff0079e4dd0`; the ADRP/ADD pair gives x1 =
+`0xfffffff0052e1e3c`, the exact `AppleARMFunction` string. The
+sequence then passes x0=x19, class size `0x28`, and calls the
+previously identified `OSMetaClass` constructor at
+`0xfffffff005993844`. Under the constructor layout used in this
+audit, x0 is the metaclass object being initialized, x1 is its class
+name, x2 is its superclass metaclass, and w3 is its class size.
+
+This directly ties `0xfffffff0079e4dd0` to the
+`AppleARMFunction` metaclass storage. Two additional
+constructor-shaped sequences at `0xfffffff0059642e8` and
+`0xfffffff0059643b8` also use the exact class-name string and
+class-size argument `0x28`, corroborating the same initializer family.
+
+### Resolved subclass relationships
+
+The previously documented registrations pass the now-identified
+`AppleARMFunction` metaclass address as x2:
+
+| Registered class | Call-site VA(s) | x2 superclass metadata | Class size |
+|---|---|---|---:|
+| `AppleARMFunctionSlowAdaptiveClocking` | `0xfffffff00598dd14` / `0xfffffff00598dde4` | `0xfffffff0079e4dd0` (`AppleARMFunction`) | `0x40` |
+| `AppleARMFunctionSlowAdaptiveClockingAggressor` | `0xfffffff00598e07c` / `0xfffffff00598e14c` | `0xfffffff0079e4dd0` (`AppleARMFunction`) | `0x38` |
+| `ApplePMGRFunctionEnableCPUCore` | `0xfffffff0065dae00` / `0xfffffff0065daed0` / `0xfffffff0065ddf04` | `0xfffffff0079e4dd0` (`AppleARMFunction`) | `0x38` |
+
+**Conclusion:** static metaclass-construction evidence in the 19H422
+KernelCache confirms that `ApplePMGRFunctionEnableCPUCore`,
+`AppleARMFunctionSlowAdaptiveClocking`, and
+`AppleARMFunctionSlowAdaptiveClockingAggressor` use
+`AppleARMFunction` as their superclass.
+
+This does not prove that `ApplePMGRFunctionEnableCPUCore` is instantiated
+for D10AP, identify its `callFunction` callback, establish a concrete
+`IOPMGR::enableCPUCore` override, or demonstrate secondary-core release,
+IRQ delivery, device boot, iOS 16 compatibility, or SpringBoard. The
+broad shared-segment disassembly remains partial under Binutils 2.42;
+the specific supplied windows and references are the evidence recorded
+here.
+
+### Next static research question
+
+The superclass identity is resolved. The next useful static question is
+whether the `ApplePMGRFunctionEnableCPUCore` class has an identifiable
+callback implementation and how its registration data refers to that
+callback. Keep that analysis confined to local, read-only examination of
+the hash-identified KernelCache; class registration alone does not
+establish runtime behavior.
+
 
 The bounded disassembly already completed successfully:
 
