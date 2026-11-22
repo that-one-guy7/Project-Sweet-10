@@ -29,6 +29,9 @@
 
 ## Change log
 
+- 2026-11-22: Recorded the corrected generic ApplePMGR virtual-address dump excerpt supplied by the user. The first 64 bytes and first 100 disassembly lines begin with plausible AArch64 function prologues at VM `0xfffffff0065b6000` and `0xfffffff0065b603c`. The first routine forms a pointer to `0xfffffff005668102` in the extracted prelink `__TEXT` header, reads via `0xfffffff006f19080`, and stores `0xfffffff006f1c020`; the next routine stores `0xfffffff006f192d0` and copies fixed-size regions. Several calls/branches target `0xfffffff0065ea680`, `0xfffffff0065ea68c`, `0xfffffff0065ea860`, and `0xfffffff0065ea980`, all within the confirmed `__stubs` range. No function names or CPU-start implementation are assigned. The user has not yet supplied the corrected dump's explicit size/hash; next static checks decode the stubs, inspect the referenced string, and map the data-const pointers. No binary is added to Git; no device or firmware state changed.
+
+
 - 2026-11-22: Recorded the four user-supplied outer-container boundary mappings for generic ApplePMGR `__TEXT_EXEC`. Start VA `0xfffffff0065b6000` maps to `0x01c42000`; last `__text` byte `0xfffffff0065ea583` maps to `0x01c76583`; first `__stubs` byte `0xfffffff0065ea584` maps to `0x01c76584`; final segment byte `0xfffffff0065eaa4b` maps to `0x01c76a4b`. All mappings identify `__PLK_TEXT_EXEC`; text and stubs are contiguous, and the complete byte count equals `0x34a4c` / 215,628. The next step is to dump by virtual address with `ipsw macho dump`, then verify output size/hash before disassembly. No binary is added to Git; no device or firmware state changed, and the iPhone 7 remains on iOS 12.1.4.
 
 
