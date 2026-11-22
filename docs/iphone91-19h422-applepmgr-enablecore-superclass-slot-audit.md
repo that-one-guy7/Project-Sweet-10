@@ -156,32 +156,79 @@ storage x0=`0xfffffff0079e57c0`, the
 `AppleARMFunctionSlowAdaptiveClocking` name in x1,
 `0xfffffff0079e4dd0` in x2, and class size `0x40`.
 
-These findings support the candidate pointer's use as shared
-superclass-metaclass metadata across the two AppleARMFunction classes
-and the previously identified `ApplePMGRFunctionEnableCPUCore`
-registration. The class represented by the pointer remains unknown.
-`AppleARMFunction` is a plausible parent-name hypothesis, not a
-confirmed identity: it must be tied to a constructor sequence whose
-x1 points to the exact `AppleARMFunction` string and whose x0 is
-`0xfffffff0079e4dd0`.
+## AppleARMFunction metaclass-storage correlation (2026-11-22)
 
-### Next check
+The user then searched the target KernelCache for the exact base-class
+strings. The raw string scan returned:
 
-~~~sh
-strings -a -t x -n 5 "$KC" |
-  awk '$2 == "AppleARMFunction" || $2 == "site.AppleARMFunction"'
+| String | KernelCache file offset | Virtual address |
+|---|---:|---|
+| `AppleARMFunction` | `0x96de3c` | `0xfffffff0052e1e3c` |
+| `site.AppleARMFunction` | `0x96de4d` | `0xfffffff0052e1e4d` |
 
-ipsw macho o2a "$KC" 0x<file-offset>
+Both offsets were mapped with `ipsw macho o2a` into
+`__PRELINK_TEXT.__text`.
 
-A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
-grep -in 'AppleARMFunction' "$A2S" | head -80
+The shared `__PLK_TEXT_EXEC` disassembly contains a class-construction
+sequence at `0xfffffff005964fec`:
+
+~~~asm
+0xfffffff005964fe4: adrp x19, 0xfffffff0079e4000
+0xfffffff005964fe8: add  x19, x19, #0xdd0
+0xfffffff005964fec: adrp x1, 0xfffffff0052e1000
+0xfffffff005964ff0: add  x1, x1, #0xe3c
+0xfffffff005964ff4: adrp x2, 0xfffffff006cdf000
+0xfffffff005964ff8: ldr  x2, [x2, #0x7c0]
+0xfffffff005964ffc: mov  x0, x19
+0xfffffff005965000: mov  w3, #0x28
+0xfffffff005965004: bl   0xfffffff005993844
 ~~~
 
-The first command looks for the exact base-class strings, avoiding
-substring matches on the two longer subclass names. Map any returned
-file offset with `ipsw macho o2a`, then correlate the resulting VA
-with a bounded disassembly window. The `.a2s` lookup is supplemental;
-absence from that text file does not prove the class is absent.
+This computes x0 = `0xfffffff0079e4dd0`, points x1 at the exact
+`AppleARMFunction` class-name string, loads x2 from slot
+`0xfffffff006cdf7c0`, and supplies class size `0x28`. The x2 value
+is the superclass argument for `AppleARMFunction` itself; its identity
+has not been resolved.
+
+The important cross-reference is that the previously audited
+`ApplePMGRFunctionEnableCPUCore` initializer passes the same
+`0xfffffff0079e4dd0` address in x2. In the public XNU
+`OSMetaClass(const char *inClassName, const OSMetaClass *inSuperClass,
+unsigned int inClassSize)` signature, x0 is the metaclass object being
+constructed, x1 is its name, x2 is its superclass metaclass, and w3 is
+its class size. The public implementation stores
+`superClassLink = inSuperClass`
+([OSMetaClass.cpp](https://github.com/apple/darwin-xnu/blob/main/libkern/c%2B%2B/OSMetaClass.cpp)).
+That ABI/argument pattern makes `0xfffffff0079e4dd0` the static
+`AppleARMFunction` metaclass storage, and strongly identifies
+`AppleARMFunction` as the direct superclass supplied to
+`ApplePMGRFunctionEnableCPUCore`.
+
+**Evidence qualification:** the AppleARMFunction call site targets
+`0xfffffff005993844`; its exact local callee identity should still be
+checked directly before treating the helper's symbol name as independently
+resolved. The constructor argument layout and matching storage address
+are strong static evidence, not proof that a specific KEXT was loaded or
+that any CPU-start callback runs on D10AP. The parent of
+`AppleARMFunction` itself, loaded through
+`0xfffffff006cdf7c0`, also remains unknown.
+
+### Next check: verify the shared constructor helper
+
+~~~sh
+grep -n -B8 -A36 '^0xfffffff005993844:' \
+  "$HOME/plk-text-exec.disass.txt"
+
+A2S="$HOME/Downloads/extracted/19H422__iPhone9,1_3/kernelcache.release.iPhone9,1_3.a2s"
+grep -in 'OSMetaClass::OSMetaClass' "$A2S" | head -40
+~~~
+
+The first command inspects the shared call target used by the
+AppleARMFunction sequence. The second is supplemental symbol-cache
+evidence; an empty result does not prove the method is absent. After the
+helper is checked, the next separate static question is the identity of
+AppleARMFunction's own superclass pointer at
+`0xfffffff006cdf7c0`.
 
 The bounded disassembly already completed successfully:
 
