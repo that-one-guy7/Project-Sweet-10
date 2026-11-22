@@ -1430,3 +1430,26 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   for constructor correlation. M2/M4 remain open; M7/SpringBoard has
   not started. The physical iPhone 7 remains on iOS 12.1.4; no device
   or firmware state was changed.
+
+
+- 2026-11-22: Resolved the main class-name lead in the iPhone9,1 /
+  D10AP 19H422 shared prelink analysis. The exact
+  `AppleARMFunction` string is at file offset `0x96de3c` /
+  VA `0xfffffff0052e1e3c`; `site.AppleARMFunction` is at
+  `0x96de4d` / `0xfffffff0052e1e4d`. A registration-shaped
+  sequence at `0xfffffff005964fec` sets x0 to
+  `0xfffffff0079e4dd0`, x1 to `AppleARMFunction`, x2 from
+  `0xfffffff006cdf7c0`, and w3 to `0x28`, then calls
+  `0xfffffff005993844`. The previously audited
+  `ApplePMGRFunctionEnableCPUCore` initializer passes the exact
+  `0xfffffff0079e4dd0` address in x2. Under the public XNU
+  OSMetaClass constructor argument contract, this strongly identifies
+  AppleARMFunction as the static direct superclass of
+  ApplePMGRFunctionEnableCPUCore. The helper body at
+  `0xfffffff005993844` remains to be checked directly, and
+  AppleARMFunction's own superclass (loaded from
+  `0xfffffff006cdf7c0`) is still unknown. This does not establish
+  D10AP runtime instantiation, the EnableCPUCore callback, secondary-core
+  release, iOS 16 compatibility, boot, or SpringBoard. M2/M4 remain open;
+  M7/SpringBoard has not started. The physical iPhone 7 remains on
+  iOS 12.1.4; no device or firmware state was changed.
