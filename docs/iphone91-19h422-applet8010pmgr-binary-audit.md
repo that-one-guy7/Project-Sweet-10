@@ -344,8 +344,9 @@ Pinned sources:
 - [8796.141.3 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOPMGR.h), [IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOPMGR.cpp), [AppleARMSMP.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/arm/AppleARMSMP.cpp)
 - [8020.101.4 IOPMGR.h](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/IOKit/IOPMGR.h), [IOPMGR.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/Kernel/IOPMGR.cpp), [AppleARMSMP.cpp](https://github.com/apple-oss-distributions/xnu/blob/xnu-8020.101.4/iokit/Kernel/arm/AppleARMSMP.cpp)
 
-The 8020.101.4 snapshot is close to, but not the exact source revision
-for, the target KernelCache's reported `8020.241.44~1` version. This
+The 8020.101.4 snapshot is an earlier public source version from the
+same XNU 8020 line, not the exact source revision for the target
+KernelCache's reported `8020.241.44~1` version. This
 cross-tag API comparison does not identify the private 19H422
 ApplePMGR/AppleT8010PMGR override. See the focused
 [EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
