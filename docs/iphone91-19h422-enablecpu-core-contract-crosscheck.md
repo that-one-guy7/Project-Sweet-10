@@ -238,6 +238,74 @@ independently confirms the correct outer-container mapping and avoids
 the earlier mistake of treating an inner `LC_SEGMENT_64.fileoff` as
 an outer file offset.
 
+### First verified AppleT8010PMGR executable dump and initial disassembly (2026-11-22)
+
+The user completed the virtual-address-based dump of the mapped segment
+at `0xfffffff0068ac000`. The shell size assertion for exactly 14,984
+bytes completed without error. The raw segment SHA-256 is:
+
+`95cb5769c9425c0a6755de602f1e0872959b7fa910da642aa791c5e5f3fc5e52`.
+
+GNU `objdump -D -b binary -m aarch64` produced an address-adjusted
+disassembly. Its generic `.data` section label is an artifact of
+disassembling a raw binary, not evidence that the original
+`__TEXT_EXEC` segment is data.
+
+The user supplied the first 180 disassembly lines (beginning at
+`0xfffffff0068ac000`). This excerpt establishes several static facts:
+
+- The opening sequence forms a reference to VA
+  `0xfffffff00584f9b0`, loads a 64-bit value through slot
+  `0xfffffff006f73f10`, places immediate `0x34f48` in `w3`, and
+  calls local address `0xfffffff0068af8f0`. It then stores the pointer
+  value `0xfffffff006f74a58` through the incoming `x0` pointer.
+- Other short sequences call local addresses
+  `0xfffffff0068afa10`, `0xfffffff0068afa28`, and
+  `0xfffffff0068af8d8`, and store pointer values including
+  `0xfffffff006f74040`.
+- At `0xfffffff0068ac200`, a longer sequence makes repeated calls to
+  local address `0xfffffff0068af92c` with constant argument pairs
+  `(0,0)`, `(1,1)`, `(8,2)`, `(39,3)`, `(12,4)`,
+  `(10,5)`, and `(11,6)`, while setting `x3` and `x4` to zero
+  for each shown call.
+
+These are observations about instruction operands and control flow,
+not semantic identifications. The local destinations are in the
+segment's `__stubs` region; until their stub bodies and indirect
+targets are resolved, the calls must not be named as metaclass
+registration, register programming, CPU-core release, or the
+`IOPMGR::enableCPUCore` implementation. The first 180 lines are only
+an excerpt and do not establish the behavior of the entire segment.
+
+### Next static inspection
+
+The remaining useful evidence is the complete local stub table and the
+cross-references into it, plus the bytes/string at
+`0xfffffff00584f9b0` (offset `0x6b0` relative to the extracted
+AppleT8010PMGR header base `0xfffffff00584f300`). The next read-only
+host commands are:
+
+```sh
+DIS="$HOME/AppleT8010PMGR.text-exec.disass.txt"
+PRE="$HOME/AppleT8010PMGR.prelink-text.bin"
+
+# Display the full local __stubs region.
+sed -n '/^fffffff0068af8b4:/,$p' "$DIS"
+
+# List direct branches/calls from the text into the local stub range.
+grep -E ':[[:space:]]+(bl|b)[[:space:]]+0xfffffff0068af' "$DIS"
+
+# Inspect the prelink-header bytes around VA 0xfffffff00584f9b0.
+# Header VM base is 0xfffffff00584f300, so this is file offset 0x6b0.
+xxd -g1 -s 0x690 -l 128 "$PRE"
+strings -a -t x -n 1 "$PRE" | grep -Ei 'AppleT8010PMGR|ApplePMGR|AppleARMFunction'
+```
+
+Paste the stub-region output, branch/call list, and the string/hex context
+around offset `0x6b0`. These are local, read-only static inspections.
+Do not infer a runtime path from the stub names alone.
+
+
 ### Next host-side extraction and disassembly
 
 Use the verified VM address, not an inner file offset:
