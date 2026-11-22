@@ -223,6 +223,45 @@ personality:
 | `IOPlatformWakeAction` | `600` |
 | Halt/restart, active, and sleep action fields | `null` in the serialized JSON |
 
+
+### Generic ApplePMGR Mach-O header and segment map
+
+The extracted 49,023-byte prelink `__TEXT` region was parsed as a 64-bit
+ARM64 `MH_KEXT_BUNDLE` with 10 load commands. The user-supplied
+`ipsw macho info --loads` output reports:
+
+| Field / segment | Value |
+|---|---|
+| `LC_UUID` | `29A10C96-489B-3D22-8D81-974A570645C3` |
+| `LC_SOURCE_VERSION` | `939.140.3.0.0` |
+| `__TEXT` | VM `0xfffffff005666d80`; size `0xbf7f`; extracted header starts at file offset `0` |
+| `__TEXT.__const` | size `0x300`; header-relative offset `0x660` |
+| `__TEXT.__cstring` | size `0xb61f`; header-relative offset `0x960` |
+| `__TEXT_EXEC` | VM `0xfffffff0065b6000`; KernelCache offset `0x00f4f280`; size `0x34a4c` |
+| `__TEXT_EXEC.__text` | size `0x34584`; KernelCache offset `0x00f4f280` |
+| `__TEXT_EXEC.__stubs` | size `0x4c8`; KernelCache offset `0x00f83804` |
+| `__DATA` | VM `0xfffffff007ae12c0`; KernelCache offset `0x0247a540`; size `0x4d0` |
+| `__DATA_CONST` | VM `0xfffffff006f18e80`; KernelCache offset `0x018b2100`; size `0x6c88` |
+| `__LINKEDIT` | zero file size in the reported load command |
+
+The `__DATA_CONST` segment contains `__got` (`0x400` bytes),
+`__mod_init_func` (`0x18`), `__mod_term_func` (`0x18`),
+`__const` (`0x57a8`), `__kalloc_type` (`0x5c0`), and
+`__kalloc_var` (`0xaf0`). These are useful candidates for later
+class/registration metadata inspection, but their presence alone does not
+identify a vtable, initializer, or CPU-start implementation.
+
+The `__DATA` start address exactly matches the previously recorded
+`_PrelinkKmodInfo` address. The reported `LC_SYMTAB` is stripped and the
+dysymbol table has zero local, external, and undefined symbol entries. The
+zero-sized `__LINKEDIT` and stripped symbol tables mean the code cannot be
+resolved by ordinary symbol names from this extracted KEXT header.
+
+As with the T8010 bundle, these load-command file offsets refer to the
+original 19H422 KernelCache, not offsets inside the extracted `__TEXT`
+header file. In particular, the executable bytes are not contiguous with
+the 49,023-byte header artifact.
+
 By comparison, the T8010-specific bundle record advertises
 `IOClass=AppleT8010PMGR` and `IONameMatch=pmgr1,t8010`. Both personality
 records name `AppleARMIODevice` as the provider class, but they match
@@ -236,21 +275,44 @@ The action values `90000` and `600` are recorded verbatim. Their units,
 call-site interpretation, and runtime effects have not been established and
 must not be labelled milliseconds or treated as measured delays.
 
+### Pinned XNU 8796 IOPMGR interface contract
+
+The public `xnu-8796.141.3` source makes the unresolved CPU-start question
+more specific:
+
+- `IOPMGR.h` describes `IOPMGR` as the base class for power managers such
+  as `ApplePMGR`.
+- Its two-argument `enableCPUCore(cpu_id, entry_pa)` contract is to release
+  a secondary CPU from reset and enable external IRQ delivery. The physical
+  reset-vector argument is not necessarily honored by every platform.
+- The older one-argument overload is deprecated.
+- In `IOPMGR.cpp`, the default two-argument implementation falls back to
+  the one-argument overload; the base one-argument implementation panics
+  with "enableCPUCore is unimplemented".
+
+Pinned source references:
+[`IOPMGR.h`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/IOKit/IOPMGR.h#L38-L63)
+and
+[`IOPMGR.cpp`](https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.141.3/iokit/Kernel/IOPMGR.cpp#L33-L46).
+
+This describes the public 8796 interface and default fallback, not the
+private implementation in the 19H422 ApplePMGR/AppleT8010PMGR binaries.
+The target binary audit must still determine which concrete class supplies
+the required overrides. The source contract also does not prove that the
+20H392 donor kernel uses the same exact ApplePMGR implementation.
+
 ### Next static check
 
-The base `ApplePMGR` executable record provides its load address and size,
-but no code bytes have yet been inspected. The next host-side check is to map
-`0xfffffff005666d80` to its original KernelCache file offset with
-`ipsw macho a2o`, extract the recorded `0xbf7f`-byte prelink `__TEXT`
-region from the read-only host copy, and inspect its Mach-O load commands for
-the separate executable text segment. Any code-segment extraction should be
-kept distinct from the prelink header region, as in the
-`AppleT8010PMGR` audit above.
+The header has now been parsed, so the next read-only host check is to
+extract the separate `__TEXT_EXEC` segment from the original 19H422
+KernelCache using file offset `0x00f4f280` and size `0x34a4c`.
+The `__TEXT` artifact can also be searched locally for strings naming the
+`IOPMGR` CPU methods. Keep both extracted files local; do not add the
+proprietary binary data to the repository.
 
-This follow-up still does not establish secondary-core release. It narrows
-the next inspection to the generic ApplePMGR implementation, while the
-T8010-specific provider's actual CPU-start contract and firmware/reset-vector
-interaction remain unresolved.
+This can reveal candidate method strings and permit instruction-level review,
+but stripped symbols, indirect calls, and class metadata still require
+careful interpretation. A missing string is not proof a method is absent.
 
 ## Relationship to project milestones
 
