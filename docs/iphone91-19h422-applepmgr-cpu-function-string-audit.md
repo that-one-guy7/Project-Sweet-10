@@ -305,6 +305,30 @@ to XNU's `IOPMGR::enableCPUCore` virtual method. See the
 [callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md)
 for the evidence boundary and next static check.
 
+### 19H422 follow-up string inventory
+
+The user's follow-up scan of the generic ApplePMGR header
+(`SHA-256 4764017feef6d87c1f8a524bf04ec1148817d61fd482639e252325fd0300f43f`)
+found:
+
+- `ApplePMGRFunctionCPUIdle` at `0xa4e6`, its `site.` string at
+  `0xa4ff`, and an explicit
+  `ApplePMGRFunctionCPUIdle::callFunction` signature at `0xa51d`.
+- `ApplePMGRFunctionEnableCPUCore` at `0xa5ac` and its `site.`
+  string at `0xa5cb`.
+- No matching EnableCPUCore `callFunction` or
+  `initWithTargetDataAndSymbol` signature in the supplied filtered
+  output. No matching generic `ApplePMGR::enableCPUCore` or
+  `ApplePMGR::enableCPUCores` method string was returned either.
+
+The scan does include call/initializer signatures for several other
+ApplePMGR function classes. This makes the EnableCPUCore non-match worth
+tracking, but it remains a string-inventory observation only: no claim
+that an override or inherited callback is absent is justified.
+
+See the [EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md)
+for the paired AppleT8010PMGR result and next static check.
+
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:
