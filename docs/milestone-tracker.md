@@ -1274,3 +1274,18 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   current-main CI is rerunning the scanner and tests. K2 remains open pending
   manual per-feature migration review. See merged PR #137 (both merged-head checks passed); no device or
   firmware state was accessed or changed.
+
+- 2026-11-22: Extended the target-native 19H422 generic ApplePMGR audit with
+  the user's corrected caller disassembly. The IOPMGR constructor call at
+  0xfffffff0065b6060 receives the original x0 object pointer, unchanged by
+  the caller's pointer arithmetic. The metaclass initializer at
+  0xfffffff0065b6194 loads a superclass pointer annotated by the local
+  ipsw .a2s cache as IOPMGR::gMetaClass and passes it with the ApplePMGR
+  class name and 0x34e98 size argument to OSMetaClass::OSMetaClass.
+  Together with the GOT label for IOPMGR::IOPMGR, this strongly supports
+  ApplePMGR deriving from IOPMGR with a base subobject at offset zero.
+  The labels remain qualified pending regeneration of a fresh .a2s cache
+  from the hash-identified 19H422 KernelCache. This does not identify the
+  CPU-core-enable callback or prove secondary-core release. M2 and M4
+  remain open; M7/SpringBoard has not started. The iPhone 7 remains on
+  iOS 12.1.4; no device or firmware state was changed.
