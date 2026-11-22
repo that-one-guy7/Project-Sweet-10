@@ -220,31 +220,51 @@ enough to equate it with the public XNU singular
 
 ## Next read-only host-side check
 
-The generic and T8010 string scans above are complete. The next useful
-target-native artifact is a correctly mapped disassembly of the
-`AppleT8010PMGR` executable segment. Its embedded Mach-O header reports:
+The user has now mapped all four boundary addresses against the
+full 19H422 KernelCache with `ipsw macho a2o`. All four resolve into
+`__PLK_TEXT_EXEC`:
 
-- `__TEXT_EXEC` base: `0xfffffff0068ac000`
-- `__text` size: `0x38b4`
-- `__stubs` start: `0xfffffff0068af8b4`
-- `__TEXT_EXEC` total size: `0x3a88` (14,984 bytes)
+| Purpose | Virtual address | Outer KernelCache offset |
+|---|---|---:|
+| First byte of `__text` | `0xfffffff0068ac000` | `0x1f38000` |
+| Last byte of `__text` | `0xfffffff0068af8b3` | `0x1f3b8b3` |
+| First byte of `__stubs` | `0xfffffff0068af8b4` | `0x1f3b8b4` |
+| Last byte of `__TEXT_EXEC` | `0xfffffff0068afa87` | `0x1f3ba87` |
 
-The old extraction treated an inner Mach-O `LC_SEGMENT_64.fileoff` as
-an outer KernelCache offset; the outer mapping has not been verified.
-First, map the four boundary addresses against the full local 19H422
-KernelCache:
+The `__text` and `__stubs` boundary is contiguous. The inclusive
+outer range `0x1f38000–0x1f3ba87` is exactly `0x3a88` bytes
+(14,984 bytes), matching the embedded Mach-O segment size. This
+independently confirms the correct outer-container mapping and avoids
+the earlier mistake of treating an inner `LC_SEGMENT_64.fileoff` as
+an outer file offset.
+
+### Next host-side extraction and disassembly
+
+Use the verified VM address, not an inner file offset:
 
 ~~~sh
-ipsw macho a2o "$KC" 0xfffffff0068ac000
-ipsw macho a2o "$KC" 0xfffffff0068af8b3
-ipsw macho a2o "$KC" 0xfffffff0068af8b4
-ipsw macho a2o "$KC" 0xfffffff0068afa87
+ipsw macho dump "$KC" 0xfffffff0068ac000 \
+  --size 14984 \
+  --output "$HOME/AppleT8010PMGR.text-exec.bin"
+
+test "$(stat -c %s "$HOME/AppleT8010PMGR.text-exec.bin")" -eq 14984 || {
+  echo "Unexpected AppleT8010PMGR executable-segment size"
+  exit 1
+}
+sha256sum "$HOME/AppleT8010PMGR.text-exec.bin"
+
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff0068ac000 \
+  "$HOME/AppleT8010PMGR.text-exec.bin" \
+  > "$HOME/AppleT8010PMGR.text-exec.disass.txt"
+
+sed -n '1,180p' "$HOME/AppleT8010PMGR.text-exec.disass.txt"
 ~~~
 
-Paste the mapping results before extracting or disassembling this
-segment. Do not assume the embedded KEXT's inner `fileoff` values are
-outer-container offsets. This is static host-side inspection only; leave
-the physical iPhone on iOS 12.1.4.
+Paste the reported SHA-256 and the first 180 disassembly lines. The
+segment is small enough for a bounded review. Do not interpret an
+unresolved stub or indirect call as a named CPU-start method. Keep the
+binary local and leave the physical iPhone on iOS 12.1.4.
 
 All Apple binaries remain local analysis artifacts and are not included
 in this document. No binary is executed, no device/firmware state is
