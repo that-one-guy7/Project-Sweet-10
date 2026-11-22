@@ -1367,3 +1367,17 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   `0xfffffff0079e4000` and inspect any adjacent offset-`0xdd0`
   access. M2/M4 remain open; M7/SpringBoard has not started. The iPhone 7
   remains on iOS 12.1.4; no device or firmware state was changed.
+
+
+- 2026-11-22: The user ran the requested AArch64 disassembly search over
+  the corrected 215,628-byte generic ApplePMGR executable dump for page
+  `0xfffffff0079e4000`; the pipeline returned no matching lines. This
+  narrows only direct references within that one component and does not
+  establish that the candidate superclass pointer is unused or its class
+  absent. The next static check is a local dump and search of the shared
+  `__PLK_TEXT_EXEC` segment (file range
+  `0x00fd4000–0x02364000`, VM range
+  `0xfffffff005948000–0xfffffff006cd8000`, size
+  `0x01390000` / 20,512,768 bytes) for the same target page. M2/M4
+  remain open; M7/SpringBoard has not started. The iPhone 7 remains on
+  iOS 12.1.4; no device or firmware state was changed.
