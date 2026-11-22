@@ -29,6 +29,9 @@
 
 ## Change log
 
+- 2026-11-22: Added a static audit of the target-native `com.apple.driver.AppleT8010PMGR` prelinked KEXT from the iPhone9,1 19H422 KernelCache. The prelink record and Mach-O header/segment metadata were cross-checked against the original KernelCache offsets; method-name strings cover CPU performance states, voltage/PLL control, wakeup sources, energy accumulators, and ACC/AOP register access. This narrows the target PMGR subsystem inventory but does not establish secondary-core release, runtime behavior, XNU 8796 ABI compatibility, or device bootability. M5 remains in progress; M2/M4 gates remain open. See [the PMGR audit](iphone91-19h422-applet8010pmgr-binary-audit.md). The physical iPhone 7 remains on iOS 12.1.4; no device state was accessed or changed.
+
+
 - 2026-11-21: Added a bounded read-only filesystem path inspector for the
   selected GUI-framework paths identified by the 20H392/19H422 PrebuiltLoader
   comparison. The candidate list contains 18 exact paths, including the
