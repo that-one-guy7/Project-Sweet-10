@@ -54,6 +54,35 @@ requests, performance-state accounting, and CPU energy/idle counters. This
 places core-enable, cluster-power, and idle-management names in the same
 generic PMGR image.
 
+## Exact core-enable string offsets
+
+The user later reran the string scan with `strings -a -t x -n 5` and
+provided the extracted generic ApplePMGR prelink-header SHA-256:
+
+`4764017feef6d87c1f8a524bf04ec1148817d61fd482639e252325fd0300f43f`
+
+The extracted header's `__TEXT` base VM address is
+`0xfffffff005666d80`. The string offsets are file offsets within that
+49,023-byte extracted header. Adding the file offset to the header base
+produces these candidate string virtual addresses:
+
+| String | Header file offset | Candidate VM address |
+|---|---:|---:|
+| `ApplePMGRFunctionEnableCPUCore` | `0xa5ac` | `0xfffffff00567132c` |
+| `site.ApplePMGRFunctionEnableCPUCore` | `0xa5cb` | `0xfffffff00567134b` |
+| `ApplePMGRFunctionCPUIdle` | `0xa4e6` | `0xfffffff005671266` |
+| `site.ApplePMGRFunctionCPUIdle` | `0xa4ff` | `0xfffffff00567127f` |
+| `virtual IOReturn ApplePMGRFunctionCPUIdle::callFunction(void *, void *, void *)` | `0xa51d` | `0xfffffff00567129d` |
+
+The same filtered output includes a `callFunction` signature for
+`ApplePMGRFunctionCPUIdle`, but no corresponding
+`ApplePMGRFunctionEnableCPUCore::callFunction` or
+`initWithTargetDataAndSymbol` signature. Other function-class entries
+also have different levels of string metadata. This is a difference in
+the observed string inventory only; it does not prove that the
+EnableCPUCore class lacks an implementation, inherits a default handler,
+or is not instantiated.
+
 ## Interpretation boundary
 
 This is a meaningful lead for the unresolved A10 secondary-core path:

@@ -1307,3 +1307,20 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   strings in the extracted generic ApplePMGR prelink header. M2 and M4
   remain open; M7/SpringBoard has not started. The iPhone 7 remains on
   iOS 12.1.4; no device or firmware state was changed.
+
+- 2026-11-22: Added exact string locations from the user's filtered scan of
+  the generic ApplePMGR prelink header. The extracted header SHA-256 is
+  `4764017feef6d87c1f8a524bf04ec1148817d61fd482639e252325fd0300f43f`.
+  `ApplePMGRFunctionEnableCPUCore` is at header offset `0xa5ac`
+  (candidate VA `0xfffffff00567132c`) and
+  `site.ApplePMGRFunctionEnableCPUCore` is at `0xa5cb`
+  (candidate VA `0xfffffff00567134b`), using the extracted header's
+  `0xfffffff005666d80` base. For comparison, the same string inventory
+  contains an explicit `ApplePMGRFunctionCPUIdle::callFunction`
+  signature at offset `0xa51d`, but no corresponding EnableCPUCore
+  callFunction/init signature. This is only a difference in string evidence
+  and does not establish absence, inheritance, registration, or runtime
+  behavior. The next read-only task is to search the verified generic
+  ApplePMGR executable disassembly for references to the page containing
+  these strings. M2/M4 remain open; M7/SpringBoard has not started. The
+  iPhone 7 remains on iOS 12.1.4; no device or firmware state was changed.

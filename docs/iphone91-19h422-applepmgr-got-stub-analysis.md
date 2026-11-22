@@ -145,6 +145,45 @@ executable-dump identity are complete. Their values and symbol resolutions
 are recorded in the GOT resolution addendum below. Both binary artifacts
 remain local to the user's Ubuntu environment and are not committed.
 
+## CPU-core-enable class string locations
+
+The extracted generic ApplePMGR prelink header has SHA-256
+`4764017feef6d87c1f8a524bf04ec1148817d61fd482639e252325fd0300f43f`.
+Its `__TEXT` base VM is `0xfffffff005666d80`. The two strings naming
+`ApplePMGRFunctionEnableCPUCore` and its `site.` identifier occur at
+header file offsets `0xa5ac` and `0xa5cb`, respectively, corresponding
+to candidate VAs `0xfffffff00567132c` and `0xfffffff00567134b`.
+
+For comparison, `ApplePMGRFunctionCPUIdle` occurs at file offset
+`0xa4e6`, and its explicit
+`virtual IOReturn ApplePMGRFunctionCPUIdle::callFunction(void *, void *, void *)`
+string occurs at `0xa51d`. The filtered output contains no matching
+`ApplePMGRFunctionEnableCPUCore::callFunction` or
+`initWithTargetDataAndSymbol` signature. Do not interpret this string
+difference as proof of an absent method, inherited default, or failed
+registration.
+
+### Next reference check
+
+Use the corrected executable dump to search its AArch64 disassembly for
+references to the page containing the two EnableCPUCore strings. The
+complete `__text` span is `0x34584` bytes, or 53,601 AArch64 instructions:
+
+~~~sh
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff0065b6000 \
+  "$HOME/ApplePMGR.text-exec.bin" |
+  grep -B 5 -A 8 -i '0xfffffff005671000'
+~~~
+
+This first pass finds instructions that form addresses within the
+`0xfffffff005671000` page. Inspect adjacent `ADD` instructions to
+determine whether they target `0xfffffff00567132c` or
+`0xfffffff00567134b`. A page reference alone is not proof of a
+reference to either exact string. If there are no matches, report that
+without concluding the callback is absent. Keep the raw Apple binaries
+local and share only the filtered assembly.
+
 ## Milestone status and limits
 
 - M1: static hardware/KEXT inventory complete.
