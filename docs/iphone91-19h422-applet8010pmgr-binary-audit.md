@@ -369,6 +369,31 @@ The generic ApplePMGR scan likewise found the EnableCPUCore class-name
 strings but no matching class-specific callback signature. See the
 [EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
 
+### Verified AppleT8010PMGR executable outer-container mapping (2026-11-22)
+
+The user mapped the four embedded executable-segment boundary VAs against
+the full 19H422 KernelCache using `ipsw macho a2o`:
+
+| Purpose | Virtual address | Outer KernelCache offset |
+|---|---|---:|
+| First byte of `__text` | `0xfffffff0068ac000` | `0x1f38000` |
+| Last byte of `__text` | `0xfffffff0068af8b3` | `0x1f3b8b3` |
+| First byte of `__stubs` | `0xfffffff0068af8b4` | `0x1f3b8b4` |
+| Last byte of `__TEXT_EXEC` | `0xfffffff0068afa87` | `0x1f3ba87` |
+
+All four addresses map to `__PLK_TEXT_EXEC`. The `__text` and
+`__stubs` sections are contiguous. The inclusive mapped range
+`0x1f38000–0x1f3ba87` is `0x3a88` bytes (14,984 bytes), exactly
+matching the embedded segment size. This resolves the outer-container
+mapping ambiguity for this segment. The earlier extraction that used the
+inner `LC_SEGMENT_64.fileoff` as an outer offset remains invalid and
+must not be used as the target AppleT8010PMGR executable.
+
+The next step is a fresh virtual-address-based dump from
+`0xfffffff0068ac000`, followed by size/hash verification and local
+AArch64 disassembly. The exact command is recorded in the
+[EnableCPUCore callback and XNU contract cross-check](iphone91-19h422-enablecpu-core-contract-crosscheck.md).
+
 ### Completed generic ApplePMGR executable mapping
 
 The user has confirmed that the target KernelCache is 44,924,928 bytes

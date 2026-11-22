@@ -1496,3 +1496,18 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   unverified. M2/M4 remain open; M7/SpringBoard has not started. The
   physical iPhone 7 remains on iOS 12.1.4 and was not accessed or changed.
 
+- 2026-11-22: Verified the AppleT8010PMGR executable segment's outer
+  KernelCache mapping using four user-supplied `ipsw macho a2o` results.
+  The VM range `0xfffffff0068ac000–0xfffffff0068afa87` maps to outer
+  offsets `0x1f38000–0x1f3ba87`. The last `__text` byte
+  (`0xfffffff0068af8b3`) and first `__stubs` byte
+  (`0xfffffff0068af8b4`) map to consecutive offsets
+  `0x1f3b8b3` and `0x1f3b8b4`. The inclusive mapped range is
+  exactly `0x3a88` bytes / 14,984 bytes, matching the embedded
+  `__TEXT_EXEC` size. A new virtual-address-based extraction, SHA-256
+  verification, and local disassembly are now the next host-side tasks.
+  The earlier extraction using an inner KEXT file offset as an outer
+  KernelCache offset remains invalid. No Apple binary is committed or
+  executed; the physical iPhone 7 remains on iOS 12.1.4 and was not
+  accessed or changed.
+
