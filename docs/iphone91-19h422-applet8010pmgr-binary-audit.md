@@ -192,6 +192,66 @@ to `AppleT8010PMGR`, cross-referenced with the exact XNU 7195/8796
 conclude that the CPU-start path works or fails from this PMGR subclass
 inventory alone.
 
+## Follow-up: generic ApplePMGR bundle metadata
+
+A separate target 19H422 `ipsw kernel kexts --json` record was inspected for
+`com.apple.driver.ApplePMGR`, which the `AppleT8010PMGR` record declares
+as a required bundle library at version `1.0`.
+
+The generic/base bundle metadata reports:
+
+| Field | Value |
+|---|---|
+| Bundle identifier | `com.apple.driver.ApplePMGR` |
+| Bundle executable | `ApplePMGR` |
+| Version | `1` |
+| Bundle path | `/System/Library/Extensions/ApplePMGR.kext` |
+| `_PrelinkExecutableLoadAddr` | `0xfffffff005666d80` |
+| `_PrelinkExecutableSize` | `49,023` bytes (`0xbf7f`) |
+| `_PrelinkKmodInfo` | `0xfffffff007ae12c0` |
+
+Its serialized IOKit personality is distinct from the T8010 subclass
+personality:
+
+| Field | ApplePMGR record |
+|---|---|
+| Personality key | `AppleBringUpPMGR` |
+| `IOClass` | `AppleBringUpPMGR` |
+| `IOProviderClass` | `AppleARMIODevice` |
+| `IONameMatch` | `pmgr1,bring-up` |
+| `IOPlatformQuiesceAction` | `90000` |
+| `IOPlatformWakeAction` | `600` |
+| Halt/restart, active, and sleep action fields | `null` in the serialized JSON |
+
+By comparison, the T8010-specific bundle record advertises
+`IOClass=AppleT8010PMGR` and `IONameMatch=pmgr1,t8010`. Both personality
+records name `AppleARMIODevice` as the provider class, but they match
+different compatible strings. The T8010 bundle's declared dependency on
+`com.apple.driver.ApplePMGR` is positive metadata evidence of a bundle-level
+relationship; it does not by itself prove C++ inheritance, which provider
+actually instantiates each class on the target DeviceTree, or the implementation
+of `IOPMGR::enableCPUCore`.
+
+The action values `90000` and `600` are recorded verbatim. Their units,
+call-site interpretation, and runtime effects have not been established and
+must not be labelled milliseconds or treated as measured delays.
+
+### Next static check
+
+The base `ApplePMGR` executable record provides its load address and size,
+but no code bytes have yet been inspected. The next host-side check is to map
+`0xfffffff005666d80` to its original KernelCache file offset with
+`ipsw macho a2o`, extract the recorded `0xbf7f`-byte prelink `__TEXT`
+region from the read-only host copy, and inspect its Mach-O load commands for
+the separate executable text segment. Any code-segment extraction should be
+kept distinct from the prelink header region, as in the
+`AppleT8010PMGR` audit above.
+
+This follow-up still does not establish secondary-core release. It narrows
+the next inspection to the generic ApplePMGR implementation, while the
+T8010-specific provider's actual CPU-start contract and firmware/reset-vector
+interaction remain unresolved.
+
 ## Relationship to project milestones
 
 - **M1:** adds detail to the already-completed static hardware/KEXT inventory.
