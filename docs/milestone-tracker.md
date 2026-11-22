@@ -29,6 +29,22 @@
 
 ## Change log
 
+- 2026-11-22: Extended the generic ApplePMGR target 19H422 audit with the
+  user's parsed Mach-O load-command map. The KEXT has UUID
+  29A10C96-489B-3D22-8D81-974A570645C3 and source version 939.140.3.0.0;
+  its separate `__TEXT_EXEC` segment is at KernelCache offset 0x00f4f280
+  (size 0x34a4c), and `__DATA_CONST` is at 0x018b2100 (size 0x6c88).
+  The symbol tables are stripped. Cross-referenced the pinned public
+  xnu-8796.141.3 IOPMGR interface: `enableCPUCore` is documented as
+  releasing a secondary CPU from reset and enabling external IRQ delivery;
+  the default two-argument method falls back to a one-argument method whose
+  base implementation panics. This defines the interface requirement but
+  still does not identify the target binary's concrete override or prove
+  runtime behavior. Next step is host-side inspection of the separate
+  executable segment and local method-string inventory. No Apple binary was
+  added to Git; M2/M4 remain open, and the physical iPhone 7 remains on
+  iOS 12.1.4 with no device state accessed or changed.
+
 - 2026-11-22: Followed the T8010 subclass audit by inspecting the target 19H422 `com.apple.driver.ApplePMGR` metadata record. It reports `AppleBringUpPMGR` / `pmgr1,bring-up`, while the T8010 subclass separately reports `AppleT8010PMGR` / `pmgr1,t8010`; both use `AppleARMIODevice`, and the T8010 bundle declares ApplePMGR as a required library. Recorded the base bundle's prelink address, size, KMOD-info address, and serialized platform-action values without guessing their units. This establishes a bundle/personality-level distinction only, not class inheritance, runtime instantiation, or `IOPMGR::enableCPUCore` behavior. See the [PMGR static audit](iphone91-19h422-applet8010pmgr-binary-audit.md). The physical iPhone 7 remains on iOS 12.1.4; no device state was accessed or changed.
 
 
