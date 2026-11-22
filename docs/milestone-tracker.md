@@ -29,6 +29,9 @@
 
 ## Change log
 
+- 2026-11-22: Followed the T8010 subclass audit by inspecting the target 19H422 `com.apple.driver.ApplePMGR` metadata record. It reports `AppleBringUpPMGR` / `pmgr1,bring-up`, while the T8010 subclass separately reports `AppleT8010PMGR` / `pmgr1,t8010`; both use `AppleARMIODevice`, and the T8010 bundle declares ApplePMGR as a required library. Recorded the base bundle's prelink address, size, KMOD-info address, and serialized platform-action values without guessing their units. This establishes a bundle/personality-level distinction only, not class inheritance, runtime instantiation, or `IOPMGR::enableCPUCore` behavior. See the [PMGR static audit](iphone91-19h422-applet8010pmgr-binary-audit.md). The physical iPhone 7 remains on iOS 12.1.4; no device state was accessed or changed.
+
+
 - 2026-11-22: Added a static audit of the target-native `com.apple.driver.AppleT8010PMGR` prelinked KEXT from the iPhone9,1 19H422 KernelCache. The prelink record and Mach-O header/segment metadata were cross-checked against the original KernelCache offsets; method-name strings cover CPU performance states, voltage/PLL control, wakeup sources, energy accumulators, and ACC/AOP register access. This narrows the target PMGR subsystem inventory but does not establish secondary-core release, runtime behavior, XNU 8796 ABI compatibility, or device bootability. M5 remains in progress; M2/M4 gates remain open. See [the PMGR audit](iphone91-19h422-applet8010pmgr-binary-audit.md). The physical iPhone 7 remains on iOS 12.1.4; no device state was accessed or changed.
 
 
