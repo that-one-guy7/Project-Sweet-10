@@ -388,6 +388,90 @@ The expected size is 215,628 bytes. Stripped symbols, indirect calls, and
 class metadata still require careful interpretation. A missing string is
 not proof a method is absent.
 
+### First verified generic ApplePMGR executable disassembly
+
+The user ran the virtual-address-based dump after confirming the four
+outer-KernelCache boundary mappings. The resulting raw file is recognized
+by `file` as generic `data`, which is expected for a raw code segment.
+The supplied first 64 bytes are:
+
+```text
+fd 7b bf a9 fd 03 00 91 81 85 ff d0 21 08 04 91
+02 4b 00 f0 42 40 40 f9 03 d3 89 52 63 00 a0 72
+98 d1 00 94 28 4b 00 d0 08 81 00 91 08 00 00 f9
+fd 7b c1 a8 c0 03 5f d6 95 d1 00 14 f6 57 bd a9
+```
+
+The user-supplied AArch64 disassembly begins with a normal function
+prologue at `0xfffffff0065b6000`, followed by another routine at
+`0xfffffff0065b603c`. The first routine includes these static references:
+
+- `ADRP/ADD` forms pointer `0xfffffff005668102`, which is offset
+  `0x1382` from the extracted generic ApplePMGR `__TEXT` header load
+  address `0xfffffff005666d80`.
+- `ADRP/LDR` reads from `0xfffffff006f19080`, within the previously
+  recorded `__DATA_CONST` VM range.
+- `ADRP/ADD/STR` stores pointer `0xfffffff006f1c020` through `x0`.
+
+The second routine writes pointer `0xfffffff006f192d0` through `x0`,
+copies several fixed-size regions from addresses in `__TEXT` /
+`__DATA_CONST`, and makes repeated calls to the same stub address.
+
+Crucially, the following branch/call destinations all fall inside
+`__TEXT_EXEC.__stubs`, whose confirmed VM range is
+`0xfffffff0065ea584` through `0xfffffff0065eaa4b`:
+
+| Instruction address | Branch/call target | Stub-relative offset |
+|---|---|---:|
+| `0xfffffff0065b6020` | `0xfffffff0065ea680` | `0xfc` |
+| `0xfffffff0065b6038` | `0xfffffff0065ea68c` | `0x108` |
+| `0xfffffff0065b6060` | `0xfffffff0065ea860` | `0x2dc` |
+| `0xfffffff0065b6118` | `0xfffffff0065ea980` | `0x3fc` |
+| `0xfffffff0065b612c` | `0xfffffff0065ea980` | `0x3fc` |
+| `0xfffffff0065b6140` | `0xfffffff0065ea980` | `0x3fc` |
+
+These are calls/branches to local stubs, not direct, named C++ method
+targets. Their imported/indirect targets have not yet been resolved.
+The function names therefore remain unknown; do not label the first
+routine as a constructor or as `ApplePMGRFunctionEnableCPUCore` from this
+excerpt alone.
+
+The user did not include the corrected dump's `stat` or SHA-256 output in
+the supplied message. Its first 64 bytes and first 100 disassembly lines
+are recorded, but the complete dump's size/hash provenance still needs to
+be captured before treating the artifact as fully verified.
+
+The next host-only inspection should decode the `__stubs` tail and inspect
+the string referenced by the first routine, plus map its `__DATA_CONST`
+pointers:
+
+```sh
+stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
+sha256sum "$HOME/ApplePMGR.text-exec.bin"
+
+# The __stubs section is the final 0x4c8 bytes of the 0x34a4c segment.
+test "$(stat -c %s "$HOME/ApplePMGR.text-exec.bin")" -eq 215628 || exit 1
+tail -c $((0x4c8)) "$HOME/ApplePMGR.text-exec.bin" \
+  > "$HOME/ApplePMGR.stubs.bin"
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff0065ea584 \
+  "$HOME/ApplePMGR.stubs.bin"
+
+# The first routine references this address in the extracted __TEXT header.
+xxd -g 1 -s $((0x1382)) -l 96 "$HOME/ApplePMGR.prelink-text.bin"
+
+# Map each referenced __DATA_CONST address into the outer KernelCache.
+ipsw macho a2o "$KC" 0xfffffff006f19080
+ipsw macho a2o "$KC" 0xfffffff006f192d0
+ipsw macho a2o "$KC" 0xfffffff006f1c020
+```
+
+Keep these artifacts local. Stub decoding and pointer mapping can narrow
+the import and metadata relationships, but stripped symbols and runtime
+registration still prevent a CPU-start conclusion at this stage.
+
+See the detailed follow-up [generic ApplePMGR GOT and stub analysis](iphone91-19h422-applepmgr-got-stub-analysis.md), which maps the imported-call stubs used by the first two routines in the corrected executable excerpt.
+
 ## Relationship to project milestones
 
 - **M1:** adds detail to the already-completed static hardware/KEXT inventory.
