@@ -110,22 +110,22 @@ correct mapped outer-container offset for the segment's starting virtual
 address is `0x01c42000`. The inner KEXT's `LC_SEGMENT_64.fileoff` values are
 not absolute outer-KernelCache offsets.
 
-The next preferred read-only check is to use IPSW's fileset-aware KEXT
-extractor, documented for modern `MH_FILESET` KernelCaches:
+The user tested `ipsw kernel extract` and received
+`kernelcache type is not MH_FILESET (KEXT extraction not supported yet)`.
+This is expected for the legacy prelinked 19H422 KernelCache: IPSW documents
+KEXT extraction for modern `MH_FILESET` images only ([kernel guide](https://blacktop.github.io/ipsw/docs/guides/kernel/)).
+Do not repeat that command for this target.
 
-```sh
-mkdir -p "$HOME/ApplePMGR-kexts"
-ipsw kernel extract "$KC" com.apple.driver.ApplePMGR --imports \
-  -o "$HOME/ApplePMGR-kexts"
-PMGR="$HOME/ApplePMGR-kexts/com.apple.driver.ApplePMGR"
-file "$PMGR"
-sha256sum "$PMGR"
-ipsw macho info "$PMGR" --loads
-```
-
-Verify `$KC` against the target KernelCache SHA-256 recorded above (the user
-has now confirmed the expected hash and size). Keep the extracted binary
-local; do not add it to the repository.
+The verified outer-container mapping places the `__TEXT_EXEC` start VA at
+`0x01c42000`. Before extraction, map the section boundary addresses
+`0xfffffff0065ea583`, `0xfffffff0065ea584`, and the last segment byte
+`0xfffffff0065eaa4b` using `ipsw macho a2o "$KC" <address>`. Once the
+four address mappings confirm one contiguous executable region, use
+`ipsw macho dump "$KC" 0xfffffff0065b6000 --size 215628 --output
+"$HOME/ApplePMGR.text-exec.bin"` to dump by virtual address instead of
+manually treating the inner load-command fileoff as a container offset.
+The [Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
+documents address-based dumping to a file. Keep the artifact local.
 
 ## Milestone impact
 

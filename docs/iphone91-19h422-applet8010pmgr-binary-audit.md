@@ -264,11 +264,22 @@ ApplePMGR executable code. The `__TEXT_EXEC.__stubs`, `__DATA`, and
 `__DATA_CONST` inner `fileoff` values have not yet been independently mapped
 to outer-container offsets either.
 
-Before carving any raw range, verify the end and stub-boundary mappings, or
-prefer IPSW's fileset-aware KEXT extractor. Its kernel guide documents
-`ipsw kernel extract` for extracting a named KEXT from a modern `MH_FILESET`
-KernelCache, with `--imports` available for resolving imported names:
-<https://blacktop.github.io/ipsw/docs/guides/kernel/>.
+The fileset-aware extraction route is not supported by this target. The user
+tried `ipsw kernel extract` and received:
+
+```text
+kernelcache type is not MH_FILESET (KEXT extraction not supported yet)
+```
+
+This matches IPSW's documented limitation: `ipsw kernel extract` works on
+modern `MH_FILESET` KernelCaches, whereas this 19H422 image is an older
+prelinked Mach-O using `__PRELINK_*` regions. Do not retry that command on
+this same KernelCache. See the [IPSW kernel guide](https://blacktop.github.io/ipsw/docs/guides/kernel/).
+
+For this legacy layout, continue with the outer-KernelCache virtual-address
+mapper and `ipsw macho dump`. Before extracting the segment, map its start,
+text/stub boundary, and last byte independently. The next command block
+lists those exact address checks.
 
 The `__DATA_CONST` segment contains `__got` (`0x400` bytes),
 `__mod_init_func` (`0x18`), `__mod_term_func` (`0x18`),
@@ -331,26 +342,51 @@ the required overrides. The source contract also does not prove that the
 
 ### Next static check
 
-The next host-only check should use the fileset-aware extractor instead of
-reinterpreting the embedded KEXT's `LC_SEGMENT_64.fileoff` as a container
-offset:
+The user has confirmed that the target KernelCache is 44,924,928 bytes
+with SHA-256
+`7b40304d4da951afb6c842477fdfe7ad141a304d32c25ade73d35eb14b238aee`.
+The initial `__TEXT_EXEC` VA maps to outer offset `0x01c42000`. Now verify
+all four boundaries before any extraction:
+
+| Purpose | Virtual address |
+|---|---|
+| First byte of `__TEXT_EXEC` / `__text` | `0xfffffff0065b6000` |
+| Last byte of `__text` | `0xfffffff0065ea583` |
+| First byte of `__stubs` | `0xfffffff0065ea584` |
+| Last byte of `__TEXT_EXEC` | `0xfffffff0065eaa4b` |
+
+Run:
 
 ```sh
-mkdir -p "$HOME/ApplePMGR-kexts"
-ipsw kernel extract "$KC" com.apple.driver.ApplePMGR --imports \
-  -o "$HOME/ApplePMGR-kexts"
-PMGR="$HOME/ApplePMGR-kexts/com.apple.driver.ApplePMGR"
-file "$PMGR"
-sha256sum "$PMGR"
-ipsw macho info "$PMGR" --loads
+ipsw macho a2o "$KC" 0xfffffff0065b6000
+ipsw macho a2o "$KC" 0xfffffff0065ea583
+ipsw macho a2o "$KC" 0xfffffff0065ea584
+ipsw macho a2o "$KC" 0xfffffff0065eaa4b
 ```
 
-Keep the extracted Apple binary local; do not add it to the repository.
-If extraction succeeds, the standalone KEXT load commands can be inspected
-without manually guessing how the inner `fileoff` values relate to the
-outer KernelCache. Stripped symbols, indirect calls, and class metadata
-still require careful interpretation. A missing string is not proof a
-method is absent.
+The four results should identify the same outer executable segment and
+show contiguous offsets consistent with the reported section sizes. Do not
+assume or manually calculate the missing offsets until those results are
+checked. If the boundaries agree, use IPSW's virtual-address-based dump
+rather than confusing an embedded KEXT's `LC_SEGMENT_64.fileoff` with an
+outer-container offset:
+
+```sh
+ipsw macho dump "$KC" 0xfffffff0065b6000 \\
+  --size 215628 \\
+  --output "$HOME/ApplePMGR.text-exec.bin"
+
+stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
+sha256sum "$HOME/ApplePMGR.text-exec.bin"
+file "$HOME/ApplePMGR.text-exec.bin"
+```
+
+The `macho dump` command accepts a virtual address and writes the selected
+bytes to a file; see the [IPSW Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/).
+Keep any extracted Apple binary local; do not add it to the repository.
+Only after confirming the size and first bytes should it be disassembled.
+Stripped symbols, indirect calls, and class metadata still require careful
+interpretation. A missing string is not proof a method is absent.
 
 ## Relationship to project milestones
 
