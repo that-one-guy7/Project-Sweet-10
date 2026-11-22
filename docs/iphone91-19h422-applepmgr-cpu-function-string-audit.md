@@ -172,43 +172,94 @@ reference to the candidate superclass-metaclass storage. It does not
 establish that the address is unused: the owning class initializer may be
 in another prelinked component, or the reference may be indirect.
 
-### Next host-side check: shared prelink executable segment
+### Shared prelink references and GNU objdump abort (2026-11-22)
 
-The target KernelCache load-command map previously supplied by the user
-identifies a larger shared executable segment:
+The user dumped the shared `__PLK_TEXT_EXEC` segment locally at
+VM base `0xfffffff005948000` (20,512,768 bytes) and ran the requested
+AArch64 disassembly search. GNU `objdump` emitted instructions and
+matching references, then aborted with this assertion near address
+`0xfffffff0059928b0`:
 
-| Property | Value |
-|---|---|
-| Segment | `__PLK_TEXT_EXEC` |
-| File range | `0x00fd4000–0x02364000` |
-| VM range | `0xfffffff005948000–0xfffffff006cd8000` |
-| Size | `0x01390000` / 20,512,768 bytes |
+```
+aarch64-linux-gnu-objdump: ../../opcodes/aarch64-dis.c:251:
+get_sreg_qualifier_from_value: Assertion
+`value <= 0x4 && aarch64_get_qualifier_standard_value (qualifier) == value'
+failed.
+```
 
-Search this wider prelinked executable range for code that references the
-page containing `0xfffffff0079e4dd0`. IPSW documents
-`ipsw macho dump <macho> <address> --size <bytes> --output <file>`
-for writing a virtual-address range to a local file:
-[IPSW macho dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/).
+This is the same assertion signature as the reported AArch64 disassembler
+abort in [Binutils bug 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595)
+([original report](https://lists.endsoftwarepatents.org/archive/html/bug-binutils/2024-04/msg00008.html)).
+The user's local Binutils version was not included, so the exact local
+release and whether it contains the same underlying trigger are not
+established. The command therefore produced a **partial** disassembly;
+it did not complete the full shared segment. The emitted lines before
+the abort remain useful static evidence.
+
+Several constructor-shaped sequences form the candidate superclass
+address `0xfffffff0079e4dd0` in x2 and pass it to a common call target
+at `0xfffffff005993844` with class-name and class-size arguments:
+
+| Call-site VA | Class-name string VA in x1 | x2 value | w3 size | Call target |
+|---|---|---|---:|---|
+| `0xfffffff00598e07c` | `0xfffffff0052ea1fc` | `0xfffffff0079e4dd0` | `0x38` | `0xfffffff005993844` |
+| `0xfffffff00598e14c` | `0xfffffff0052ea1fc` | `0xfffffff0079e4dd0` | `0x38` | `0xfffffff005993844` |
+| `0xfffffff00598dd14` | `0xfffffff0052ea1a4` | `0xfffffff0079e4dd0` | `0x40` | `0xfffffff005993844` |
+| `0xfffffff00598dde4` | `0xfffffff0052ea1a4` | `0xfffffff0079e4dd0` | `0x40` | `0xfffffff005993844` |
+
+A further sequence at `0xfffffff00598e5a4` explicitly sets
+`x0 = 0xfffffff0079e57c0`, `x1 = 0xfffffff0052ea1a4`,
+`x2 = 0xfffffff0079e4dd0`, and `w3 = 0x40` before the same
+call target. This is additional evidence that the pointer is used as
+the superclass-metadata argument for other class registrations too.
+
+**Important distinction:** x1 is the name string for the class being
+registered; x2 is the candidate superclass metaclass pointer. The
+strings at `0xfffffff0052ea1fc` and `0xfffffff0052ea1a4` have not
+yet been extracted, so these sequences do not identify the superclass
+class name. They strengthen the interpretation of
+`0xfffffff0079e4dd0` as a shared parent-metadata object, but the
+identity is still unresolved. The earlier ApplePMGR-specific
+`ApplePMGRFunctionEnableCPUCore` registration also passes this pointer
+in x2.
+
+### Next static checks: resolve the class-name strings
+
+First record the local tool versions and map the two name-string VAs:
 
 ~~~sh
-ipsw macho dump "$KC" 0xfffffff005948000 \
-  --size 20512768 \
-  --output "$HOME/ApplePMGR.plk-text-exec.bin"
+ipsw version
+aarch64-linux-gnu-objdump --version
 
-stat -c 'Size: %s bytes' "$HOME/ApplePMGR.plk-text-exec.bin"
-sha256sum "$HOME/ApplePMGR.plk-text-exec.bin"
-
-aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
-  --adjust-vma=0xfffffff005948000 \
-  "$HOME/ApplePMGR.plk-text-exec.bin" |
-  grep -B 8 -A 12 -i '0xfffffff0079e4000'
+ipsw macho a2o "$KC" 0xfffffff0052ea1fc
+ipsw macho a2o "$KC" 0xfffffff0052ea1a4
 ~~~
 
-The expected dump size is 20,512,768 bytes. Keep the dump local; do not
-commit or upload the Apple binary. If a page reference appears, inspect
-the nearby instructions for an `ADD #0xdd0` or load/store to the exact
-candidate object. If there are no matches, report that result without
-claiming that the object or class is absent.
+If both addresses map successfully, dump the small containing range and
+read the strings. The requested range covers both string starts:
+
+~~~sh
+ipsw macho dump "$KC" 0xfffffff0052ea180 \
+  --size 256 \
+  --output "$HOME/ApplePMGR-classname-window.bin"
+
+strings -a -t x -n 4 "$HOME/ApplePMGR-classname-window.bin"
+~~~
+
+To avoid the known later abort point while confirming the two relevant
+constructor sequences, disassemble only their small address window:
+
+~~~sh
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff005948000 \
+  --start-address=0xfffffff00598e060 \
+  --stop-address=0xfffffff00598e190 \
+  "$HOME/ApplePMGR.plk-text-exec.bin"
+~~~
+
+This bounded run is intended to stop before the recorded abort address;
+it does not repair Binutils or complete the full-segment scan. Keep all
+Apple binary artifacts local and uncommitted.
 
 See the dedicated [EnableCPUCore superclass-slot audit](iphone91-19h422-applepmgr-enablecore-superclass-slot-audit.md).
 ## Interpretation boundary

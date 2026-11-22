@@ -114,41 +114,83 @@ The user's local IPSW version was not included, so this source reference
 explains the inspected upstream implementation rather than proving the
 exact local binary revision.
 
-## Wider executable-reference check
+## Shared prelink cross-references and disassembler abort
 
-The user searched the corrected generic ApplePMGR executable dump for
-page `0xfffffff0079e4000`; the command returned no matching lines.
-This is a negative result limited to that one 215,628-byte executable
-segment, not evidence that the metaclass object or its owning class is
-absent. The initializer may be emitted in another prelinked component.
+The user successfully dumped the shared `__PLK_TEXT_EXEC` range
+(file offsets `0x00fd4000–0x02364000`, VM range
+`0xfffffff005948000–0xfffffff006cd8000`, size 20,512,768 bytes).
+The AArch64 disassembly emitted useful lines but did not complete. GNU
+`objdump` aborted near `0xfffffff0059928b0` with:
 
-The next read-only check is to inspect the shared
-`__PLK_TEXT_EXEC` segment from the hash-identified 19H422 KernelCache.
-Its load-command range is file offset `0x00fd4000–0x02364000`,
-VM address `0xfffffff005948000–0xfffffff006cd8000`, and size
-`0x01390000` (20,512,768 bytes). IPSW's current
-[macho dump command](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
-supports dumping a Mach-O virtual-address range to a local file.
-
-```sh
-ipsw macho dump "$KC" 0xfffffff005948000 \
-  --size 20512768 \
-  --output "$HOME/ApplePMGR.plk-text-exec.bin"
-
-stat -c 'Size: %s bytes' "$HOME/ApplePMGR.plk-text-exec.bin"
-sha256sum "$HOME/ApplePMGR.plk-text-exec.bin"
-
-aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
-  --adjust-vma=0xfffffff005948000 \
-  "$HOME/ApplePMGR.plk-text-exec.bin" |
-  grep -B 8 -A 12 -i '0xfffffff0079e4000'
+```
+opcodes/aarch64-dis.c:251: get_sreg_qualifier_from_value:
+Assertion `value <= 0x4 && aarch64_get_qualifier_standard_value (qualifier) == value' failed.
 ```
 
-The expected dump size is 20,512,768 bytes. If any references appear,
-inspect for an adjacent `ADD #0xdd0` or a load/store through the
-computed address. A no-match result across this larger segment would
-still not prove object absence; it would only narrow the direct-code-
-reference search. Keep the extracted Apple binary local and uncommitted.
+This exact assertion signature matches the AArch64 disassembler abort
+reported as [Binutils bug 31595](https://sourceware.org/bugzilla/show_bug.cgi?id=31595).
+The user's installed Binutils version was not included; the exact local
+version and trigger are therefore unknown. Treat the shared-segment
+disassembly as partial, not as a complete scan.
+
+Before the abort, the user-supplied output contains several registration-
+shaped sequences that set x2 to `0xfffffff0079e4dd0` and call
+`0xfffffff005993844` with a class-name pointer in x1 and class size
+in w3. Two examples:
+
+- At `0xfffffff00598e07c`, x1 is constructed as
+  `0xfffffff0052ea1fc`, x2 as `0xfffffff0079e4dd0`, w3 is
+  `0x38`, then the code calls `0xfffffff005993844`.
+- At `0xfffffff00598e14c`, the same class-name pointer, x2 value,
+  class size, and call target are used.
+- At `0xfffffff00598dd14` and `0xfffffff00598dde4`, x1 is
+  `0xfffffff0052ea1a4`, x2 is `0xfffffff0079e4dd0`, and
+  w3 is `0x40`.
+- At `0xfffffff00598e5a4`, x0 is explicitly set to
+  `0xfffffff0079e57c0`, x1 to `0xfffffff0052ea1a4`, and x2
+  to `0xfffffff0079e4dd0`, with class size `0x40`.
+
+The argument arrangement is consistent with further OSMetaClass-style
+registrations. x1 is the class-name string of the class being registered;
+x2 is the candidate superclass-metaclass pointer. The two class-name
+strings have not been extracted, so these results do not yet identify
+the class at `0xfffffff0079e4dd0`. They support its use as a common
+parent metadata object by multiple registrations, including the
+previously identified `ApplePMGRFunctionEnableCPUCore` registration.
+
+### Next checks
+
+Record local tool versions, map the two class-name string addresses, and
+extract a small window containing both strings:
+
+```sh
+ipsw version
+aarch64-linux-gnu-objdump --version
+
+ipsw macho a2o "$KC" 0xfffffff0052ea1fc
+ipsw macho a2o "$KC" 0xfffffff0052ea1a4
+
+ipsw macho dump "$KC" 0xfffffff0052ea180 \
+  --size 256 \
+  --output "$HOME/ApplePMGR-classname-window.bin"
+
+strings -a -t x -n 4 "$HOME/ApplePMGR-classname-window.bin"
+```
+
+For a bounded recheck of the two `0x598e...` sites, stay below the
+known abort address:
+
+```sh
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \
+  --adjust-vma=0xfffffff005948000 \
+  --start-address=0xfffffff00598e060 \
+  --stop-address=0xfffffff00598e190 \
+  "$HOME/ApplePMGR.plk-text-exec.bin"
+```
+
+This short range is intended to avoid the recorded abort point; it does
+not fix Binutils or make the full-segment disassembly complete. The
+local Apple binary stays outside GitHub.
 
 No runtime class hierarchy, callback implementation, D10AP function
 instantiation, IOPMGR CPU-start override, secondary-core release, IRQ
