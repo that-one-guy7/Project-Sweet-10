@@ -29,6 +29,21 @@
 
 ## Change log
 
+- 2026-11-22: Added the user-provided generic ApplePMGR CPU-related string
+  inventory from the target iPhone9,1 / D10AP 19H422 prelink header.
+  The reported names include CPU-complex initialization, core-count lookup,
+  physical-cluster ID and power-state methods, cluster control, CPU-idle
+  routines, and the `ApplePMGRFunctionEnableCPUCore` identifier. This is a
+  lead only, not proof of the `IOPMGR::enableCPUCore` implementation.
+  The separately extracted `__TEXT_EXEC` segment matches the declared
+  215,628-byte size and has SHA-256
+  `355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99`,
+  but the first displayed disassembly bytes decode as readable diagnostic
+  strings. The file-offset mapping therefore needs independent validation
+  before instruction-level claims. No extracted Apple binary was added to
+  Git; M2/M4 remain open, and the physical iPhone 7 remains on iOS 12.1.4
+  with no device state accessed or changed.
+
 - 2026-11-22: Extended the generic ApplePMGR target 19H422 audit with the
   user's parsed Mach-O load-command map. The KEXT has UUID
   29A10C96-489B-3D22-8D81-974A570645C3 and source version 939.140.3.0.0;

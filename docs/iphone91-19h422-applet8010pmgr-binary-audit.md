@@ -301,18 +301,68 @@ The target binary audit must still determine which concrete class supplies
 the required overrides. The source contract also does not prove that the
 20H392 donor kernel uses the same exact ApplePMGR implementation.
 
+### Generic ApplePMGR CPU-related method strings and extraction check
+
+A local string scan of the user-extracted 49,023-byte generic ApplePMGR
+prelink `__TEXT` region returned the following CPU/cluster-related names:
+
+- `ApplePMGR::_cpuComplexInit(ApplePMGR::CPUComplex *)`
+- `ApplePMGR::getCPUComplexCoreCount(...)`
+- `ApplePMGR::getPhysicalClusterID(ApplePMGR::ClusterID)`
+- `ApplePMGR::clearClusterInterruptStatus(...)`
+- `ApplePMGR::getClusterPowerState(...)`
+- `ApplePMGR::enableCluster(...)`
+- `ApplePMGR::_cpuIdle(...)`, `_cpuIdleTimer(...)`, and `_cpuIdleInit(...)`
+- The identifiers `ApplePMGRFunctionEnableCPUCore` and
+  `site.ApplePMGRFunctionEnableCPUCore`
+- `AppleBringUpPMGR::initRegGroups()`
+
+This is useful positive evidence that the generic ApplePMGR bundle has a
+CPU-complex, cluster power/state, and CPU-idle management surface. The
+`ApplePMGRFunctionEnableCPUCore` identifier is a particularly relevant
+lead for the core-enable path. It is only an identifier string, however:
+it does not establish its call signature, implementation, invocation path,
+or whether it supplies the `IOPMGR::enableCPUCore` override needed by the
+reviewed XNU interface. Likewise, `enableCluster` is not synonymous with
+releasing an individual CPU core from reset. The filtered string output did
+not show a demangled `IOPMGR::enableCPUCore` method, but the stripped symbol
+tables and string-only search mean that this is not evidence the method is
+absent.
+
+The separate executable-segment extraction produced exactly 215,628 bytes
+(`0x34a4c`), matching the load-command size, with SHA-256
+`355a6e2728742cf65d6d0fe5138b702ee898b3d74a631627de03e584b6a62b99`.
+The first displayed bytes from the user's ARM64 disassembly are nevertheless
+readable diagnostic strings (for example, text containing duration and
+GAS-query messages), not recognizable function instructions. Therefore
+that disassembly is **not yet accepted as instruction-level evidence**.
+Matching the requested byte count proves only the output length, not that
+the selected KernelCache file offset maps to the intended virtual address.
+
+Before further disassembly, independently map the executable segment start
+address `0xfffffff0065b6000` against the same original 19H422 KernelCache
+with `ipsw macho a2o`. Compare its reported file offset with
+`0x00f4f280`. If it differs, the current extraction used the wrong offset;
+if it agrees, inspect the mapping and file identity further rather than
+assuming the leading ASCII bytes are code. Keep the extracted Apple binary
+local; only the metadata, hash, and analysis belong in the repository.
+
 ### Next static check
 
-The header has now been parsed, so the next read-only host check is to
-extract the separate `__TEXT_EXEC` segment from the original 19H422
-KernelCache using file offset `0x00f4f280` and size `0x34a4c`.
-The `__TEXT` artifact can also be searched locally for strings naming the
-`IOPMGR` CPU methods. Keep both extracted files local; do not add the
-proprietary binary data to the repository.
+The local string inventory is now recorded above, but the executable
+segment's file-offset mapping must be confirmed before instruction-level
+analysis. First map virtual address `0xfffffff0065b6000` against the same
+19H422 KernelCache with `ipsw macho a2o` and compare the returned offset
+with `0x00f4f280`. Do not infer function bodies from the current objdump
+output because its first displayed bytes decode as readable strings.
 
-This can reveal candidate method strings and permit instruction-level review,
-but stripped symbols, indirect calls, and class metadata still require
-careful interpretation. A missing string is not proof a method is absent.
+After the segment mapping is validated, the next useful static target is
+the generic ApplePMGR `__DATA_CONST` region (including its `__got`,
+`__mod_init_func`, and `__const` sections), followed by carefully bounded
+cross-references to the `ApplePMGRFunctionEnableCPUCore` identifier. The
+goal is to establish a concrete class/function relationship to the public
+`IOPMGR::enableCPUCore` contract, not merely find more CPU-related names.
+Keep all proprietary Apple binaries local.
 
 ## Relationship to project milestones
 
