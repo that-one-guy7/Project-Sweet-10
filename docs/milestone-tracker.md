@@ -1381,3 +1381,25 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   `0x01390000` / 20,512,768 bytes) for the same target page. M2/M4
   remain open; M7/SpringBoard has not started. The iPhone 7 remains on
   iOS 12.1.4; no device or firmware state was changed.
+
+
+- 2026-11-22: The shared `__PLK_TEXT_EXEC` dump emitted further
+  AArch64 constructor-shaped sequences that pass
+  `0xfffffff0079e4dd0` in x2 to common call target
+  `0xfffffff005993844`, with class-name string pointers
+  `0xfffffff0052ea1fc` / `0xfffffff0052ea1a4` and class sizes
+  `0x38` / `0x40`. One sequence explicitly supplies static
+  metaclass storage x0=`0xfffffff0079e57c0`. The x1 pointers name
+  the classes being registered, not the superclass; their strings are
+  still to be extracted, so the parent identity remains unknown. The
+  same command then aborted near `0xfffffff0059928b0` with
+  `get_sreg_qualifier_from_value` assertion
+  `value <= 0x4 && aarch64_get_qualifier_standard_value (qualifier) == value`,
+  matching the reported Binutils AArch64 disassembler bug 31595. This
+  makes the shared-segment output partial; it is not evidence of a
+  corrupted KernelCache or a completed full-segment scan. Next extract
+  the strings at `0xfffffff0052ea1fc` and
+  `0xfffffff0052ea1a4` and use a bounded disassembly window around
+  `0xfffffff00598e060–0xfffffff00598e190`. M2/M4 remain open;
+  M7/SpringBoard has not started. The iPhone 7 remains on iOS 12.1.4;
+  no device or firmware state was changed.
