@@ -116,19 +116,60 @@ filtered code-reference output did not show a direct immediate construction
 of that site-string address. It does not rule out a pointer stored in
 read-only data, generated tables, or another indirect registration path.
 
-### Next static check
+### GOT[0x158] superclass-pointer mapping (2026-11-22)
 
-Read the raw 64-bit value from GOT offset `0x158`, then map it if it is
-a kernel virtual address. Also map the static class-metaclass object
-address passed in `x0` by the third sequence:
+The user supplied the following read-only results from the hash-identified
+19H422 iPhone9,1 KernelCache:
+
+| Check | Result |
+|---|---|
+| ApplePMGR GOT dump, offset `0x158` | `0xfffffff0079e4dd0` |
+| `ipsw macho a2o` for that VA | outer file offset `0x2690dd0`, section `__data`, segment `__PRELINK_DATA` |
+| Load-command mapping | `__PRELINK_DATA`: file `0x02690000–0x027e4000`, VM `0xfffffff0079e4000–0xfffffff007b38000`, `rw-/rw-` |
+| First `0x80` bytes at file offset `0x2690dd0` | sixteen displayed 64-bit words are zero |
+
+The VA is passed in x2 to the OSMetaClass constructor in two of the
+three EnableCPUCore metaclass-construction sequences. This is consistent
+with x2 being the superclass-metaclass argument, but the pointer's class
+identity remains unknown. The zero sample establishes only that these
+file-backed bytes are zero; it does not name the object or establish how
+the storage is populated during initialization.
+
+The user also searched the local `.a2s` text for the exact VA and for the
+ADRP/GOT operand text; those greps returned no matches. A textual search of
+that artifact is not an instruction cross-reference analysis and does not
+negate the earlier disassembly.
+
+### C++ scanner result and limitation (2026-11-22)
+
+The user ran the whole-cache `ipsw kernel cpp` scan and class-filtered
+scans for `ApplePMGRFunctionEnableCPUCore` and
+`ApplePMGRFunctionCPUIdle`; each reported `no classes discovered`.
+The current IPSW CLI documentation lists `--class` and
+`--inheritance` as supported options. Its current command implementation
+emits that warning when the discovered/displayed class list is empty and
+returns without output. Therefore this result is a scanner/input limitation
+for this KernelCache, not evidence that either class is absent. See the
+[IPSW cpp CLI reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/kernel/cpp/)
+and [upstream command implementation](https://github.com/blacktop/ipsw/blob/26b65938cf4c9479cb5627d2d479492a1dcdd13e/cmd/ipsw/cmd/kernel/kernel_cpp.go).
+
+### Next static checks
+
+Record the local IPSW build/version and its verbose scanner diagnostics,
+then obtain the exact PMGR bundle identifier before attempting an
+entry-scoped scan:
 
 ~~~sh
-xxd -e -g8 -c8 -s 0x158 -l 8 "$HOME/ApplePMGR.got.bin"
-ipsw macho a2o "$KC" 0xfffffff007ae14c0
+ipsw version
+ipsw kernel cpp --verbose --inheritance "$KC"
+ipsw kernel kexts "$KC" | grep -iE 'ApplePMGR|AppleT8010PMGR'
 ~~~
 
-Do not assign the superclass name until the raw GOT value has been
-identified. Keep the Apple binary and GOT dump local.
+Use the exact bundle identifier printed by the last command for a
+subsequent `ipsw kernel cpp -e <bundle-id> --inheritance "$KC"` check.
+Do not infer the owning class or label the superclass from the zero-filled
+sample alone. Keep Apple binaries local.
+
 
 ## Interpretation boundary
 
