@@ -122,20 +122,41 @@ segment start at outer offset `0x01c42000`, the last `__text` byte at
 segment byte at `0x01c76a4b`. All map to `__PLK_TEXT_EXEC`; text and stubs
 are contiguous and the total range matches `0x34a4c`.
 
-The next host-only command is the virtual-address dump:
+The user has now supplied the first 64 bytes and first 100 lines of the
+corrected virtual-address dump. It begins with valid-looking AArch64 function
+prologues. The first routine references a string pointer at
+`0xfffffff005668102` (offset `0x1382` in the extracted header), data at
+`0xfffffff006f19080`, and stores a pointer at `0xfffffff006f1c020`.
+The second routine stores `0xfffffff006f192d0` and copies several fixed-size
+regions from text/data-const addresses.
+
+Several branch/call targets in this excerpt (`0xfffffff0065ea680`,
+`0xfffffff0065ea68c`, `0xfffffff0065ea860`, and `0xfffffff0065ea980`)
+are inside the `__stubs` VM range, not direct named methods. No C++ method
+name has yet been assigned to either routine. The supplied message omitted
+the current dump's explicit `stat` and SHA-256 results, so capture those
+along with the stub and reference inspections next:
 
 ```sh
-ipsw macho dump "$KC" 0xfffffff0065b6000 \\
-  --size 215628 \\
-  --output "$HOME/ApplePMGR.text-exec.bin"
-
 stat -c 'Size: %s bytes' "$HOME/ApplePMGR.text-exec.bin"
 sha256sum "$HOME/ApplePMGR.text-exec.bin"
-file "$HOME/ApplePMGR.text-exec.bin"
+
+test "$(stat -c %s "$HOME/ApplePMGR.text-exec.bin")" -eq 215628 || exit 1
+tail -c $((0x4c8)) "$HOME/ApplePMGR.text-exec.bin" \\
+  > "$HOME/ApplePMGR.stubs.bin"
+aarch64-linux-gnu-objdump -D -b binary -m aarch64 \\
+  --adjust-vma=0xfffffff0065ea584 \\
+  "$HOME/ApplePMGR.stubs.bin"
+
+xxd -g 1 -s $((0x1382)) -l 96 "$HOME/ApplePMGR.prelink-text.bin"
+ipsw macho a2o "$KC" 0xfffffff006f19080
+ipsw macho a2o "$KC" 0xfffffff006f192d0
+ipsw macho a2o "$KC" 0xfffffff006f1c020
 ```
 
-Expected size: 215,628 bytes. The [Mach-O dump reference](https://blacktop.github.io/ipsw/docs/cli/ipsw/macho/dump/)
-documents address-based dumping to a file. Keep the artifact local.
+Keep the files local. This can identify what the first anonymous routine
+references and which imported functions the stubs dispatch to; it still
+cannot establish secondary-core release by itself.
 
 ## Milestone impact
 
