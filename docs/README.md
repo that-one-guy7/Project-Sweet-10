@@ -33,6 +33,7 @@
 - [iPhone9,1 recursive GUI framework location inventory](iphone91-19h422-recursive-framework-location-inventory.md)
 - [iPhone9,1 recursive GUI framework location results](iphone91-19h422-recursive-framework-location-results.md)
 - [T8010 XNU source-version compatibility options](t8010-xnu-version-compatibility-options.md)
+- [H9/T8010 protection-model source map](h9-t8010-protection-model-source-map.md)
 - [T8010 XNU source comparison matrix](../research/t8010-xnu-source-matrix.json)
 - [dyld cache and filesystem evidence semantics](dyld-cache-filesystem-evidence-semantics.md)
 - [20H392 service and graphics dependency results](20h392-platform-framework-dependency-results.md)

@@ -180,6 +180,10 @@ The source review supports these dispositions, not an implementation recipe:
 5. **Keep K1 open.** The 20H392 version string and public XNU candidate do
    not identify Apple's exact source commit or private build inputs.
 
+## Detailed protection-model source map
+
+The separate [H9/T8010 protection-model source map](h9-t8010-protection-model-source-map.md) traces the KTRR/CTRR, `__ARM_KERNEL_PROTECT__`, `XNU_MONITOR`, `PMAP_CS`, 16K-page, and PAN controls into the pinned XNU source. It reinforces the no-transplant disposition; it does not close the product-build or target-runtime evidence gaps.
+
 ## Pinned source references
 
 Historical XNU 7195:
