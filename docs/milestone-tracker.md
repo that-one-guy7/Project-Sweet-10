@@ -1511,3 +1511,14 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   executed; the physical iPhone 7 remains on iOS 12.1.4 and was not
   accessed or changed.
 
+
+- 2026-11-23: Added a pinned H9/T8010 protection-model source map for the
+  historical XNU 7195.121.3 profile and public XNU 8796.141.3 candidate.
+  The review separates KTRR/CTRR integrity modes, ARM kernel-protection
+  layout, XNU_MONITOR/PPL, development/debug-only PMAP_CS settings, 16K
+  pages, and PAN. It records the source-level distinction between KTRR-only
+  privileged-register helpers and KTRR-or-CTRR startup/VM paths, plus the
+  separate CTRR CPU-cluster coordination path. This is a source map, not
+  product-build or runtime evidence; M2 and the T8010 protection/pmap gate
+  remain open. No device or firmware state was accessed or changed; the
+  physical iPhone 7 remains on iOS 12.1.4.
