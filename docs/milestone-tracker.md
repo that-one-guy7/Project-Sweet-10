@@ -1506,10 +1506,7 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   exactly `0x3a88` bytes / 14,984 bytes, matching the embedded
   `__TEXT_EXEC` size. A new virtual-address-based extraction, SHA-256
   verification, and local disassembly are now the next host-side tasks.
-  The earlier extraction using an inner KEXT file offset as an outer
-  KernelCache offset remains invalid. No Apple binary is committed or
-  executed; the physical iPhone 7 remains on iOS 12.1.4 and was not
-  accessed or changed.
+  The earlier extraction using an inner KEXT file offset as an outer KernelCache offset remains invalid. This inspection did not add or execute a binary; two earlier extracted AppleT8010PMGR blobs were tracked in the repository and are removed from the current tree by the 2026-11-24 artifact-hygiene change. Their historical Git objects remain. The physical iPhone 7 remains on iOS 12.1.4 and was not accessed or changed.
 
 
 
