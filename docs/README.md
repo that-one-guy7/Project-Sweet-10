@@ -56,6 +56,7 @@
 - [iPhone9,1 target-native hardware and service crosswalk](iphone9,1-target-hardware-crosswalk.md)
 - [iPhone9,1 19H422 KernelCache KEXT inventory](iphone91-19h422-kernelcache-kext-inventory.md)
 - [iPhone9,1 19H422 AppleT8010PMGR prelinked KEXT static audit](iphone91-19h422-applet8010pmgr-binary-audit.md)
+- [Repository artifact hygiene and extracted-binary cleanup](repository-artifact-hygiene.md)
 - [iPhone9,1 19H422 AIC and T8010 KEXT metadata](iphone91-19h422-aic-kext-inventory.md)
 - [19H422 / 20H392 AIC and T8010 KEXT comparison plan](20h392-19h422-aic-t8010-kext-comparison.md)
 - [19H422 / 20H392 AIC and T8010 KEXT comparison results](20h392-19h422-aic-t8010-kext-comparison-results.md)
