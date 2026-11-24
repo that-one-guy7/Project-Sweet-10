@@ -25,7 +25,7 @@ PR #169 records a separate host-side 14,984-byte dump with SHA-256:
 
 `95cb5769c9425c0a6755de602f1e0872959b7fa910da642aa791c5e5f3fc5e52`
 
-That digest differs from the tracked executable segment's `cfeb...` digest even though the sizes match. [PR #170's provenance note](applet8010pmgr-dump-provenance-reconciliation.md) records this discrepancy. This cleanup does not choose which dump is correct, overwrite one with the other, or erase either identity. It removes the extracted code from the public working tree while preserving hashes, sizes, source identity, and mapping metadata in text documentation.
+That digest differs from the tracked executable segment's `cfeb...` digest even though the sizes match. [PR #170's provenance note](https://github.com/that-one-guy7/Project-Sweet-10/pull/170) records this discrepancy. This cleanup does not choose which dump is correct, overwrite one with the other, or erase either identity. It removes the extracted code from the public working tree while preserving hashes, sizes, source identity, and mapping metadata in text documentation.
 
 ## Current-tree cleanup and history limitation
 
