@@ -548,3 +548,27 @@ remove copies from Git history.
 This is static host-side analysis only. No binary was executed, no code was
 modified, and no device, firmware, partition, or boot state was accessed or
 changed. The iPhone 7 remains on iOS 12.1.4.
+
+
+## Repository artifact cleanup (2026-11-24)
+
+A repository-tree audit found that two extracted AppleT8010PMGR code artifacts
+were still tracked at the prior `main` commit, even though the repository's
+`.gitignore` already contains `*.bin`. The ignore rule did not untrack
+files that had already been committed.
+
+The exact prior-tree Git blob IDs and content hashes, along with the separate
+PR #169 local-dump digest, are preserved in
+[the repository artifact-hygiene record](repository-artifact-hygiene.md).
+The cleanup removes the two extracted `.bin` files from the current tree;
+it does not select between the two different executable-segment digests and
+does not rewrite Git history. Earlier commits may still contain those blobs.
+
+The source KernelCache identity, extracted sizes, segment mapping, and static
+observations remain documented here. Keep future extracted Apple code outside
+the repository; retain only non-executable metadata, hashes, offsets, and
+carefully scoped analysis notes.
+
+This cleanup is repository-only. No binary was executed and no device,
+firmware, partition, security, or boot state was accessed or changed. The
+physical iPhone 7 remains on iOS 12.1.4.
