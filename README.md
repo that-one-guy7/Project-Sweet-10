@@ -5,8 +5,9 @@
 **Selected userland reference:** iPhone X iOS 16.7.16 (`20H392`)  
 **First major milestone:** SpringBoard
 
-> Research scaffold only. It contains no iOS firmware, proprietary binaries, boot payload,
-> or working kernel. It is not ready to boot or flash.
+> Research scaffold only. The current tree contains no iOS firmware, extracted Apple code binaries,
+> boot payload, or working kernel. Earlier Git history may still contain deleted research artifacts.
+> It is not ready to boot or flash.
 
 ## Current status
 - [x] Target and project scope recorded
