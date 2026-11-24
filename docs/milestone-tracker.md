@@ -1511,3 +1511,25 @@ iOS 12.1.4; no device or firmware state was accessed or changed.
   executed; the physical iPhone 7 remains on iOS 12.1.4 and was not
   accessed or changed.
 
+
+
+- 2026-11-24: A repository-wide Git tree review found two extracted
+  AppleT8010PMGR code artifacts still tracked on the prior `main` tree:
+  the 4,603-byte prelink-text segment (Git blob
+  `c98814f224c08fdbaa5a7424ca1d5b942f587233`, SHA-256
+  `c903d96cb70e04cd7f8d48a096800af2853504e480e23e9bd87a1faef3303221`)
+  and the 14,984-byte executable segment (Git blob
+  `da503e8243697bd8623381a86a442a3cfc7f5de6`, SHA-256
+  `cfeb027ea005be174cac8c8c233b93b504fa2683fdfc9fb9706358e680940764`).
+  Both came from the hash-identified 19H422 target-reference KernelCache.
+  The second hash remains distinct from the 14,984-byte local dump digest
+  `95cb5769c9425c0a6755de602f1e0872959b7fa910da642aa791c5e5f3fc5e52`
+  recorded in PR #169; equal size is not byte identity. This cleanup removes
+  both tracked binaries from the current tree while preserving the identities
+  and audit metadata in text. The existing `.gitignore` rule `*.bin` did
+  not affect already tracked files. This does not rewrite Git history or purge
+  prior commits, clones, forks, or caches. It corrects the earlier tracker
+  sentence saying no Apple binary was committed: PR #169 itself added no
+  binary, but the repository did contain these earlier uploads. No device or
+  firmware state was accessed or changed; the physical iPhone 7 remains on
+  iOS 12.1.4.
