@@ -33,7 +33,11 @@ Pinned source references:
 | `__ARM_KERNEL_PROTECT__` | Defined as 1. Used across `proc_reg.h`, `tlb.h`, `start.s`, `cpu.c`, `arm_vm_init.c`, pmap, task, and machine-routine code. | Many guarded source paths remain in 8796, but H13 does not declare this macro in the reviewed header. | A generic optional implementation path remains in source; this audit does not establish that the iPhoneOS build selects it or that it is appropriate for T8010. |
 | `__ARM_GLOBAL_SLEEP_BIT__` | Defined as 1. Used by `cpu.c`, `machine_routines_asm.s`, and `arm_init.c` to coordinate the global sleep mechanism. | Matching consumers remain, and H13 also defines the macro. | A shared ARM64 capability exists in the modern tree; its presence in H13 does not independently validate A10-specific power behavior. |
 | `__ARM_PAN_AVAILABLE__` | Defined as 1. Used in `copyio.c`, `pcb.c`, `sleh.c`, and platform tests. | Matching consumers remain, and H13 also defines the macro. | The generic PAN path remains available in the newer source; target-specific CPU support still needs its own evidence. |
-| `SINGLE_STEP_RETIRE_ERRATA` | Defined as 1. In old `pcb.c`, adds an ISB workaround in two single-step handling paths for the documented Hurricane/Zephyr erratum. | No corresponding `SINGLE_STEP_RETIRE_ERRATA` conditional was found in the reviewed 8796 `pcb.c`, and H13 does not declare it. | The old workaround is not carried at the same reviewed call sites. This does not establish whether the erratum was fixed, handled differently, or no longer relevant to newer CPUs. |
+| `SINGLE_STEP_RETIRE_ERRATA` | Defined as 1. In XNU 7195 `pcb.c`, both `arm_debug_set32()` and `arm_debug_set64()` execute an ISB in the `else` branch after clearing the MDSCR SS bit. | XNU 8796 removes the macro guard, but both corresponding functions execute an unconditional ISB after the full if/else branch and before restoring interrupts. | The barrier remains with broader source-level branch coverage; whether this intentionally replaces the named Hurricane/Zephyr erratum workaround is unresolved. |
+
+## Single-step erratum follow-up
+
+The `SINGLE_STEP_RETIRE_ERRATA` row is refined by the [pinned 7195-to-8796 source comparison](h9-single-step-erratum-followup.md). The newer source does not retain the macro, but it does retain an unconditional ISB after each corresponding MDSCR update branch. This is structural evidence only; it does not establish the newer barrier's intent or the erratum's silicon status.
 
 ## Important distinctions
 
