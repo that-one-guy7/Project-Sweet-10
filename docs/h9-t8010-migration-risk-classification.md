@@ -23,7 +23,7 @@ replacement profile for H9. No target code or device state is changed.
 | PMU / AIC PMI | H9 explicitly sets `CPMU_AIC_PMI=1`; the shared PMU code then selects AIC interrupt generation and the machine-routine layer supplies the AIC PMI handler. H13 does not declare this macro in its reviewed profile header. | High | **Interrupt topology unresolved.** A counter count match is not enough to select the PMI route. |
 | Page size and PAN | H9 and H13 both declare 16K pages and PAN. H9 declares `__ARM_KERNEL_PROTECT__`; H13's profile instead has other protection-related configuration, including secure-pmap settings in the T8101 board block. | High | **Partial shared capability only.** Page-size agreement does not supply pmap/security policy or memory layout. |
 | Sleep / power / timebase | Both H9 and H13 declare `__ARM_GLOBAL_SLEEP_BIT__`; XNU 8796's generic sleep path remains, but H13 adds separate retention, continuous-clock, cluster and power-management feature declarations. The timebase implementation also changed between 7195 and 8796. | High | **Hardware semantics unresolved.** Do not import H13 power assumptions or XNU 8796 fallback clock values. |
-| H9-specific exception / debug errata | `HAS_MIGSTS` exception reporting and `SINGLE_STEP_RETIRE_ERRATA` workarounds are present in the reviewed 7195 call sites but absent from corresponding reviewed 8796 files. | High | **Unresolved replacement/erratum status.** Absence at one call site is not proof that the hardware feature or erratum disappeared. |
+| H9-specific exception / debug errata | The 7195 H9 profile selects `HAS_MIGSTS` exception reporting and a guarded `SINGLE_STEP_RETIRE_ERRATA` ISB. In 8796, the reviewed `sleh.c` lacks the `HAS_MIGSTS` branch, while both corresponding `pcb.c` debug-state routines retain an unconditional ISB after their MDSCR update branches. | High | **Mixed result.** The exception-reporting replacement remains unresolved; the single-step barrier is structurally retained with changed/broader placement, but its relationship to Radar 20619637 is unproven. |
 | L2 PMU events | H9 declares `HAS_CPMU_L2C_EVENTS`; no direct consumer was found in the selected source set. | Unknown | **No conclusion.** Full conditional and product-build dependency closure remains open. |
 
 ## 1. CPU startup, CPU count, and cluster topology
@@ -151,17 +151,27 @@ to select a special exception/error-reporting path involving migration and
 LLC/MMU status registers. The corresponding reviewed 8796 `sleh.c` does
 not contain that branch.
 
-The 7195 H9 header also defines `SINGLE_STEP_RETIRE_ERRATA`. The historical
-`pcb.c` uses it to add an ISB workaround in single-step handling. The
-corresponding reviewed 8796 `pcb.c` does not contain that conditional.
-The public source comparison does not establish whether these conditions
-were fixed in silicon, handled by another path, or omitted because the newer
-source targets different hardware.
+The 7195 H9 header also defines `SINGLE_STEP_RETIRE_ERRATA` and
+comments that Hurricane and Zephyr require the workaround for Radar
+20619637. In the reviewed 7195 `pcb.c`, both `arm_debug_set32()` and
+`arm_debug_set64()` execute an ISB under that macro in the `else` branch
+after clearing the MDSCR single-step bit.
 
-**Classification:** high-risk unresolved errata. Do not silently drop the
-workaround or recreate it from the macro name alone. The erratum's affected
-stepping, architectural conditions, and replacement handling require
-authoritative platform evidence.
+The corresponding 8796 `pcb.c` routines no longer contain the macro
+conditional, but both execute an unconditional ISB after the full
+MDSCR-update if/else branch and before restoring interrupts. Thus the
+instruction barrier is not absent from the newer source: its placement is
+broader at these two call sites. The available source does not attribute
+the newer unconditional barrier to Radar 20619637 or establish that it
+covers the same hardware erratum on T8010.
+
+See the [pinned single-step erratum source comparison](h9-single-step-erratum-followup.md)
+for commit/blob identities and line-level evidence.
+
+**Classification:** high-risk unresolved errata relationship. Record the
+barrier as structurally retained with changed placement, not simply
+removed. The affected CPU stepping, erratum conditions, and intent of the
+newer barrier require authoritative platform/build evidence.
 
 ## Migration disposition
 
@@ -207,6 +217,7 @@ XNU 8796:
 
 Related Sweet-10 evidence:
 - [Existing H9 feature-macro consumer audit](h9-feature-macro-consumer-audit.md)
+- [H9 single-step retirement erratum source comparison](h9-single-step-erratum-followup.md)
 - [ARM64 interrupt and timer interface audit](interrupt-timer-interface-audit.md)
 - [T8010 public-source transition](t8010-public-source-transition.md)
 - [20H392 XNU version-stamp provenance](xnu-kernel-version-stamp-provenance.md)
