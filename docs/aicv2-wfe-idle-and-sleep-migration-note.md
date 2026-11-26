@@ -4,6 +4,8 @@
 
 This is a read-only comparison of the public XNU `xnu-7195.121.3` H9/T8010-era source and the public XNU `xnu-8796.141.3` candidate. It correlates those sources with the already hash-verified iPhone9,1 / D10AP / 19H422 DeviceTree inventory.
 
+Version boundary: the target 19H422 KernelCache reports XNU `8020.241.44~1` / `RELEASE_ARM64_T8010`, while the 20H392 donor KernelCache reports `8796.142.1.703.8~1` / `RELEASE_ARM64_T8015`. Therefore XNU 7195 is a historical H9 profile reference and XNU 8796.141.3 is a nearby public candidate, **not** either exact shipped kernel source/build. This comparison cannot establish Apple's private 20H392 source revision or product build flags.
+
 **New finding:** XNU 8796 adds an AICv2-aware interrupt-delivery safeguard to the generic WFE/idle path. Its source comment explains that an interrupt masked during WFE can be ignored as an event; with AICv2 distribution, a transient masked interval can cause an SIQ query rejection and reroute the interrupt toward another core or cluster that may be power-gated. The newer code can temporarily unmask IRQ/FIQ, track software interrupt counters, and re-mask before returning.
 
 The target 19H422 static DeviceTree independently reports `aic-version = 2` and `#main-cpus = 2`. That makes the newer source path relevant to investigate, but **does not prove** that the iPhone 7's private AIC driver, XNU 8796's product configuration, or the runtime interrupt topology uses this exact path.
