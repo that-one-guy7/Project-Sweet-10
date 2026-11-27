@@ -137,26 +137,28 @@ is available.
   SoC-specific timer callback requirements.
 - Whether the target's private Apple KEXT implementation is compatible
   with the public XNU 8796 IOKit interfaces and KPI set.
-- Whether the corresponding KEXT and personalities exist in the
-  iPhone10,3 / D22AP / 20H392 donor KernelCache.
+- Whether the donor's `AppleInterruptController` executable implementation,
+  version, private KPI contract, and runtime behavior match the target. The
+  completed exact-ID metadata comparison confirms the top-level bundle is
+  present in both inventories, but does not establish binary identity or
+  runtime attachment.
 - Exact Apple source/build provenance for the 19H422 and 20H392 shipped
   KernelCaches.
 
 ## Next bounded host-side inspection
 
-The target-side KEXT JSON filter is now complete. The next bounded
-comparison is to query the **same selected AIC/T8010 bundles and personality
-fields in the iPhone X / D22AP / 20H392 donor KernelCache** and record
-present/absent/version/personality differences without merging the two
-KernelCaches' evidence.
+The selected top-level AIC/T8010 KEXT metadata comparison is complete; see
+[the 19H422/20H392 comparison results](20h392-19h422-aic-t8010-kext-comparison-results.md).
+That comparison confirms the `AppleInterruptController` bundle ID is present
+in both exports and records the selected personality/dependency fields
+without treating empty donor version strings as missing dependencies.
 
-For both releases, preserve only the relevant bundle identifiers,
-versions, personality names, `IONameMatch`, `IOProviderClass`, and
-`os_bundle_libraries` dependencies. Do not treat a matching plist
-personality as proof of binary ABI compatibility or runtime attachment.
-Do not upload KernelCache or proprietary KEXT binaries.
-
-The completed target result is documented in
+The remaining evidence gap is not another plist-presence query. It is the
+private controller/CPU callback contract, actual IRQ source and routing,
+acknowledge/EOI behavior, and runtime attachment. Public XNU's historical
+H9 CPMU-to-AIC PMI path is traced separately in the
+[H9/T8010 CPMU-to-AIC PMI delivery contract](h9-cpmu-aic-pmi-delivery-contract.md).
+The target KEXT inventory remains documented in
 [the 19H422 AIC and T8010 KEXT inventory](iphone91-19h422-aic-kext-inventory.md).
 
 ## Decision
